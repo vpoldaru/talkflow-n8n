@@ -4,7 +4,7 @@ import { ChatMessage } from "@/components/ChatMessage";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { useToast } from "@/hooks/use-toast";
-import { PlusCircle, MessageSquare, Menu } from "lucide-react";
+import { PlusCircle, MessageSquare, Menu, Loader2 } from "lucide-react";
 import { format } from "date-fns";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { cn } from "@/lib/utils";
@@ -233,7 +233,14 @@ const Index = () => {
               }}
             />
             <Button type="submit" disabled={isLoading} className="self-end">
-              {isLoading ? "Sending..." : "Send"}
+              {isLoading ? (
+                <>
+                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                  Sending...
+                </>
+              ) : (
+                "Send"
+              )}
             </Button>
           </div>
         </form>

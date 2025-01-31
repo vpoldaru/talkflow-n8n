@@ -8,6 +8,7 @@ import { PlusCircle, MessageSquare } from "lucide-react";
 import { format } from "date-fns";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { cn } from "@/lib/utils";
+import { ThemeToggle } from "@/components/ThemeToggle";
 
 const WEBHOOK_URL = import.meta.env.VITE_N8N_WEBHOOK_URL || "https://n8n.martinclan.org/webhook/0949763f-f3f7-46bf-8676-c050d92e6966/chat";
 const STORAGE_KEY = "chat_sessions";
@@ -143,12 +144,13 @@ const Index = () => {
   return (
     <div className="flex h-screen">
       {/* Sidebar */}
-      <div className="w-64 border-r bg-gray-50/50 flex flex-col">
-        <div className="p-4 border-b">
+      <div className="w-64 border-r bg-sidebar flex flex-col">
+        <div className="p-4 border-b flex flex-col gap-4">
           <Button onClick={createNewSession} className="w-full flex items-center gap-2">
             <PlusCircle className="w-4 h-4" />
             New Chat
           </Button>
+          <ThemeToggle />
         </div>
         <ScrollArea className="flex-1">
           <div className="p-2 space-y-2">
@@ -157,9 +159,9 @@ const Index = () => {
                 key={session.id}
                 onClick={() => setCurrentSessionId(session.id)}
                 className={cn(
-                  "w-full text-left px-3 py-2 rounded-lg hover:bg-gray-100 transition-colors",
+                  "w-full text-left px-3 py-2 rounded-lg hover:bg-sidebar-accent transition-colors",
                   "flex items-center gap-2 text-sm",
-                  session.id === currentSessionId && "bg-gray-100"
+                  session.id === currentSessionId && "bg-sidebar-accent"
                 )}
               >
                 <MessageSquare className="w-4 h-4 shrink-0" />
@@ -167,7 +169,7 @@ const Index = () => {
                   <div className="font-medium truncate">
                     {getFirstMessage(session.messages)}
                   </div>
-                  <div className="text-xs text-gray-500">
+                  <div className="text-xs text-muted-foreground">
                     {format(session.lastUpdated, 'MMM d, h:mm a')}
                   </div>
                 </div>
@@ -178,7 +180,7 @@ const Index = () => {
       </div>
 
       {/* Main Chat Area */}
-      <div className="flex-1 flex flex-col">
+      <div className="flex-1 flex flex-col bg-background">
         <div className="flex-1 overflow-y-auto p-4 space-y-4">
           {currentSession?.messages.map((message) => (
             <ChatMessage key={message.id} message={message} />

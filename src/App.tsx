@@ -15,6 +15,9 @@ const queryClient = new QueryClient({
       staleTime: 0,
     },
   },
+  config: {
+    queryKeyHashFn: () => uuidv4(),
+  }
 });
 
 const App = () => {

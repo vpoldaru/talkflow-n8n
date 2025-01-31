@@ -29,12 +29,15 @@ export const ChatMessage = ({ message }: ChatMessageProps) => {
       >
         <ReactMarkdown
           components={{
-            code({ node, className, children, ...props }) {
+            code({ inline, className, children, ...props }) {
               const match = /language-(\w+)/.exec(className || '');
-              return !props.inline && match ? (
+              return inline ? (
+                <code className={cn("bg-muted px-1 py-0.5 rounded", className)} {...props}>
+                  {children}
+                </code>
+              ) : match ? (
                 <SyntaxHighlighter
-                  {...props}
-                  style={vscDarkPlus as any}
+                  style={vscDarkPlus}
                   language={match[1]}
                   PreTag="div"
                   className="rounded-md"

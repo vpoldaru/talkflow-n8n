@@ -6,6 +6,7 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { useEffect } from "react";
 import Index from "./pages/Index";
 import NotFound from "./pages/NotFound";
+import { v4 as uuidv4 } from 'uuid';
 
 const queryClient = new QueryClient({
   defaultOptions: {

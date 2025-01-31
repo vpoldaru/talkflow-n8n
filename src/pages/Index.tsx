@@ -26,7 +26,7 @@ const Index = () => {
 
   const createNewSession = () => {
     const newSession: ChatSession = {
-      id: uuidv4(),
+      id: uuidv4(), // Changed from crypto.randomUUID()
       messages: [],
       createdAt: Date.now(),
       lastUpdated: Date.now(),
@@ -80,7 +80,7 @@ const Index = () => {
     if (!currentSession) return;
 
     const userMessage: Message = {
-      id: uuidv4(),
+      id: uuidv4(), // Changed from crypto.randomUUID()
       content: input,
       role: "user",
       timestamp: Date.now(),
@@ -109,7 +109,7 @@ const Index = () => {
 
       const data = await response.json();
       const assistantMessage: Message = {
-        id: uuidv4(),
+        id: uuidv4(), // Changed from crypto.randomUUID()
         content: data[0]?.output || "Sorry, I couldn't process that.",
         role: "assistant",
         timestamp: Date.now(),

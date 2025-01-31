@@ -4,7 +4,6 @@ import { vscDarkPlus } from 'react-syntax-highlighter/dist/esm/styles/prism';
 import { Message } from '@/types/chat';
 import { cn } from '@/lib/utils';
 import type { Components } from 'react-markdown';
-import type { CodeComponent } from 'react-markdown/lib/components';
 
 interface ChatMessageProps {
   message: Message;
@@ -30,13 +29,14 @@ export const ChatMessage = ({ message }: ChatMessageProps) => {
       >
         <ReactMarkdown
           components={{
-            code: ({ inline, className, children, ...props }) => {
+            code: ({ className, children, ...props }) => {
               const match = /language-(\w+)/.exec(className || '');
-              return inline ? (
+              const isInline = !match;
+              return isInline ? (
                 <code className={cn("bg-muted px-1 py-0.5 rounded", className)} {...props}>
                   {children}
                 </code>
-              ) : match ? (
+              ) : (
                 <SyntaxHighlighter
                   style={vscDarkPlus}
                   language={match[1]}
@@ -45,10 +45,6 @@ export const ChatMessage = ({ message }: ChatMessageProps) => {
                 >
                   {String(children).replace(/\n$/, '')}
                 </SyntaxHighlighter>
-              ) : (
-                <code className={cn("bg-muted px-1 py-0.5 rounded", className)} {...props}>
-                  {children}
-                </code>
               );
             },
           }}

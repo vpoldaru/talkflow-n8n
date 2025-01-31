@@ -6,8 +6,20 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { useEffect } from "react";
 import Index from "./pages/Index";
 import NotFound from "./pages/NotFound";
+import { v4 as uuidv4 } from 'uuid';
 
-const queryClient = new QueryClient();
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      gcTime: 1000 * 60 * 60 * 24, // 24 hours
+    },
+  },
+  config: {
+    defaultQueryOptions: {
+      queryKeyHashFn: () => uuidv4(),
+    },
+  },
+});
 
 const App = () => {
   useEffect(() => {

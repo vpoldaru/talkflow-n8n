@@ -2,7 +2,7 @@ import { useState, useRef, useEffect } from "react";
 import { Message, ChatSession } from "@/types/chat";
 import { ChatMessage } from "@/components/ChatMessage";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
 import { useToast } from "@/hooks/use-toast";
 import { PlusCircle, MessageSquare, Menu } from "lucide-react";
 import { format } from "date-fns";
@@ -209,7 +209,7 @@ const Index = () => {
       </div>
 
       {/* Main Chat Area */}
-      <div className="flex-1 flex flex-col bg-background relative">
+      <div className="flex-1 flex flex-col bg-background relative pb-6">
         <div className="flex-1 overflow-y-auto p-4 space-y-4 pt-16 md:pt-4">
           {currentSession?.messages.map((message) => (
             <ChatMessage key={message.id} message={message} />
@@ -219,14 +219,20 @@ const Index = () => {
 
         <form onSubmit={handleSend} className="p-4 border-t">
           <div className="flex gap-2 max-w-3xl mx-auto">
-            <Input
+            <Textarea
               value={input}
               onChange={(e) => setInput(e.target.value)}
               placeholder="Type your message..."
               disabled={isLoading}
-              className="flex-1"
+              className="flex-1 min-h-[80px] resize-none"
+              onKeyDown={(e) => {
+                if (e.key === 'Enter' && !e.shiftKey) {
+                  e.preventDefault();
+                  handleSend(e);
+                }
+              }}
             />
-            <Button type="submit" disabled={isLoading}>
+            <Button type="submit" disabled={isLoading} className="self-end">
               {isLoading ? "Sending..." : "Send"}
             </Button>
           </div>

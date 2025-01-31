@@ -4,3 +4,10 @@ export interface Message {
   role: 'user' | 'assistant';
   timestamp: number;
 }
+
+export interface ChatSession {
+  id: string;
+  messages: Message[];
+  createdAt: number;
+  lastUpdated: number;
+}

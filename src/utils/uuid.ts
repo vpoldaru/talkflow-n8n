@@ -1,4 +1,5 @@
-import { v4 as uuidv4 } from 'uuid';
+import * as uuid from 'uuid';
+const uuidv4 = uuid.v4;
 
 export const generateUUID = (): string => {
   return uuidv4();

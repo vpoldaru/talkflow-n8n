@@ -3,7 +3,7 @@ import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
 import { vscDarkPlus } from 'react-syntax-highlighter/dist/esm/styles/prism';
 import { Message } from '@/types/chat';
 import { cn } from '@/lib/utils';
-import type { CodeProps } from 'react-markdown/lib/ast-to-react';
+import type { Components } from 'react-markdown';
 
 interface ChatMessageProps {
   message: Message;
@@ -29,7 +29,7 @@ export const ChatMessage = ({ message }: ChatMessageProps) => {
       >
         <ReactMarkdown
           components={{
-            code({ node, className, children, ...props }: CodeProps) {
+            code({ node, className, children, ...props }) {
               const match = /language-(\w+)/.exec(className || '');
               return !props.inline && match ? (
                 <SyntaxHighlighter

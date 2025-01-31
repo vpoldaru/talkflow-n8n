@@ -3,7 +3,9 @@ import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
 import { vscDarkPlus } from 'react-syntax-highlighter/dist/esm/styles/prism';
 import { Message } from '@/types/chat';
 import { cn } from '@/lib/utils';
-import type { Components } from 'react-markdown';
+import { Copy } from 'lucide-react';
+import { Button } from './ui/button';
+import { useToast } from '@/hooks/use-toast';
 
 interface ChatMessageProps {
   message: Message;
@@ -11,6 +13,16 @@ interface ChatMessageProps {
 
 export const ChatMessage = ({ message }: ChatMessageProps) => {
   const isAssistant = message.role === 'assistant';
+  const { toast } = useToast();
+
+  const handleCopy = (text: string) => {
+    navigator.clipboard.writeText(text).then(() => {
+      toast({
+        description: "Code copied to clipboard",
+        duration: 2000,
+      });
+    });
+  };
 
   return (
     <div
@@ -32,19 +44,42 @@ export const ChatMessage = ({ message }: ChatMessageProps) => {
             code: ({ className, children, ...props }) => {
               const match = /language-(\w+)/.exec(className || '');
               const isInline = !match;
+              const codeText = String(children).replace(/\n$/, '');
+
               return isInline ? (
                 <code className={cn("bg-muted px-1 py-0.5 rounded", className)} {...props}>
                   {children}
                 </code>
               ) : (
-                <SyntaxHighlighter
-                  style={vscDarkPlus}
-                  language={match[1]}
-                  PreTag="div"
-                  className="rounded-md"
-                >
-                  {String(children).replace(/\n$/, '')}
-                </SyntaxHighlighter>
+                <div className="relative">
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    className="absolute right-2 top-2"
+                    onClick={() => handleCopy(codeText)}
+                  >
+                    <Copy className="h-4 w-4" />
+                  </Button>
+                  <SyntaxHighlighter
+                    style={vscDarkPlus}
+                    language={match[1]}
+                    PreTag="div"
+                    className="rounded-md"
+                  >
+                    {codeText}
+                  </SyntaxHighlighter>
+                  <div className="mt-2 flex justify-end">
+                    <Button
+                      variant="secondary"
+                      size="sm"
+                      className="gap-2"
+                      onClick={() => handleCopy(codeText)}
+                    >
+                      <Copy className="h-4 w-4" />
+                      Copy code
+                    </Button>
+                  </div>
+                </div>
               );
             },
           }}

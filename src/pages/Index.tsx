@@ -106,7 +106,7 @@ const Index = () => {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({ 
-          message: input,
+          chatInput: input,
           sessionId: currentSession.id 
         }),
       });

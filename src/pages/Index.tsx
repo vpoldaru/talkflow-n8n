@@ -6,7 +6,7 @@ import { useIsMobile } from "@/hooks/use-mobile";
 import { ChatMessages } from "@/components/chat/ChatMessages";
 import { ChatInput } from "@/components/chat/ChatInput";
 import { ChatSidebar } from "@/components/chat/ChatSidebar";
-import { generateUUID } from "@/utils/uuid";
+import { v4 as uuidv4 } from 'uuid';
 
 const WEBHOOK_URL = import.meta.env.VITE_N8N_WEBHOOK_URL || "https://n8n.martinclan.org/webhook/0949763f-f3f7-46bf-8676-c050d92e6966/chat";
 const STORAGE_KEY = "chat_sessions";
@@ -26,7 +26,7 @@ const Index = () => {
 
   const createNewSession = () => {
     const newSession: ChatSession = {
-      id: generateUUID(),
+      id: uuidv4(),
       messages: [],
       createdAt: Date.now(),
       lastUpdated: Date.now(),
@@ -80,7 +80,7 @@ const Index = () => {
     if (!currentSession) return;
 
     const userMessage: Message = {
-      id: generateUUID(),
+      id: uuidv4(),
       content: input,
       role: "user",
       timestamp: Date.now(),
@@ -109,7 +109,7 @@ const Index = () => {
 
       const data = await response.json();
       const assistantMessage: Message = {
-        id: generateUUID(),
+        id: uuidv4(),
         content: data[0]?.output || "Sorry, I couldn't process that.",
         role: "assistant",
         timestamp: Date.now(),

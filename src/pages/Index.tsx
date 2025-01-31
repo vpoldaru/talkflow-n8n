@@ -153,6 +153,8 @@ const Index = () => {
     }
   };
 
+  const currentSession = getCurrentSession();
+
   return (
     <div className="flex h-screen relative">
       {/* Mobile Menu Button */}

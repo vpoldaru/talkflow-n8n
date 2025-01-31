@@ -17,6 +17,22 @@ const Index = () => {
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const { toast } = useToast();
 
+  const getCurrentSession = () => {
+    return sessions.find(s => s.id === currentSessionId);
+  };
+
+  const createNewSession = () => {
+    const newSession: ChatSession = {
+      id: crypto.randomUUID(),
+      messages: [],
+      createdAt: Date.now(),
+      lastUpdated: Date.now(),
+    };
+    setSessions(prev => [newSession, ...prev]);
+    setCurrentSessionId(newSession.id);
+    setInput("");
+  };
+
   // Load sessions from localStorage on mount
   useEffect(() => {
     const savedSessions = localStorage.getItem(STORAGE_KEY);
@@ -48,22 +64,6 @@ const Index = () => {
   useEffect(() => {
     scrollToBottom();
   }, [getCurrentSession()?.messages]);
-
-  const createNewSession = () => {
-    const newSession: ChatSession = {
-      id: crypto.randomUUID(),
-      messages: [],
-      createdAt: Date.now(),
-      lastUpdated: Date.now(),
-    };
-    setSessions(prev => [newSession, ...prev]);
-    setCurrentSessionId(newSession.id);
-    setInput("");
-  };
-
-  const getCurrentSession = () => {
-    return sessions.find(s => s.id === currentSessionId);
-  };
 
   const updateSession = (sessionId: string, messages: Message[]) => {
     setSessions(prev => prev.map(session => 

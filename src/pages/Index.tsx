@@ -13,6 +13,7 @@ const Index = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [webhookConfig, setWebhookConfig] = useState<WebhookConfig>({ url: "" });
   const [showConfig, setShowConfig] = useState(false);
+  const [sessionId, setSessionId] = useState<string>("");
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const { toast } = useToast();
 
@@ -45,12 +46,21 @@ const Index = () => {
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ message: input }),
+        body: JSON.stringify({ 
+          message: input,
+          sessionId: sessionId 
+        }),
       });
 
       if (!response.ok) throw new Error("Failed to get response");
 
       const data = await response.json();
+      
+      // Update sessionId if it's in the response
+      if (data.sessionId) {
+        setSessionId(data.sessionId);
+      }
+
       const assistantMessage: Message = {
         id: (Date.now() + 1).toString(),
         content: data.message || "Sorry, I couldn't process that.",

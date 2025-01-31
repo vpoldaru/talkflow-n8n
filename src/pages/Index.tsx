@@ -115,7 +115,9 @@ const Index = () => {
         }),
       });
 
-      if (!response.ok) throw new Error("Failed to get response");
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
 
       const data = await response.json();
       const assistantMessage: Message = {
@@ -129,9 +131,11 @@ const Index = () => {
     } catch (error) {
       toast({
         title: "Error",
-        description: "Failed to send message. Please try again.",
+        description: "Failed to send message. Please try again later.",
         variant: "destructive",
       });
+      // Remove the user message if the request failed
+      updateSession(currentSession.id, currentSession.messages);
     } finally {
       setIsLoading(false);
     }

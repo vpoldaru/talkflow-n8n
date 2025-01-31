@@ -33,7 +33,6 @@ const Index = () => {
     setInput("");
   };
 
-  // Load sessions from localStorage on mount
   useEffect(() => {
     const savedSessions = localStorage.getItem(STORAGE_KEY);
     if (savedSessions) {
@@ -114,10 +113,9 @@ const Index = () => {
       if (!response.ok) throw new Error("Failed to get response");
 
       const data = await response.json();
-
       const assistantMessage: Message = {
         id: crypto.randomUUID(),
-        content: data.message || "Sorry, I couldn't process that.",
+        content: data[0]?.output || "Sorry, I couldn't process that.",
         role: "assistant",
         timestamp: Date.now(),
       };

@@ -4,7 +4,3 @@ export interface Message {
   role: 'user' | 'assistant';
   timestamp: number;
 }
-
-export interface WebhookConfig {
-  url: string;
-}

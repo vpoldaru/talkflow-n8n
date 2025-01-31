@@ -3,6 +3,7 @@ import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
 import { vscDarkPlus } from 'react-syntax-highlighter/dist/esm/styles/prism';
 import { Message } from '@/types/chat';
 import { cn } from '@/lib/utils';
+import type { CodeProps } from 'react-markdown/lib/ast-to-react';
 
 interface ChatMessageProps {
   message: Message;
@@ -28,15 +29,15 @@ export const ChatMessage = ({ message }: ChatMessageProps) => {
       >
         <ReactMarkdown
           components={{
-            code({ node, inline, className, children, ...props }) {
+            code({ node, className, children, ...props }: CodeProps) {
               const match = /language-(\w+)/.exec(className || '');
-              return !inline && match ? (
+              return !props.inline && match ? (
                 <SyntaxHighlighter
-                  style={vscDarkPlus}
+                  {...props}
+                  style={vscDarkPlus as any}
                   language={match[1]}
                   PreTag="div"
                   className="rounded-md"
-                  {...props}
                 >
                   {String(children).replace(/\n$/, '')}
                 </SyntaxHighlighter>

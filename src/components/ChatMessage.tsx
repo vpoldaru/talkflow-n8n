@@ -4,7 +4,7 @@ import { vscDarkPlus } from 'react-syntax-highlighter/dist/esm/styles/prism';
 import { Message } from '@/types/chat';
 import { cn } from '@/lib/utils';
 import type { Components } from 'react-markdown';
-import type { CodeProps } from 'react-markdown/lib/ast-to-react';
+import type { CodeComponent } from 'react-markdown/lib/components';
 
 interface ChatMessageProps {
   message: Message;
@@ -30,7 +30,7 @@ export const ChatMessage = ({ message }: ChatMessageProps) => {
       >
         <ReactMarkdown
           components={{
-            code: ({ inline, className, children, ...props }: CodeProps) => {
+            code: ({ inline, className, children, ...props }) => {
               const match = /language-(\w+)/.exec(className || '');
               return inline ? (
                 <code className={cn("bg-muted px-1 py-0.5 rounded", className)} {...props}>

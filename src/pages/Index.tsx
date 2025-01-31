@@ -1,15 +1,11 @@
-import { useState, useRef, useEffect } from "react";
+import { useState, useEffect } from "react";
 import { Message, ChatSession } from "@/types/chat";
-import { ChatMessage } from "@/components/ChatMessage";
-import { Button } from "@/components/ui/button";
-import { Textarea } from "@/components/ui/textarea";
 import { useToast } from "@/hooks/use-toast";
-import { PlusCircle, MessageSquare, Menu, Loader2 } from "lucide-react";
-import { format } from "date-fns";
-import { ScrollArea } from "@/components/ui/scroll-area";
-import { cn } from "@/lib/utils";
-import { ThemeToggle } from "@/components/ThemeToggle";
+import { Menu } from "lucide-react";
 import { useIsMobile } from "@/hooks/use-mobile";
+import { ChatMessages } from "@/components/chat/ChatMessages";
+import { ChatInput } from "@/components/chat/ChatInput";
+import { ChatSidebar } from "@/components/chat/ChatSidebar";
 
 const WEBHOOK_URL = import.meta.env.VITE_N8N_WEBHOOK_URL || "https://n8n.martinclan.org/webhook/0949763f-f3f7-46bf-8676-c050d92e6966/chat";
 const STORAGE_KEY = "chat_sessions";
@@ -20,7 +16,6 @@ const Index = () => {
   const [input, setInput] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
-  const messagesEndRef = useRef<HTMLDivElement>(null);
   const { toast } = useToast();
   const isMobile = useIsMobile();
 
@@ -60,14 +55,6 @@ const Index = () => {
       localStorage.setItem(STORAGE_KEY, JSON.stringify(sessions));
     }
   }, [sessions]);
-
-  const scrollToBottom = () => {
-    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
-  };
-
-  useEffect(() => {
-    scrollToBottom();
-  }, [getCurrentSession()?.messages]);
 
   const updateSession = (sessionId: string, messages: Message[]) => {
     setSessions(prev => prev.map(session => 
@@ -141,15 +128,6 @@ const Index = () => {
     }
   };
 
-  const getFirstMessage = (messages: Message[]) => {
-    const userMessage = messages.find(m => m.role === "user");
-    return userMessage ? userMessage.content : "New Chat";
-  };
-
-  const toggleSidebar = () => {
-    setIsSidebarOpen(!isSidebarOpen);
-  };
-
   const handleSessionClick = (sessionId: string) => {
     setCurrentSessionId(sessionId);
     if (isMobile) {
@@ -164,90 +142,34 @@ const Index = () => {
       {/* Mobile Menu Button */}
       {isMobile && (
         <button
-          onClick={toggleSidebar}
+          onClick={() => setIsSidebarOpen(!isSidebarOpen)}
           className="fixed top-4 left-4 z-50 p-2 rounded-lg bg-background border"
         >
           <Menu className="w-5 h-5" />
         </button>
       )}
 
-      {/* Sidebar */}
-      <div
-        className={cn(
-          "w-64 border-r bg-sidebar flex flex-col absolute md:relative z-40 h-full transition-transform duration-200 ease-in-out",
-          isMobile && !isSidebarOpen ? "-translate-x-full" : "translate-x-0"
-        )}
-      >
-        <div className="p-4 border-b flex flex-col gap-4">
-          <Button onClick={createNewSession} className="w-full flex items-center gap-2">
-            <PlusCircle className="w-4 h-4" />
-            New Chat
-          </Button>
-          <ThemeToggle />
-        </div>
-        <ScrollArea className="flex-1">
-          <div className="p-2 space-y-2">
-            {sessions.map((session) => (
-              <button
-                key={session.id}
-                onClick={() => handleSessionClick(session.id)}
-                className={cn(
-                  "w-full text-left px-3 py-2 rounded-lg hover:bg-sidebar-accent transition-colors",
-                  "flex items-center gap-2 text-sm",
-                  session.id === currentSessionId && "bg-sidebar-accent"
-                )}
-              >
-                <MessageSquare className="w-4 h-4 shrink-0" />
-                <div className="truncate flex-1">
-                  <div className="font-medium truncate">
-                    {getFirstMessage(session.messages)}
-                  </div>
-                  <div className="text-xs text-muted-foreground">
-                    {format(session.lastUpdated, 'MMM d, h:mm a')}
-                  </div>
-                </div>
-              </button>
-            ))}
-          </div>
-        </ScrollArea>
-      </div>
+      <ChatSidebar
+        sessions={sessions}
+        currentSessionId={currentSessionId}
+        isSidebarOpen={isSidebarOpen}
+        onNewChat={createNewSession}
+        onSessionSelect={handleSessionClick}
+      />
 
       {/* Main Chat Area */}
       <div className="flex-1 flex flex-col bg-background relative pb-6">
-        <div className="flex-1 overflow-y-auto p-4 space-y-4 pt-16 md:pt-4">
-          {currentSession?.messages.map((message) => (
-            <ChatMessage key={message.id} message={message} />
-          ))}
-          <div ref={messagesEndRef} />
-        </div>
-
-        <form onSubmit={handleSend} className="p-4 border-t">
-          <div className="flex gap-2 max-w-3xl mx-auto">
-            <Textarea
-              value={input}
-              onChange={(e) => setInput(e.target.value)}
-              placeholder="Type your message..."
-              disabled={isLoading}
-              className="flex-1 min-h-[80px] resize-none"
-              onKeyDown={(e) => {
-                if (e.key === 'Enter' && !e.shiftKey) {
-                  e.preventDefault();
-                  handleSend(e);
-                }
-              }}
+        {currentSession && (
+          <>
+            <ChatMessages messages={currentSession.messages} />
+            <ChatInput
+              input={input}
+              isLoading={isLoading}
+              onInputChange={setInput}
+              onSend={handleSend}
             />
-            <Button type="submit" disabled={isLoading} className="self-end">
-              {isLoading ? (
-                <>
-                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                  Sending...
-                </>
-              ) : (
-                "Send"
-              )}
-            </Button>
-          </div>
-        </form>
+          </>
+        )}
       </div>
 
       {/* Mobile Overlay */}

@@ -6,11 +6,17 @@ export function ThemeToggle() {
   const [isDark, setIsDark] = useState(() => {
     // Initialize with system preference or existing class
     if (typeof window !== 'undefined') {
-      return document.documentElement.classList.contains("dark") ||
-             window.matchMedia("(prefers-color-scheme: dark)").matches;
+      const hasDarkClass = document.documentElement.classList.contains("dark");
+      const prefersDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
+      return hasDarkClass || prefersDark;
     }
-    return false;
+    return true; // Default to dark mode
   });
+
+  useEffect(() => {
+    // Set initial theme class
+    document.documentElement.classList.toggle("dark", isDark);
+  }, []);
 
   useEffect(() => {
     // Sync the UI with the actual theme state
@@ -18,7 +24,7 @@ export function ThemeToggle() {
     if (isDark !== isDarkMode) {
       setIsDark(isDarkMode);
     }
-  }, []);
+  }, [isDark]);
 
   const toggleTheme = () => {
     const newIsDark = !isDark;

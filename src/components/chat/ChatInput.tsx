@@ -1,7 +1,7 @@
 import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
 import { useRef } from "react";
-import { Loader2, Send } from "lucide-react";
+import { Loader2, Send, Mic } from "lucide-react";
 
 interface ChatInputProps {
   input: string;
@@ -41,6 +41,14 @@ export const ChatInput = ({
               disabled={isLoading}
             />
           </div>
+          <Button 
+            type="button" 
+            size="icon" 
+            variant="ghost"
+            className="shrink-0"
+          >
+            <Mic className="h-4 w-4" />
+          </Button>
           <Button 
             type="submit" 
             size="icon" 

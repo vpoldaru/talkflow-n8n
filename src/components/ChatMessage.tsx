@@ -1,13 +1,10 @@
-import ReactMarkdown from 'react-markdown';
-import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
-import { vscDarkPlus } from 'react-syntax-highlighter/dist/esm/styles/prism';
 import { Message } from '@/types/chat';
 import { cn } from '@/lib/utils';
-import { Copy, PlayCircle } from 'lucide-react';
+import { Copy } from 'lucide-react';
 import { Button } from './ui/button';
 import { useToast } from '@/hooks/use-toast';
 import { format } from 'date-fns';
-import { useNavigate } from 'react-router-dom';
+import { MarkdownRenderer } from './chat/MarkdownRenderer';
 
 interface ChatMessageProps {
   message: Message;
@@ -16,16 +13,15 @@ interface ChatMessageProps {
 export const ChatMessage = ({ message }: ChatMessageProps) => {
   const isAssistant = message.role === 'assistant';
   const { toast } = useToast();
-  const navigate = useNavigate();
   const formattedTime = format(new Date(message.timestamp), 'MMM d, yyyy h:mm a');
 
-  const handleCopy = async (text: string) => {
+  const handleCopy = async () => {
     try {
       if (navigator.clipboard && window.isSecureContext) {
-        await navigator.clipboard.writeText(text);
+        await navigator.clipboard.writeText(message.content);
       } else {
         const textArea = document.createElement('textarea');
-        textArea.value = text;
+        textArea.value = message.content;
         textArea.style.position = 'fixed';
         textArea.style.left = '-999999px';
         textArea.style.top = '-999999px';
@@ -62,20 +58,6 @@ export const ChatMessage = ({ message }: ChatMessageProps) => {
     }
   };
 
-  const handleCopyToPlayground = (code: string, language?: string) => {
-    localStorage.setItem('playground-code', code);
-    // Map 'terraform' to 'hcl' for Monaco editor compatibility
-    const mappedLanguage = language?.toLowerCase() === 'terraform' ? 'hcl' : language;
-    if (mappedLanguage) {
-      localStorage.setItem('playground-language', mappedLanguage);
-    }
-    navigate('/playground');
-    toast({
-      description: "Code copied to playground",
-      duration: 2000,
-    });
-  };
-
   return (
     <div
       className={cn(
@@ -99,96 +81,7 @@ export const ChatMessage = ({ message }: ChatMessageProps) => {
         }}
       >
         <div className="prose prose-slate dark:prose-invert max-w-none break-words text-left">
-          <ReactMarkdown
-            components={{
-              p: ({ children }) => (
-                <p className="mb-2 last:mb-0 leading-relaxed text-left">{children}</p>
-              ),
-              h1: ({ children }) => (
-                <h1 className="text-2xl font-bold mb-4 bg-clip-text text-transparent bg-gradient-to-r from-slate-900 to-slate-700 dark:from-slate-100 dark:to-slate-300 text-left">{children}</h1>
-              ),
-              h2: ({ children }) => (
-                <h2 className="text-xl font-bold mb-3 bg-clip-text text-transparent bg-gradient-to-r from-slate-900 to-slate-700 dark:from-slate-100 dark:to-slate-300 text-left">{children}</h2>
-              ),
-              h3: ({ children }) => (
-                <h3 className="text-lg font-bold mb-2 bg-clip-text text-transparent bg-gradient-to-r from-slate-900 to-slate-700 dark:from-slate-100 dark:to-slate-300 text-left">{children}</h3>
-              ),
-              ul: ({ children }) => (
-                <ul className="list-disc pl-6 mb-4 space-y-2 marker:text-slate-500 dark:marker:text-slate-400 text-left">
-                  {children}
-                </ul>
-              ),
-              ol: ({ children }) => (
-                <ol className="list-decimal pl-6 mb-4 space-y-2 marker:text-slate-500 dark:marker:text-slate-400 text-left">
-                  {children}
-                </ol>
-              ),
-              li: ({ children }) => (
-                <li className="mb-1 leading-relaxed text-left">{children}</li>
-              ),
-              blockquote: ({ children }) => (
-                <blockquote className="border-l-4 border-violet-300 dark:border-violet-600 pl-4 my-4 italic bg-violet-50/30 dark:bg-violet-900/20 py-2 rounded-r text-left">
-                  {children}
-                </blockquote>
-              ),
-              code: ({ className, children, ...props }) => {
-                const match = /language-(\w+)/.exec(className || '');
-                const isInline = !match;
-                const codeText = String(children).replace(/\n$/, '');
-
-                return isInline ? (
-                  <code
-                    className={cn(
-                      "bg-slate-100 dark:bg-slate-800 backdrop-blur-sm px-1.5 py-0.5 rounded font-mono text-sm border border-slate-200 dark:border-slate-700",
-                      className
-                    )}
-                    {...props}
-                  >
-                    {children}
-                  </code>
-                ) : (
-                  <div className="relative my-6 group rounded-xl overflow-hidden shadow-lg transition-all duration-200 hover:shadow-xl border border-slate-200 dark:border-slate-800">
-                    <div className="absolute top-0 right-0 flex items-center gap-2 m-2 z-10">
-                      <span className="text-xs text-slate-600 dark:text-slate-400 font-mono px-2 py-1 rounded-md bg-slate-100/80 dark:bg-slate-800/80 backdrop-blur-sm border border-slate-200/50 dark:border-slate-700/50 opacity-100 group-hover:opacity-0 transition-opacity">
-                        {match[1].toUpperCase()}
-                      </span>
-                      <Button
-                        variant="ghost"
-                        size="icon"
-                        className="bg-slate-100/80 dark:bg-slate-800/80 backdrop-blur-sm hover:bg-slate-200/80 dark:hover:bg-slate-700/80"
-                        onClick={() => handleCopyToPlayground(codeText, match[1])}
-                      >
-                        <PlayCircle className="h-4 w-4" />
-                      </Button>
-                      <Button
-                        variant="ghost"
-                        size="icon"
-                        className="bg-slate-100/80 dark:bg-slate-800/80 backdrop-blur-sm hover:bg-slate-200/80 dark:hover:bg-slate-700/80"
-                        onClick={() => handleCopy(codeText)}
-                      >
-                        <Copy className="h-4 w-4" />
-                      </Button>
-                    </div>
-                    <SyntaxHighlighter
-                      style={vscDarkPlus}
-                      language={match[1]}
-                      PreTag="div"
-                      className="rounded-xl !mt-0 !mb-0 shadow-inner text-left"
-                      customStyle={{
-                        margin: 0,
-                        borderRadius: '0.75rem',
-                        background: 'rgba(15, 23, 42, 0.95)',
-                      }}
-                    >
-                      {codeText}
-                    </SyntaxHighlighter>
-                  </div>
-                );
-              },
-            }}
-          >
-            {message.content}
-          </ReactMarkdown>
+          <MarkdownRenderer content={message.content} />
         </div>
         <div className="mt-2 flex justify-between items-center">
           <span className="text-xs text-slate-500 dark:text-slate-400 opacity-0 group-hover:opacity-100 transition-opacity duration-200">
@@ -199,7 +92,7 @@ export const ChatMessage = ({ message }: ChatMessageProps) => {
               variant="ghost"
               size="sm"
               className="text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-100"
-              onClick={() => handleCopy(message.content)}
+              onClick={handleCopy}
             >
               <Copy className="mr-2 h-4 w-4" />
               Copy response

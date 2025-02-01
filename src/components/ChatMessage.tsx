@@ -15,13 +15,49 @@ export const ChatMessage = ({ message }: ChatMessageProps) => {
   const isAssistant = message.role === 'assistant';
   const { toast } = useToast();
 
-  const handleCopy = (text: string) => {
-    navigator.clipboard.writeText(text).then(() => {
+  const handleCopy = async (text: string) => {
+    try {
+      if (navigator.clipboard && window.isSecureContext) {
+        // Use clipboard API when available
+        await navigator.clipboard.writeText(text);
+      } else {
+        // Fallback for when clipboard API is not available
+        const textArea = document.createElement('textarea');
+        textArea.value = text;
+        textArea.style.position = 'fixed';
+        textArea.style.left = '-999999px';
+        textArea.style.top = '-999999px';
+        document.body.appendChild(textArea);
+        textArea.focus();
+        textArea.select();
+        
+        try {
+          document.execCommand('copy');
+        } catch (err) {
+          console.error('Failed to copy text:', err);
+          toast({
+            description: "Failed to copy text",
+            variant: "destructive",
+            duration: 2000,
+          });
+          return;
+        } finally {
+          textArea.remove();
+        }
+      }
+      
       toast({
         description: "Code copied to clipboard",
         duration: 2000,
       });
-    });
+    } catch (err) {
+      console.error('Failed to copy text:', err);
+      toast({
+        description: "Failed to copy text",
+        variant: "destructive",
+        duration: 2000,
+      });
+    }
   };
 
   return (

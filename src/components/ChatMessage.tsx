@@ -132,14 +132,14 @@ export const ChatMessage = ({ message }: ChatMessageProps) => {
                   </code>
                 ) : (
                   <div className="relative my-6 group rounded-xl overflow-hidden shadow-lg transition-all duration-200 hover:shadow-xl border border-slate-200 dark:border-slate-800">
-                    <div className="absolute -top-0 right-0 flex items-center gap-2 m-2 z-10">
+                    <div className="absolute top-0 right-0 flex items-center gap-2 m-2 z-10 opacity-100 group-hover:opacity-0 transition-opacity">
                       <span className="text-xs text-slate-600 dark:text-slate-400 font-mono px-2 py-1 rounded-md bg-slate-100/80 dark:bg-slate-800/80 backdrop-blur-sm border border-slate-200/50 dark:border-slate-700/50">
                         {match[1].toUpperCase()}
                       </span>
                       <Button
                         variant="ghost"
                         size="icon"
-                        className="opacity-0 group-hover:opacity-100 transition-opacity bg-slate-100/80 dark:bg-slate-800/80 backdrop-blur-sm hover:bg-slate-200/80 dark:hover:bg-slate-700/80"
+                        className="bg-slate-100/80 dark:bg-slate-800/80 backdrop-blur-sm hover:bg-slate-200/80 dark:hover:bg-slate-700/80"
                         onClick={() => handleCopy(codeText)}
                       >
                         <Copy className="h-4 w-4" />

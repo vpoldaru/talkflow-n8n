@@ -62,8 +62,11 @@ export const ChatMessage = ({ message }: ChatMessageProps) => {
     }
   };
 
-  const handleCopyToPlayground = (code: string) => {
+  const handleCopyToPlayground = (code: string, language?: string) => {
     localStorage.setItem('playground-code', code);
+    if (language) {
+      localStorage.setItem('playground-language', language);
+    }
     navigate('/playground');
     toast({
       description: "Code copied to playground",
@@ -151,7 +154,7 @@ export const ChatMessage = ({ message }: ChatMessageProps) => {
                         variant="ghost"
                         size="icon"
                         className="bg-slate-100/80 dark:bg-slate-800/80 backdrop-blur-sm hover:bg-slate-200/80 dark:hover:bg-slate-700/80"
-                        onClick={() => handleCopyToPlayground(codeText)}
+                        onClick={() => handleCopyToPlayground(codeText, match[1])}
                       >
                         <PlayCircle className="h-4 w-4" />
                       </Button>

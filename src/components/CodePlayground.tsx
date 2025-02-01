@@ -43,9 +43,16 @@ const CodePlayground: React.FC<CodePlaygroundProps> = ({
 
   useEffect(() => {
     const savedCode = localStorage.getItem('playground-code');
+    const savedLanguage = localStorage.getItem('playground-language');
+    
     if (savedCode) {
       setCode(savedCode);
       localStorage.removeItem('playground-code');
+    }
+    
+    if (savedLanguage && SUPPORTED_LANGUAGES.some(lang => lang.value === savedLanguage)) {
+      setLanguage(savedLanguage);
+      localStorage.removeItem('playground-language');
     }
   }, []);
 

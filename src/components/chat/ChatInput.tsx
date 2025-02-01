@@ -29,6 +29,8 @@ export const ChatInput = ({
     }
   };
 
+  const isInputEmpty = input.length === 0 || !input.trim();
+
   return (
     <form onSubmit={onSend} className="fixed bottom-0 left-0 right-0 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 flex justify-center items-center">
       <div className="w-full max-w-[900px] px-4 py-4">
@@ -58,7 +60,7 @@ export const ChatInput = ({
             <Button 
               type="submit" 
               size="icon" 
-              disabled={isLoading || !input.trim()}
+              disabled={isLoading || isInputEmpty}
               className="shrink-0"
             >
               {isLoading ? (

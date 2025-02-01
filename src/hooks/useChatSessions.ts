@@ -4,8 +4,41 @@ import { v4 as uuidv4 } from 'uuid';
 import { DEFAULT_WELCOME_MESSAGE } from "@/config/messages";
 
 const STORAGE_KEY = "chat_sessions";
-const WEBHOOK_URL = window.env?.VITE_N8N_WEBHOOK_URL || import.meta.env.VITE_N8N_WEBHOOK_URL || "https://n8n.martinclan.org/webhook/0949763f-f3f7-46bf-8676-c050d92e6966/chat";
-const WELCOME_MESSAGE = window.env?.VITE_WELCOME_MESSAGE || import.meta.env.VITE_WELCOME_MESSAGE || DEFAULT_WELCOME_MESSAGE;
+
+// Add detailed logging for configuration sources
+console.log('Configuration Sources:');
+console.log('window.env:', window.env);
+console.log('import.meta.env:', import.meta.env);
+console.log('DEFAULT_WELCOME_MESSAGE:', DEFAULT_WELCOME_MESSAGE);
+
+const WEBHOOK_URL = (() => {
+  const windowEnvUrl = window.env?.VITE_N8N_WEBHOOK_URL;
+  const viteEnvUrl = import.meta.env.VITE_N8N_WEBHOOK_URL;
+  const fallbackUrl = "https://n8n.martinclan.org/webhook/0949763f-f3f7-46bf-8676-c050d92e6966/chat";
+  
+  console.log('WEBHOOK_URL sources:');
+  console.log('- window.env.VITE_N8N_WEBHOOK_URL:', windowEnvUrl);
+  console.log('- import.meta.env.VITE_N8N_WEBHOOK_URL:', viteEnvUrl);
+  console.log('- fallback URL:', fallbackUrl);
+  
+  const finalUrl = windowEnvUrl || viteEnvUrl || fallbackUrl;
+  console.log('Selected WEBHOOK_URL:', finalUrl);
+  return finalUrl;
+})();
+
+const WELCOME_MESSAGE = (() => {
+  const windowEnvMsg = window.env?.VITE_WELCOME_MESSAGE;
+  const viteEnvMsg = import.meta.env.VITE_WELCOME_MESSAGE;
+  
+  console.log('WELCOME_MESSAGE sources:');
+  console.log('- window.env.VITE_WELCOME_MESSAGE:', windowEnvMsg);
+  console.log('- import.meta.env.VITE_WELCOME_MESSAGE:', viteEnvMsg);
+  console.log('- DEFAULT_WELCOME_MESSAGE:', DEFAULT_WELCOME_MESSAGE);
+  
+  const finalMsg = windowEnvMsg || viteEnvMsg || DEFAULT_WELCOME_MESSAGE;
+  console.log('Selected WELCOME_MESSAGE:', finalMsg);
+  return finalMsg;
+})();
 
 export const useChatSessions = () => {
   const [sessions, setSessions] = useState<ChatSession[]>([]);

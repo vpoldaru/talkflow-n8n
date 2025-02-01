@@ -38,7 +38,7 @@ export const ChatMessages = ({ messages, isTyping = false }: ChatMessagesProps) 
         backgroundSize: '100% 100%, 24px 24px'
       }}
     >
-      <div className="max-w-2xl mx-auto space-y-12">
+      <div className="container max-w-2xl mx-auto space-y-12">
         {messages.map((message) => (
           <ChatMessage key={message.id} message={message} />
         ))}

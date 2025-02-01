@@ -72,39 +72,41 @@ export const ChatInput = ({
 
   return (
     <form onSubmit={onSend} className="fixed bottom-0 left-0 right-0 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
-      <div className="max-w-2xl mx-auto flex gap-4 p-4">
-        <div className="relative flex-1">
-          <Textarea
-            placeholder="Type a message..."
-            value={input}
-            onChange={(e) => onInputChange(e.target.value)}
-            rows={3}
-            className="min-h-[80px] w-full resize-none bg-background px-4 py-[10px] focus-visible:ring-1"
-            onKeyDown={(e) => {
-              if (e.key === 'Enter' && !e.shiftKey) {
-                e.preventDefault();
-                onSend(e);
-              }
-            }}
-          />
-        </div>
-        <div className="flex flex-col gap-2 justify-end">
-          <Button 
-            type="button" 
-            size="icon" 
-            variant={isRecording ? "destructive" : "outline"}
-            onClick={toggleRecording}
-            className="flex-shrink-0"
-          >
-            <Mic className={`h-4 w-4 ${isRecording ? 'animate-pulse' : ''}`} />
-          </Button>
-          <Button type="submit" size="icon" disabled={isLoading || !input.trim()}>
-            {isLoading ? (
-              <Loader2 className="h-4 w-4 animate-spin" />
-            ) : (
-              <Send className="h-4 w-4" />
-            )}
-          </Button>
+      <div className="container max-w-2xl mx-auto">
+        <div className="flex gap-4 p-4">
+          <div className="relative flex-1">
+            <Textarea
+              placeholder="Type a message..."
+              value={input}
+              onChange={(e) => onInputChange(e.target.value)}
+              rows={3}
+              className="min-h-[80px] w-full resize-none bg-background px-4 py-[10px] focus-visible:ring-1"
+              onKeyDown={(e) => {
+                if (e.key === 'Enter' && !e.shiftKey) {
+                  e.preventDefault();
+                  onSend(e);
+                }
+              }}
+            />
+          </div>
+          <div className="flex flex-col gap-2 justify-end">
+            <Button 
+              type="button" 
+              size="icon" 
+              variant={isRecording ? "destructive" : "outline"}
+              onClick={toggleRecording}
+              className="flex-shrink-0"
+            >
+              <Mic className={`h-4 w-4 ${isRecording ? 'animate-pulse' : ''}`} />
+            </Button>
+            <Button type="submit" size="icon" disabled={isLoading || !input.trim()}>
+              {isLoading ? (
+                <Loader2 className="h-4 w-4 animate-spin" />
+              ) : (
+                <Send className="h-4 w-4" />
+              )}
+            </Button>
+          </div>
         </div>
       </div>
     </form>

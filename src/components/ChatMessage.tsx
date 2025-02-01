@@ -61,7 +61,7 @@ export const ChatMessage = ({ message }: ChatMessageProps) => {
   return (
     <div
       className={cn(
-        "flex w-full mb-8 animate-fade-in transform transition-all duration-300",
+        "flex w-full animate-fade-in transform transition-all duration-300",
         isAssistant ? "justify-start" : "justify-end"
       )}
     >
@@ -77,88 +77,90 @@ export const ChatMessage = ({ message }: ChatMessageProps) => {
           perspective: '1000px'
         }}
       >
-        <ReactMarkdown
-          components={{
-            p: ({ children }) => (
-              <p className="mb-4 last:mb-0 leading-relaxed">{children}</p>
-            ),
-            h1: ({ children }) => (
-              <h1 className="text-2xl font-bold mb-4 bg-clip-text text-transparent bg-gradient-to-r from-primary to-primary/80 dark:from-primary-foreground dark:to-primary-foreground/80">{children}</h1>
-            ),
-            h2: ({ children }) => (
-              <h2 className="text-xl font-bold mb-3 bg-clip-text text-transparent bg-gradient-to-r from-primary to-primary/80 dark:from-primary-foreground dark:to-primary-foreground/80">{children}</h2>
-            ),
-            h3: ({ children }) => (
-              <h3 className="text-lg font-bold mb-2 bg-clip-text text-transparent bg-gradient-to-r from-primary to-primary/80 dark:from-primary-foreground dark:to-primary-foreground/80">{children}</h3>
-            ),
-            ul: ({ children }) => (
-              <ul className="list-disc pl-6 mb-4 space-y-2 marker:text-primary/70 dark:marker:text-primary-foreground/70">
-                {children}
-              </ul>
-            ),
-            ol: ({ children }) => (
-              <ol className="list-decimal pl-6 mb-4 space-y-2 marker:text-primary/70 dark:marker:text-primary-foreground/70">
-                {children}
-              </ol>
-            ),
-            li: ({ children }) => (
-              <li className="mb-1 leading-relaxed">{children}</li>
-            ),
-            blockquote: ({ children }) => (
-              <blockquote className="border-l-4 border-primary/30 dark:border-primary-foreground/30 pl-4 my-4 italic bg-primary/5 dark:bg-primary-foreground/5 py-2 rounded-r">
-                {children}
-              </blockquote>
-            ),
-            code: ({ className, children, ...props }) => {
-              const match = /language-(\w+)/.exec(className || '');
-              const isInline = !match;
-              const codeText = String(children).replace(/\n$/, '');
-
-              return isInline ? (
-                <code
-                  className={cn(
-                    "bg-muted/60 backdrop-blur-sm px-1.5 py-0.5 rounded font-mono text-sm border border-muted/30",
-                    className
-                  )}
-                  {...props}
-                >
+        <div className="prose prose-sm dark:prose-invert max-w-none overflow-hidden break-words">
+          <ReactMarkdown
+            components={{
+              p: ({ children }) => (
+                <p className="mb-4 last:mb-0 leading-relaxed">{children}</p>
+              ),
+              h1: ({ children }) => (
+                <h1 className="text-2xl font-bold mb-4 bg-clip-text text-transparent bg-gradient-to-r from-primary to-primary/80 dark:from-primary-foreground dark:to-primary-foreground/80">{children}</h1>
+              ),
+              h2: ({ children }) => (
+                <h2 className="text-xl font-bold mb-3 bg-clip-text text-transparent bg-gradient-to-r from-primary to-primary/80 dark:from-primary-foreground dark:to-primary-foreground/80">{children}</h2>
+              ),
+              h3: ({ children }) => (
+                <h3 className="text-lg font-bold mb-2 bg-clip-text text-transparent bg-gradient-to-r from-primary to-primary/80 dark:from-primary-foreground dark:to-primary-foreground/80">{children}</h3>
+              ),
+              ul: ({ children }) => (
+                <ul className="list-disc pl-6 mb-4 space-y-2 marker:text-primary/70 dark:marker:text-primary-foreground/70">
                   {children}
-                </code>
-              ) : (
-                <div className="relative my-6 group rounded-xl overflow-hidden shadow-lg transition-all duration-200 hover:shadow-xl border border-muted/30">
-                  <div className="absolute -top-0 right-0 flex items-center gap-2 m-2 z-10">
-                    <span className="text-xs text-muted-foreground font-mono px-2 py-1 rounded-md bg-muted/30 backdrop-blur-sm border border-muted/30">
-                      {match[1].toUpperCase()}
-                    </span>
-                    <Button
-                      variant="ghost"
-                      size="icon"
-                      className="opacity-0 group-hover:opacity-100 transition-opacity bg-muted/30 backdrop-blur-sm hover:bg-muted/50"
-                      onClick={() => handleCopy(codeText)}
-                    >
-                      <Copy className="h-4 w-4" />
-                    </Button>
-                  </div>
-                  <SyntaxHighlighter
-                    style={vscDarkPlus}
-                    language={match[1]}
-                    PreTag="div"
-                    className="rounded-xl !mt-0 !mb-0 shadow-inner"
-                    customStyle={{
-                      margin: 0,
-                      borderRadius: '0.75rem',
-                      background: 'rgba(0,0,0,0.8)',
-                    }}
+                </ul>
+              ),
+              ol: ({ children }) => (
+                <ol className="list-decimal pl-6 mb-4 space-y-2 marker:text-primary/70 dark:marker:text-primary-foreground/70">
+                  {children}
+                </ol>
+              ),
+              li: ({ children }) => (
+                <li className="mb-1 leading-relaxed">{children}</li>
+              ),
+              blockquote: ({ children }) => (
+                <blockquote className="border-l-4 border-primary/30 dark:border-primary-foreground/30 pl-4 my-4 italic bg-primary/5 dark:bg-primary-foreground/5 py-2 rounded-r">
+                  {children}
+                </blockquote>
+              ),
+              code: ({ className, children, ...props }) => {
+                const match = /language-(\w+)/.exec(className || '');
+                const isInline = !match;
+                const codeText = String(children).replace(/\n$/, '');
+
+                return isInline ? (
+                  <code
+                    className={cn(
+                      "bg-muted/60 backdrop-blur-sm px-1.5 py-0.5 rounded font-mono text-sm border border-muted/30",
+                      className
+                    )}
+                    {...props}
                   >
-                    {codeText}
-                  </SyntaxHighlighter>
-                </div>
-              );
-            },
-          }}
-        >
-          {message.content}
-        </ReactMarkdown>
+                    {children}
+                  </code>
+                ) : (
+                  <div className="relative my-6 group rounded-xl overflow-hidden shadow-lg transition-all duration-200 hover:shadow-xl border border-muted/30">
+                    <div className="absolute -top-0 right-0 flex items-center gap-2 m-2 z-10">
+                      <span className="text-xs text-muted-foreground font-mono px-2 py-1 rounded-md bg-muted/30 backdrop-blur-sm border border-muted/30">
+                        {match[1].toUpperCase()}
+                      </span>
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        className="opacity-0 group-hover:opacity-100 transition-opacity bg-muted/30 backdrop-blur-sm hover:bg-muted/50"
+                        onClick={() => handleCopy(codeText)}
+                      >
+                        <Copy className="h-4 w-4" />
+                      </Button>
+                    </div>
+                    <SyntaxHighlighter
+                      style={vscDarkPlus}
+                      language={match[1]}
+                      PreTag="div"
+                      className="rounded-xl !mt-0 !mb-0 shadow-inner"
+                      customStyle={{
+                        margin: 0,
+                        borderRadius: '0.75rem',
+                        background: 'rgba(0,0,0,0.8)',
+                      }}
+                    >
+                      {codeText}
+                    </SyntaxHighlighter>
+                  </div>
+                );
+              },
+            }}
+          >
+            {message.content}
+          </ReactMarkdown>
+        </div>
       </div>
     </div>
   );

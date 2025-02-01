@@ -11,14 +11,14 @@ interface ChatInputProps {
 
 export const ChatInput = ({ input, isLoading, onInputChange, onSend }: ChatInputProps) => {
   return (
-    <form onSubmit={onSend} className="p-4 border-t">
+    <form onSubmit={onSend} className="p-4 border-t bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
       <div className="flex gap-2 max-w-3xl mx-auto">
         <Textarea
           value={input}
           onChange={(e) => onInputChange(e.target.value)}
           placeholder="Type your message..."
           disabled={isLoading}
-          className="flex-1 min-h-[80px] resize-none"
+          className="flex-1 min-h-[80px] max-h-[200px] resize-none"
           onKeyDown={(e) => {
             if (e.key === 'Enter' && !e.shiftKey) {
               e.preventDefault();

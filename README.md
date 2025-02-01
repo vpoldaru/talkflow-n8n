@@ -1,69 +1,120 @@
-# Welcome to your Lovable project
+# TalkFlow N8N Integration
 
-## Project info
+A real-time chat application integrated with N8N workflows for automated responses and processing.
+
+## Features
+
+- Real-time chat interface
+- N8N workflow integration
+- Message history persistence
+- Mobile-responsive design
+- Dark/light mode support
+- Code syntax highlighting
+- Markdown support
+
+## Project Info
 
 **URL**: https://lovable.dev/projects/d5d4b31a-09c7-475c-a998-94f5a4cb4b09
 
-## How can I edit this code?
+## Technologies Used
 
-There are several ways of editing your application.
+This project is built with modern web technologies:
 
-**Use Lovable**
+- **Vite** - Next Generation Frontend Tooling
+- **TypeScript** - JavaScript with syntax for types
+- **React** - UI Library
+- **shadcn/ui** - Re-usable components
+- **Tailwind CSS** - Utility-first CSS framework
+- **React Query** - Data synchronization
+- **React Router** - Navigation
+- **React Markdown** - Markdown rendering
 
-Simply visit the [Lovable Project](https://lovable.dev/projects/d5d4b31a-09c7-475c-a998-94f5a4cb4b09) and start prompting.
+## Getting Started
 
-Changes made via Lovable will be committed automatically to this repo.
+### Prerequisites
 
-**Use your preferred IDE**
+- Node.js & npm - [install with nvm](https://github.com/nvm-sh/nvm#installing-and-updating)
 
-If you want to work locally using your own IDE, you can clone this repo and push changes. Pushed changes will also be reflected in Lovable.
+### Development
 
-The only requirement is having Node.js & npm installed - [install with nvm](https://github.com/nvm-sh/nvm#installing-and-updating)
+There are several ways to work with this codebase:
 
-Follow these steps:
+**1. Use Lovable (Recommended)**
+
+Visit the [Lovable Project](https://lovable.dev/projects/d5d4b31a-09c7-475c-a998-94f5a4cb4b09) and start prompting.
+Changes made via Lovable will be committed automatically.
+
+**2. Local Development**
 
 ```sh
-# Step 1: Clone the repository using the project's Git URL.
+# Clone the repository
 git clone <YOUR_GIT_URL>
 
-# Step 2: Navigate to the project directory.
+# Navigate to project directory
 cd <YOUR_PROJECT_NAME>
 
-# Step 3: Install the necessary dependencies.
+# Install dependencies
 npm i
 
-# Step 4: Start the development server with auto-reloading and an instant preview.
+# Start development server
 npm run dev
 ```
 
-**Edit a file directly in GitHub**
+**3. Edit on GitHub**
 
-- Navigate to the desired file(s).
-- Click the "Edit" button (pencil icon) at the top right of the file view.
-- Make your changes and commit the changes.
+- Navigate to desired file(s)
+- Click "Edit" (pencil icon)
+- Make changes and commit
 
-**Use GitHub Codespaces**
+**4. Use GitHub Codespaces**
 
-- Navigate to the main page of your repository.
-- Click on the "Code" button (green button) near the top right.
-- Select the "Codespaces" tab.
-- Click on "New codespace" to launch a new Codespace environment.
-- Edit files directly within the Codespace and commit and push your changes once you're done.
+- Go to repository main page
+- Click "Code" button
+- Select "Codespaces" tab
+- Click "New codespace"
 
-## What technologies are used for this project?
+## Environment Variables
 
-This project is built with .
+The application requires the following environment variables:
 
-- Vite
-- TypeScript
-- React
-- shadcn-ui
-- Tailwind CSS
+```
+VITE_N8N_WEBHOOK_URL=your_n8n_webhook_url
+```
 
-## How can I deploy this project?
+## Project Structure
 
-Simply open [Lovable](https://lovable.dev/projects/d5d4b31a-09c7-475c-a998-94f5a4cb4b09) and click on Share -> Publish.
+```
+src/
+├── components/     # Reusable UI components
+├── hooks/         # Custom React hooks
+├── pages/         # Route components
+├── types/         # TypeScript definitions
+└── utils/         # Helper functions
+```
 
-## I want to use a custom domain - is that possible?
+## Deployment
 
-We don't support custom domains (yet). If you want to deploy your project under your own domain then we recommend using Netlify. Visit our docs for more details: [Custom domains](https://docs.lovable.dev/tips-tricks/custom-domain/)
+### Quick Deploy
+
+Open [Lovable](https://lovable.dev/projects/d5d4b31a-09c7-475c-a998-94f5a4cb4b09) and click on Share -> Publish.
+
+### Custom Domain
+
+While we don't currently support custom domains directly, you can deploy to Netlify:
+1. Fork this repository
+2. Connect it to Netlify
+3. Configure your custom domain
+
+Visit our docs for more details: [Custom domains](https://docs.lovable.dev/tips-tricks/custom-domain/)
+
+## Contributing
+
+1. Fork the repository
+2. Create a feature branch
+3. Commit your changes
+4. Push to the branch
+5. Open a Pull Request
+
+## License
+
+This project is open source and available under the MIT License.

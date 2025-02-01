@@ -36,31 +36,33 @@ export const ChatInput = ({
               onChange={(e) => onInputChange(e.target.value)}
               onKeyDown={handleKeyDown}
               ref={textareaRef}
-              rows={1}
-              className="min-h-[44px] w-full resize-none bg-background px-4 py-3 focus-visible:ring-1"
+              rows={2}
+              className="min-h-[68px] w-full resize-none bg-background px-4 py-3 focus-visible:ring-1"
               disabled={isLoading}
             />
           </div>
-          <Button 
-            type="button" 
-            size="icon" 
-            variant="ghost"
-            className="shrink-0"
-          >
-            <Mic className="h-4 w-4" />
-          </Button>
-          <Button 
-            type="submit" 
-            size="icon" 
-            disabled={isLoading || !input.trim()}
-            className="shrink-0"
-          >
-            {isLoading ? (
-              <Loader2 className="h-4 w-4 animate-spin" />
-            ) : (
-              <Send className="h-4 w-4" />
-            )}
-          </Button>
+          <div className="flex flex-col gap-2">
+            <Button 
+              type="button" 
+              size="icon" 
+              variant="ghost"
+              className="shrink-0"
+            >
+              <Mic className="h-4 w-4" />
+            </Button>
+            <Button 
+              type="submit" 
+              size="icon" 
+              disabled={isLoading || !input.trim()}
+              className="shrink-0"
+            >
+              {isLoading ? (
+                <Loader2 className="h-4 w-4 animate-spin" />
+              ) : (
+                <Send className="h-4 w-4" />
+              )}
+            </Button>
+          </div>
         </div>
       </div>
     </form>

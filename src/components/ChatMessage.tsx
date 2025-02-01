@@ -45,7 +45,7 @@ export const ChatMessage = ({ message }: ChatMessageProps) => {
       }
       
       toast({
-        description: "Code copied to clipboard",
+        description: "Message copied to clipboard",
         duration: 2000,
       });
     } catch (err) {
@@ -164,6 +164,19 @@ export const ChatMessage = ({ message }: ChatMessageProps) => {
             {message.content}
           </ReactMarkdown>
         </div>
+        {isAssistant && (
+          <div className="mt-4 flex justify-end">
+            <Button
+              variant="ghost"
+              size="sm"
+              className="text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-100"
+              onClick={() => handleCopy(message.content)}
+            >
+              <Copy className="mr-2 h-4 w-4" />
+              Copy response
+            </Button>
+          </div>
+        )}
       </div>
     </div>
   );

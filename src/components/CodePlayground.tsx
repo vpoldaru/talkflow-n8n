@@ -4,17 +4,37 @@ import { Card, CardContent, CardHeader, CardTitle } from './ui/card';
 import { Button } from './ui/button';
 import { Play, Copy } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from './ui/select';
 
 interface CodePlaygroundProps {
   defaultLanguage?: string;
   defaultValue?: string;
 }
 
+const SUPPORTED_LANGUAGES = [
+  { value: 'javascript', label: 'JavaScript' },
+  { value: 'typescript', label: 'TypeScript' },
+  { value: 'python', label: 'Python' },
+  { value: 'java', label: 'Java' },
+  { value: 'csharp', label: 'C#' },
+  { value: 'cpp', label: 'C++' },
+  { value: 'go', label: 'Go' },
+  { value: 'rust', label: 'Rust' },
+  { value: 'ruby', label: 'Ruby' },
+  { value: 'php', label: 'PHP' },
+  { value: 'sql', label: 'SQL' },
+  { value: 'html', label: 'HTML' },
+  { value: 'css', label: 'CSS' },
+  { value: 'json', label: 'JSON' },
+  { value: 'markdown', label: 'Markdown' },
+];
+
 const CodePlayground: React.FC<CodePlaygroundProps> = ({
   defaultLanguage = 'javascript',
   defaultValue = '// Write your code here\nconsole.log("Hello, World!");',
 }) => {
   const [code, setCode] = useState(defaultValue);
+  const [language, setLanguage] = useState(defaultLanguage);
   const { toast } = useToast();
 
   useEffect(() => {
@@ -43,12 +63,19 @@ const CodePlayground: React.FC<CodePlaygroundProps> = ({
 
   const handleRun = () => {
     try {
-      const result = new Function(code)();
-      console.log('Code execution result:', result);
-      toast({
-        title: "Success",
-        description: "Code executed successfully! Check the console for output.",
-      });
+      if (language === 'javascript') {
+        const result = new Function(code)();
+        console.log('Code execution result:', result);
+        toast({
+          title: "Success",
+          description: "Code executed successfully! Check the console for output.",
+        });
+      } else {
+        toast({
+          title: "Info",
+          description: `Running ${language} code is not supported in the browser. This is a preview-only mode.`,
+        });
+      }
     } catch (error) {
       toast({
         title: "Error",
@@ -62,7 +89,21 @@ const CodePlayground: React.FC<CodePlaygroundProps> = ({
     <Card className="w-full max-w-5xl mx-auto bg-card shadow-lg">
       <CardHeader className="border-b border-border/20">
         <CardTitle className="flex justify-between items-center">
-          <span className="text-xl font-semibold text-card-foreground">Code Playground</span>
+          <div className="flex items-center gap-4">
+            <span className="text-xl font-semibold text-card-foreground">Code Playground</span>
+            <Select value={language} onValueChange={setLanguage}>
+              <SelectTrigger className="w-[180px]">
+                <SelectValue placeholder="Select language" />
+              </SelectTrigger>
+              <SelectContent>
+                {SUPPORTED_LANGUAGES.map((lang) => (
+                  <SelectItem key={lang.value} value={lang.value}>
+                    {lang.label}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
           <div className="space-x-3">
             <Button
               variant="outline"
@@ -89,7 +130,7 @@ const CodePlayground: React.FC<CodePlaygroundProps> = ({
         <div className="rounded-md overflow-hidden border border-border/20">
           <Editor
             height="500px"
-            defaultLanguage={defaultLanguage}
+            language={language}
             value={code}
             onChange={(value) => setCode(value || '')}
             theme="vs-dark"

@@ -72,8 +72,8 @@ export const ChatInput = ({
 
   return (
     <form onSubmit={onSend} className="fixed bottom-0 left-0 right-0 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
-      <div className="container max-w-2xl mx-auto">
-        <div className="flex gap-4 p-4">
+      <div className="container mx-auto px-4">
+        <div className="max-w-2xl mx-auto flex gap-4 py-4">
           <div className="relative flex-1">
             <Textarea
               placeholder="Type a message..."

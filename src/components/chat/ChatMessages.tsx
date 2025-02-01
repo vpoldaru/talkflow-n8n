@@ -38,17 +38,19 @@ export const ChatMessages = ({ messages, isTyping = false }: ChatMessagesProps) 
         backgroundSize: '100% 100%, 24px 24px'
       }}
     >
-      <div className="container max-w-2xl mx-auto space-y-12">
-        {messages.map((message) => (
-          <ChatMessage key={message.id} message={message} />
-        ))}
-        {isTyping && (
-          <div className="flex items-center space-x-2 text-slate-500 dark:text-slate-400">
-            <Loader2 className="h-4 w-4 animate-spin" />
-            <span>AI is typing...</span>
-          </div>
-        )}
-        <div ref={messagesEndRef} className="h-4" />
+      <div className="container mx-auto px-4">
+        <div className="max-w-2xl mx-auto space-y-12">
+          {messages.map((message) => (
+            <ChatMessage key={message.id} message={message} />
+          ))}
+          {isTyping && (
+            <div className="flex items-center space-x-2 text-slate-500 dark:text-slate-400">
+              <Loader2 className="h-4 w-4 animate-spin" />
+              <span>AI is typing...</span>
+            </div>
+          )}
+          <div ref={messagesEndRef} className="h-4" />
+        </div>
       </div>
     </ScrollArea>
   );

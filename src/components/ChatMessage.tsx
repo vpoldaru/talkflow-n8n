@@ -82,9 +82,6 @@ export const ChatMessage = ({ message }: ChatMessageProps) => {
             : '0 4px 6px -1px rgba(139, 92, 246, 0.3), 0 2px 4px -1px rgba(139, 92, 246, 0.15), 0 8px 24px -4px rgba(139, 92, 246, 0.25)'
         }}
       >
-        <span className="absolute -top-6 left-2 text-xs text-slate-500 dark:text-slate-400 opacity-0 group-hover:opacity-100 transition-opacity duration-200">
-          {formattedTime}
-        </span>
         <div className="prose prose-slate dark:prose-invert max-w-none break-words text-left">
           <ReactMarkdown
             components={{
@@ -169,8 +166,11 @@ export const ChatMessage = ({ message }: ChatMessageProps) => {
             {message.content}
           </ReactMarkdown>
         </div>
-        {isAssistant && (
-          <div className="mt-4 flex justify-start">
+        <div className="mt-4 flex justify-between items-center">
+          <span className="text-xs text-slate-500 dark:text-slate-400 opacity-0 group-hover:opacity-100 transition-opacity duration-200">
+            {formattedTime}
+          </span>
+          {isAssistant && (
             <Button
               variant="ghost"
               size="sm"
@@ -180,8 +180,8 @@ export const ChatMessage = ({ message }: ChatMessageProps) => {
               <Copy className="mr-2 h-4 w-4" />
               Copy response
             </Button>
-          </div>
-        )}
+          )}
+        </div>
       </div>
     </div>
   );

@@ -39,7 +39,7 @@ export const ChatMessages = ({ messages, isTyping = false }: ChatMessagesProps) 
       }}
     >
       <div className="container mx-auto px-4">
-        <div className="max-w-2xl mx-auto space-y-12">
+        <div className="max-w-[900px] mx-auto space-y-12">
           {messages.map((message) => (
             <ChatMessage key={message.id} message={message} />
           ))}

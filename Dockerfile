@@ -24,8 +24,15 @@ COPY --from=builder /app/dist /usr/share/nginx/html
 # Copy nginx configuration
 COPY nginx.conf /etc/nginx/conf.d/default.conf
 
+# Create a script to replace environment variables
+RUN echo "#!/bin/sh\n\
+    envsubst '\$VITE_N8N_WEBHOOK_URL \$VITE_WELCOME_MESSAGE' < /usr/share/nginx/html/index.html > /usr/share/nginx/html/index.html.tmp\n\
+    mv /usr/share/nginx/html/index.html.tmp /usr/share/nginx/html/index.html\n\
+    nginx -g 'daemon off;'" > /docker-entrypoint.sh \
+    && chmod +x /docker-entrypoint.sh
+
 # Expose port 80
 EXPOSE 80
 
-# Start nginx
-CMD ["nginx", "-g", "daemon off;"]
+# Start nginx with our custom entrypoint script
+CMD ["/docker-entrypoint.sh"]

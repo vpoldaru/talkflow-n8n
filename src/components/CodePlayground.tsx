@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import Editor from '@monaco-editor/react';
 import { Card, CardContent, CardHeader, CardTitle } from './ui/card';
 import { Button } from './ui/button';
-import { Play, Copy } from 'lucide-react';
+import { Copy } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from './ui/select';
 
@@ -27,7 +27,7 @@ const SUPPORTED_LANGUAGES = [
   { value: 'css', label: 'CSS' },
   { value: 'json', label: 'JSON' },
   { value: 'markdown', label: 'Markdown' },
-  { value: 'hcl', label: 'Terraform' },  // Updated to use 'hcl' for Terraform files
+  { value: 'hcl', label: 'Terraform' },
   { value: 'bicep', label: 'Bicep' },
   { value: 'powershell', label: 'PowerShell' },
   { value: 'shell', label: 'Bash/Shell' },
@@ -72,30 +72,6 @@ const CodePlayground: React.FC<CodePlaygroundProps> = ({
     }
   };
 
-  const handleRun = () => {
-    try {
-      if (language === 'javascript') {
-        const result = new Function(code)();
-        console.log('Code execution result:', result);
-        toast({
-          title: "Success",
-          description: "Code executed successfully! Check the console for output.",
-        });
-      } else {
-        toast({
-          title: "Info",
-          description: `Running ${language} code is not supported in the browser. This is a preview-only mode.`,
-        });
-      }
-    } catch (error) {
-      toast({
-        title: "Error",
-        description: error instanceof Error ? error.message : "Failed to execute code",
-        variant: "destructive",
-      });
-    }
-  };
-
   return (
     <Card className="w-full max-w-5xl mx-auto bg-card shadow-lg">
       <CardHeader className="border-b border-border/20">
@@ -115,26 +91,15 @@ const CodePlayground: React.FC<CodePlaygroundProps> = ({
               </SelectContent>
             </Select>
           </div>
-          <div className="space-x-3">
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={handleCopy}
-              className="hover:bg-accent"
-            >
-              <Copy className="w-4 h-4 mr-2" />
-              Copy
-            </Button>
-            <Button
-              variant="default"
-              size="sm"
-              onClick={handleRun}
-              className="bg-primary hover:bg-primary/90"
-            >
-              <Play className="w-4 h-4 mr-2" />
-              Run
-            </Button>
-          </div>
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={handleCopy}
+            className="hover:bg-accent"
+          >
+            <Copy className="w-4 h-4 mr-2" />
+            Copy
+          </Button>
         </CardTitle>
       </CardHeader>
       <CardContent className="p-4">

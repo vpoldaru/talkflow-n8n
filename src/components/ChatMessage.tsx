@@ -67,17 +67,20 @@ export const ChatMessage = ({ message }: ChatMessageProps) => {
     >
       <div
         className={cn(
-          "max-w-[80%] rounded-2xl p-6 shadow-lg transition-all duration-200 backdrop-blur-sm",
+          "max-w-[85%] rounded-2xl p-6 shadow-lg transition-all duration-200 backdrop-blur-sm hover:shadow-xl",
           isAssistant
-            ? "bg-gradient-to-br from-blue-50/90 to-blue-100/90 dark:from-blue-900/20 dark:to-blue-800/30 hover:shadow-xl hover:-translate-y-0.5 border border-blue-100/50 dark:border-blue-700/30"
-            : "bg-gradient-to-br from-primary/90 to-primary text-primary-foreground hover:shadow-xl hover:-translate-y-0.5 border border-primary/20"
+            ? "bg-gradient-to-br from-blue-50/90 to-blue-100/90 dark:from-blue-900/20 dark:to-blue-800/30 hover:-translate-y-0.5 border border-blue-100/50 dark:border-blue-700/30"
+            : "bg-gradient-to-br from-primary/90 to-primary text-primary-foreground hover:-translate-y-0.5 border border-primary/20"
         )}
         style={{
           transformStyle: 'preserve-3d',
-          perspective: '1000px'
+          perspective: '1000px',
+          boxShadow: isAssistant 
+            ? '0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06), 0 8px 24px -4px rgba(0, 0, 0, 0.1)'
+            : '0 4px 6px -1px rgba(0, 0, 0, 0.2), 0 2px 4px -1px rgba(0, 0, 0, 0.1), 0 8px 24px -4px rgba(0, 0, 0, 0.15)'
         }}
       >
-        <div className="prose prose-sm dark:prose-invert max-w-none overflow-hidden break-words">
+        <div className="prose prose-sm dark:prose-invert max-w-none break-words">
           <ReactMarkdown
             components={{
               p: ({ children }) => (

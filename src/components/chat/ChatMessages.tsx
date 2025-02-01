@@ -20,7 +20,7 @@ export const ChatMessages = ({ messages }: ChatMessagesProps) => {
 
   return (
     <ScrollArea 
-      className="flex-1 p-4 space-y-4 pt-16 md:pt-4"
+      className="flex-1 p-4 space-y-8 pt-16 md:pt-4"
       style={{
         background: `
           linear-gradient(to bottom, 
@@ -32,7 +32,7 @@ export const ChatMessages = ({ messages }: ChatMessagesProps) => {
         backgroundSize: '100% 100%, 24px 24px'
       }}
     >
-      <div className="max-w-3xl mx-auto space-y-8">
+      <div className="max-w-2xl mx-auto space-y-12">
         {messages.map((message) => (
           <ChatMessage key={message.id} message={message} />
         ))}

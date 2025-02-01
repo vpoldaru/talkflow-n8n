@@ -12,7 +12,7 @@ interface ChatInputProps {
 export const ChatInput = ({ input, isLoading, onInputChange, onSend }: ChatInputProps) => {
   return (
     <form onSubmit={onSend} className="p-4 border-t bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
-      <div className="flex gap-2 max-w-3xl mx-auto">
+      <div className="flex gap-2 max-w-2xl mx-auto">
         <Textarea
           value={input}
           onChange={(e) => onInputChange(e.target.value)}

@@ -6,6 +6,7 @@ import { cn } from '@/lib/utils';
 import { Copy } from 'lucide-react';
 import { Button } from './ui/button';
 import { useToast } from '@/hooks/use-toast';
+import { format } from 'date-fns';
 
 interface ChatMessageProps {
   message: Message;
@@ -14,6 +15,7 @@ interface ChatMessageProps {
 export const ChatMessage = ({ message }: ChatMessageProps) => {
   const isAssistant = message.role === 'assistant';
   const { toast } = useToast();
+  const formattedTime = format(new Date(message.timestamp), 'MMM d, yyyy h:mm a');
 
   const handleCopy = async (text: string) => {
     try {
@@ -61,13 +63,13 @@ export const ChatMessage = ({ message }: ChatMessageProps) => {
   return (
     <div
       className={cn(
-        "flex w-full animate-fade-in transform transition-all duration-300",
+        "flex w-full animate-fade-in transform transition-all duration-300 group",
         isAssistant ? "justify-start" : "justify-end"
       )}
     >
       <div
         className={cn(
-          "max-w-[85%] rounded-2xl p-6 transition-all duration-200 backdrop-blur-sm hover:-translate-y-1",
+          "max-w-[85%] rounded-2xl p-6 transition-all duration-200 backdrop-blur-sm hover:-translate-y-1 relative",
           isAssistant
             ? "bg-gradient-to-br from-slate-50 to-blue-50 dark:from-slate-900 dark:to-blue-900 border border-blue-100/50 dark:border-blue-800/30"
             : "bg-gradient-to-br from-violet-500 to-purple-500 text-white border border-violet-400/20 dark:border-violet-500/20"
@@ -80,6 +82,9 @@ export const ChatMessage = ({ message }: ChatMessageProps) => {
             : '0 4px 6px -1px rgba(139, 92, 246, 0.3), 0 2px 4px -1px rgba(139, 92, 246, 0.15), 0 8px 24px -4px rgba(139, 92, 246, 0.25)'
         }}
       >
+        <span className="absolute -top-6 left-2 text-xs text-slate-500 dark:text-slate-400 opacity-0 group-hover:opacity-100 transition-opacity duration-200">
+          {formattedTime}
+        </span>
         <div className="prose prose-slate dark:prose-invert max-w-none break-words text-left">
           <ReactMarkdown
             components={{

@@ -17,6 +17,7 @@ const Index = () => {
   const [input, setInput] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+  const [isTyping, setIsTyping] = useState(false);
   const { toast } = useToast();
   const isMobile = useIsMobile();
 
@@ -80,7 +81,7 @@ const Index = () => {
     if (!currentSession) return;
 
     const userMessage: Message = {
-      id: uuidv4(), // Changed from crypto.randomUUID()
+      id: uuidv4(),
       content: input,
       role: "user",
       timestamp: Date.now(),
@@ -90,6 +91,7 @@ const Index = () => {
     updateSession(currentSession.id, newMessages);
     setInput("");
     setIsLoading(true);
+    setIsTyping(true);
 
     try {
       const response = await fetch(WEBHOOK_URL, {
@@ -109,7 +111,7 @@ const Index = () => {
 
       const data = await response.json();
       const assistantMessage: Message = {
-        id: uuidv4(), // Changed from crypto.randomUUID()
+        id: uuidv4(),
         content: data[0]?.output || "Sorry, I couldn't process that.",
         role: "assistant",
         timestamp: Date.now(),
@@ -122,10 +124,10 @@ const Index = () => {
         description: "Failed to send message. Please try again later.",
         variant: "destructive",
       });
-      // Remove the user message if the request failed
       updateSession(currentSession.id, currentSession.messages);
     } finally {
       setIsLoading(false);
+      setIsTyping(false);
     }
   };
 
@@ -140,7 +142,6 @@ const Index = () => {
 
   return (
     <div className="flex h-screen relative">
-      {/* Mobile Menu Button */}
       {isMobile && (
         <button
           onClick={() => setIsSidebarOpen(!isSidebarOpen)}
@@ -158,11 +159,10 @@ const Index = () => {
         onSessionSelect={handleSessionClick}
       />
 
-      {/* Main Chat Area */}
       <div className="flex-1 flex flex-col bg-background relative pb-6">
         {currentSession && (
           <>
-            <ChatMessages messages={currentSession.messages} />
+            <ChatMessages messages={currentSession.messages} isTyping={isTyping} />
             <ChatInput
               input={input}
               isLoading={isLoading}
@@ -173,7 +173,6 @@ const Index = () => {
         )}
       </div>
 
-      {/* Mobile Overlay */}
       {isMobile && isSidebarOpen && (
         <div
           className="fixed inset-0 bg-background/80 backdrop-blur-sm z-30"

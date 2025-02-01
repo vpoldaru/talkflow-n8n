@@ -2,12 +2,14 @@ import { Message } from "@/types/chat";
 import { ChatMessage } from "@/components/ChatMessage";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { useEffect, useRef } from "react";
+import { Loader2 } from "lucide-react";
 
 interface ChatMessagesProps {
   messages: Message[];
+  isTyping?: boolean;
 }
 
-export const ChatMessages = ({ messages }: ChatMessagesProps) => {
+export const ChatMessages = ({ messages, isTyping = false }: ChatMessagesProps) => {
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
   const scrollToBottom = () => {
@@ -40,6 +42,12 @@ export const ChatMessages = ({ messages }: ChatMessagesProps) => {
         {messages.map((message) => (
           <ChatMessage key={message.id} message={message} />
         ))}
+        {isTyping && (
+          <div className="flex items-center space-x-2 text-slate-500 dark:text-slate-400">
+            <Loader2 className="h-4 w-4 animate-spin" />
+            <span>AI is typing...</span>
+          </div>
+        )}
         <div ref={messagesEndRef} className="h-4" />
       </div>
     </ScrollArea>

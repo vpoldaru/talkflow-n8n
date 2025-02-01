@@ -9,9 +9,18 @@ import { ChatSidebar } from "@/components/chat/ChatSidebar";
 import { v4 as uuidv4 } from 'uuid';
 import { DEFAULT_WELCOME_MESSAGE } from "@/config/messages";
 
-const WEBHOOK_URL = import.meta.env.VITE_N8N_WEBHOOK_URL || "https://n8n.martinclan.org/webhook/0949763f-f3f7-46bf-8676-c050d92e6966/chat";
+declare global {
+  interface Window {
+    env: {
+      VITE_N8N_WEBHOOK_URL: string;
+      VITE_WELCOME_MESSAGE: string;
+    };
+  }
+}
+
+const WEBHOOK_URL = window.env?.VITE_N8N_WEBHOOK_URL || import.meta.env.VITE_N8N_WEBHOOK_URL || "https://n8n.martinclan.org/webhook/0949763f-f3f7-46bf-8676-c050d92e6966/chat";
 const STORAGE_KEY = "chat_sessions";
-const WELCOME_MESSAGE = import.meta.env.VITE_WELCOME_MESSAGE || DEFAULT_WELCOME_MESSAGE;
+const WELCOME_MESSAGE = window.env?.VITE_WELCOME_MESSAGE || import.meta.env.VITE_WELCOME_MESSAGE || DEFAULT_WELCOME_MESSAGE;
 
 const Index = () => {
   const [sessions, setSessions] = useState<ChatSession[]>([]);

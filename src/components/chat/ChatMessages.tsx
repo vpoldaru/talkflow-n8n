@@ -25,9 +25,13 @@ export const ChatMessages = ({ messages }: ChatMessagesProps) => {
         background: `
           linear-gradient(to bottom, 
             hsl(var(--background)) 0%,
-            hsl(var(--muted)/0.3) 100%
+            hsl(var(--muted)/0.1) 100%
           ),
-          radial-gradient(circle at 2px 2px, rgba(0,0,0,0.05) 1px, transparent 0)
+          radial-gradient(
+            circle at 2px 2px,
+            rgba(148, 163, 184, 0.05) 1px,
+            transparent 0
+          )
         `,
         backgroundSize: '100% 100%, 24px 24px'
       }}

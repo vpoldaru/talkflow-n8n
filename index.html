@@ -3,12 +3,18 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>talkflow-agent</title>
+    <meta http-equiv="Content-Security-Policy" content="script-src 'self' 'unsafe-eval' https://cdn.gpteng.co; object-src 'none';" />
+    <title>talkflow-n8n</title>
     <meta name="description" content="Chat Agent" />
     <meta name="author" content="Jim Martin" />
     <meta property="og:image" content="/og-image.png" />
+    <script>
+      window.env = {
+        VITE_N8N_WEBHOOK_URL: '${VITE_N8N_WEBHOOK_URL}',
+        VITE_WELCOME_MESSAGE: '${VITE_WELCOME_MESSAGE}'
+      };
+    </script>
   </head>
-
   <body>
     <div id="root"></div>
     <script src="https://cdn.gpteng.co/gptengineer.js" type="module"></script>

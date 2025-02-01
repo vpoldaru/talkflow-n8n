@@ -44,6 +44,18 @@ const Index = () => {
     setInput("");
   };
 
+  const handleDeleteSession = (sessionId: string) => {
+    setSessions(prev => prev.filter(session => session.id !== sessionId));
+    if (sessionId === currentSessionId) {
+      const remainingSessions = sessions.filter(session => session.id !== sessionId);
+      if (remainingSessions.length > 0) {
+        setCurrentSessionId(remainingSessions[0].id);
+      } else {
+        createNewSession();
+      }
+    }
+  };
+
   useEffect(() => {
     const savedSessions = localStorage.getItem(STORAGE_KEY);
     if (savedSessions) {
@@ -164,6 +176,7 @@ const Index = () => {
         isSidebarOpen={isSidebarOpen}
         onNewChat={createNewSession}
         onSessionSelect={handleSessionClick}
+        onDeleteSession={handleDeleteSession}
       />
 
       <div className="flex-1 flex flex-col bg-background relative pb-6">

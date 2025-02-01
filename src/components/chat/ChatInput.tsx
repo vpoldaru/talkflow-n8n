@@ -78,26 +78,34 @@ export const ChatInput = ({
             placeholder="Type a message..."
             value={input}
             onChange={(e) => onInputChange(e.target.value)}
-            rows={1}
-            className="min-h-[44px] w-full resize-none bg-background px-4 py-[10px] focus-visible:ring-1"
+            rows={3}
+            className="min-h-[80px] w-full resize-none bg-background px-4 py-[10px] focus-visible:ring-1"
+            onKeyDown={(e) => {
+              if (e.key === 'Enter' && !e.shiftKey) {
+                e.preventDefault();
+                onSend(e);
+              }
+            }}
           />
         </div>
-        <Button 
-          type="button" 
-          size="icon" 
-          variant={isRecording ? "destructive" : "outline"}
-          onClick={toggleRecording}
-          className="flex-shrink-0"
-        >
-          <Mic className={`h-4 w-4 ${isRecording ? 'animate-pulse' : ''}`} />
-        </Button>
-        <Button type="submit" size="icon" disabled={isLoading || !input.trim()}>
-          {isLoading ? (
-            <Loader2 className="h-4 w-4 animate-spin" />
-          ) : (
-            <Send className="h-4 w-4" />
-          )}
-        </Button>
+        <div className="flex flex-col gap-2 justify-end">
+          <Button 
+            type="button" 
+            size="icon" 
+            variant={isRecording ? "destructive" : "outline"}
+            onClick={toggleRecording}
+            className="flex-shrink-0"
+          >
+            <Mic className={`h-4 w-4 ${isRecording ? 'animate-pulse' : ''}`} />
+          </Button>
+          <Button type="submit" size="icon" disabled={isLoading || !input.trim()}>
+            {isLoading ? (
+              <Loader2 className="h-4 w-4 animate-spin" />
+            ) : (
+              <Send className="h-4 w-4" />
+            )}
+          </Button>
+        </div>
       </div>
     </form>
   );

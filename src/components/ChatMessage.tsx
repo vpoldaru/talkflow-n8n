@@ -61,17 +61,21 @@ export const ChatMessage = ({ message }: ChatMessageProps) => {
   return (
     <div
       className={cn(
-        "flex w-full mb-6 animate-fade-in",
+        "flex w-full mb-8 animate-fade-in transform transition-all duration-300",
         isAssistant ? "justify-start" : "justify-end"
       )}
     >
       <div
         className={cn(
-          "max-w-[80%] rounded-lg p-6 shadow-lg transition-all duration-200",
+          "max-w-[80%] rounded-2xl p-6 shadow-lg transition-all duration-200 backdrop-blur-sm",
           isAssistant
-            ? "bg-blue-50 dark:bg-blue-900/20 hover:bg-blue-100 dark:hover:bg-blue-900/30"
-            : "bg-primary text-primary-foreground hover:opacity-95"
+            ? "bg-gradient-to-br from-blue-50/90 to-blue-100/90 dark:from-blue-900/20 dark:to-blue-800/30 hover:shadow-xl hover:-translate-y-0.5 border border-blue-100/50 dark:border-blue-700/30"
+            : "bg-gradient-to-br from-primary/90 to-primary text-primary-foreground hover:shadow-xl hover:-translate-y-0.5 border border-primary/20"
         )}
+        style={{
+          transformStyle: 'preserve-3d',
+          perspective: '1000px'
+        }}
       >
         <ReactMarkdown
           components={{
@@ -79,21 +83,21 @@ export const ChatMessage = ({ message }: ChatMessageProps) => {
               <p className="mb-4 last:mb-0 leading-relaxed">{children}</p>
             ),
             h1: ({ children }) => (
-              <h1 className="text-2xl font-bold mb-4 text-primary dark:text-primary-foreground">{children}</h1>
+              <h1 className="text-2xl font-bold mb-4 bg-clip-text text-transparent bg-gradient-to-r from-primary to-primary/80 dark:from-primary-foreground dark:to-primary-foreground/80">{children}</h1>
             ),
             h2: ({ children }) => (
-              <h2 className="text-xl font-bold mb-3 text-primary dark:text-primary-foreground">{children}</h2>
+              <h2 className="text-xl font-bold mb-3 bg-clip-text text-transparent bg-gradient-to-r from-primary to-primary/80 dark:from-primary-foreground dark:to-primary-foreground/80">{children}</h2>
             ),
             h3: ({ children }) => (
-              <h3 className="text-lg font-bold mb-2 text-primary dark:text-primary-foreground">{children}</h3>
+              <h3 className="text-lg font-bold mb-2 bg-clip-text text-transparent bg-gradient-to-r from-primary to-primary/80 dark:from-primary-foreground dark:to-primary-foreground/80">{children}</h3>
             ),
             ul: ({ children }) => (
-              <ul className="list-disc pl-6 mb-4 space-y-2 marker:text-primary dark:marker:text-primary-foreground">
+              <ul className="list-disc pl-6 mb-4 space-y-2 marker:text-primary/70 dark:marker:text-primary-foreground/70">
                 {children}
               </ul>
             ),
             ol: ({ children }) => (
-              <ol className="list-decimal pl-6 mb-4 space-y-2 marker:text-primary dark:marker:text-primary-foreground">
+              <ol className="list-decimal pl-6 mb-4 space-y-2 marker:text-primary/70 dark:marker:text-primary-foreground/70">
                 {children}
               </ol>
             ),
@@ -101,7 +105,7 @@ export const ChatMessage = ({ message }: ChatMessageProps) => {
               <li className="mb-1 leading-relaxed">{children}</li>
             ),
             blockquote: ({ children }) => (
-              <blockquote className="border-l-4 border-primary/30 dark:border-primary-foreground/30 pl-4 my-4 italic">
+              <blockquote className="border-l-4 border-primary/30 dark:border-primary-foreground/30 pl-4 my-4 italic bg-primary/5 dark:bg-primary-foreground/5 py-2 rounded-r">
                 {children}
               </blockquote>
             ),
@@ -113,7 +117,7 @@ export const ChatMessage = ({ message }: ChatMessageProps) => {
               return isInline ? (
                 <code
                   className={cn(
-                    "bg-muted px-1.5 py-0.5 rounded font-mono text-sm",
+                    "bg-muted/60 backdrop-blur-sm px-1.5 py-0.5 rounded font-mono text-sm border border-muted/30",
                     className
                   )}
                   {...props}
@@ -121,15 +125,15 @@ export const ChatMessage = ({ message }: ChatMessageProps) => {
                   {children}
                 </code>
               ) : (
-                <div className="relative my-6 group">
-                  <div className="absolute -top-4 right-0 flex items-center gap-2">
-                    <span className="text-xs text-muted-foreground font-mono">
+                <div className="relative my-6 group rounded-xl overflow-hidden shadow-lg transition-all duration-200 hover:shadow-xl border border-muted/30">
+                  <div className="absolute -top-0 right-0 flex items-center gap-2 m-2 z-10">
+                    <span className="text-xs text-muted-foreground font-mono px-2 py-1 rounded-md bg-muted/30 backdrop-blur-sm border border-muted/30">
                       {match[1].toUpperCase()}
                     </span>
                     <Button
                       variant="ghost"
                       size="icon"
-                      className="opacity-0 group-hover:opacity-100 transition-opacity"
+                      className="opacity-0 group-hover:opacity-100 transition-opacity bg-muted/30 backdrop-blur-sm hover:bg-muted/50"
                       onClick={() => handleCopy(codeText)}
                     >
                       <Copy className="h-4 w-4" />
@@ -139,10 +143,11 @@ export const ChatMessage = ({ message }: ChatMessageProps) => {
                     style={vscDarkPlus}
                     language={match[1]}
                     PreTag="div"
-                    className="rounded-md !mt-0 !mb-0"
+                    className="rounded-xl !mt-0 !mb-0 shadow-inner"
                     customStyle={{
                       margin: 0,
-                      borderRadius: '0.5rem',
+                      borderRadius: '0.75rem',
+                      background: 'rgba(0,0,0,0.8)',
                     }}
                   >
                     {codeText}

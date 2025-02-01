@@ -21,9 +21,7 @@ const WEBHOOK_URL = (() => {
   console.log('- import.meta.env.VITE_N8N_WEBHOOK_URL:', viteEnvUrl);
   console.log('- fallback URL:', fallbackUrl);
   
-  const finalUrl = windowEnvUrl || viteEnvUrl || fallbackUrl;
-  console.log('Selected WEBHOOK_URL:', finalUrl);
-  return finalUrl;
+  return windowEnvUrl || viteEnvUrl || fallbackUrl;
 })();
 
 const WELCOME_MESSAGE = (() => {
@@ -35,7 +33,10 @@ const WELCOME_MESSAGE = (() => {
   console.log('- import.meta.env.VITE_WELCOME_MESSAGE:', viteEnvMsg);
   console.log('- DEFAULT_WELCOME_MESSAGE:', DEFAULT_WELCOME_MESSAGE);
   
-  const finalMsg = windowEnvMsg || viteEnvMsg || DEFAULT_WELCOME_MESSAGE;
+  // Remove any extra quotes from the message
+  const cleanMessage = (msg: string) => msg.replace(/^["'](.*)["']$/, '$1');
+  
+  const finalMsg = windowEnvMsg ? cleanMessage(windowEnvMsg) : (viteEnvMsg ? cleanMessage(viteEnvMsg) : DEFAULT_WELCOME_MESSAGE);
   console.log('Selected WELCOME_MESSAGE:', finalMsg);
   return finalMsg;
 })();

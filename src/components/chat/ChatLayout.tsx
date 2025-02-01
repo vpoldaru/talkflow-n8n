@@ -4,6 +4,7 @@ import { ChatSidebar } from "@/components/chat/ChatSidebar";
 import { ChatSession } from "@/types/chat";
 import { useState } from "react";
 import { useIsMobile } from "@/hooks/use-mobile";
+import { Menu } from "lucide-react"; // Added this import
 
 interface ChatLayoutProps {
   sessions: ChatSession[];

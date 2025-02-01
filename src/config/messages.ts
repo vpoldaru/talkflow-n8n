@@ -1,0 +1,1 @@
+export const DEFAULT_WELCOME_MESSAGE = "Welcome! How can I assist you today?";

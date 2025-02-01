@@ -1,120 +1,113 @@
-# TalkFlow N8N Integration
+# **TalkFlow N8N Integration**
 
-A real-time chat application integrated with N8N workflows for automated responses and processing.
+A real-time chat application integrated with **N8N workflows** for automated responses and processing.
 
-## Features
-
+## **Features**
 - Real-time chat interface
-- N8N workflow integration
-- Message history persistence
+- **N8N workflow integration**
+- **Message history persistence**
 - Mobile-responsive design
 - Dark/light mode support
-- Code syntax highlighting
+- **Code syntax highlighting**
 - Markdown support
 
-## Project Info
-
-**URL**: https://lovable.dev/projects/d5d4b31a-09c7-475c-a998-94f5a4cb4b09
-
-## Technologies Used
-
+## **Technologies Used**
 This project is built with modern web technologies:
 
-- **Vite** - Next Generation Frontend Tooling
-- **TypeScript** - JavaScript with syntax for types
-- **React** - UI Library
-- **shadcn/ui** - Re-usable components
+- **Vite** - Next-generation frontend tooling
+- **TypeScript** - Strongly typed JavaScript
+- **React** - UI framework
+- **shadcn/ui** - Reusable UI components
 - **Tailwind CSS** - Utility-first CSS framework
 - **React Query** - Data synchronization
 - **React Router** - Navigation
 - **React Markdown** - Markdown rendering
 
-## Getting Started
+---
 
-### Prerequisites
+## **Getting Started**
 
-- Node.js & npm - [install with nvm](https://github.com/nvm-sh/nvm#installing-and-updating)
+### **Prerequisites**
+- **Node.js & npm** – Install using [nvm](https://github.com/nvm-sh/nvm#installing-and-updating)
 
-### Development
-
-There are several ways to work with this codebase:
-
-**1. Use Lovable (Recommended)**
-
-Visit the [Lovable Project](https://lovable.dev/projects/d5d4b31a-09c7-475c-a998-94f5a4cb4b09) and start prompting.
-Changes made via Lovable will be committed automatically.
-
-**2. Local Development**
-
+### **Development Setup**
 ```sh
 # Clone the repository
-git clone <YOUR_GIT_URL>
+git clone https://github.com/jimmartinquisitive/talkflow-n8n.git
 
 # Navigate to project directory
-cd <YOUR_PROJECT_NAME>
+cd talkflow-n8n
 
 # Install dependencies
-npm i
+npm install
 
-# Start development server
+# Start the development server
 npm run dev
 ```
 
-**3. Edit on GitHub**
+---
 
-- Navigate to desired file(s)
-- Click "Edit" (pencil icon)
-- Make changes and commit
+## **Deployment Options**
 
-**4. Use GitHub Codespaces**
+### **1. Docker (Recommended)**
+You can run the app using **Docker** from Docker Hub:
 
-- Go to repository main page
-- Click "Code" button
-- Select "Codespaces" tab
-- Click "New codespace"
-
-## Environment Variables
-
-The application requires the following environment variables:
-
+```sh
+docker run -d -p 3000:3000 \
+  -e VITE_N8N_WEBHOOK_URL="your_n8n_webhook_url" \
+  jimmartinquis/n8n-chatui:latest
 ```
+
+### **2. Compile from Source**
+Manually build and run the project:
+
+```sh
+git clone https://github.com/jimmartinquisitive/talkflow-n8n.git
+cd talkflow-n8n
+
+# Install dependencies
+npm install
+
+# Build the project
+npm run build
+
+# Serve the production build
+npm run preview
+```
+
+---
+
+## **Configuration**
+The application requires the following environment variable:
+
+```sh
 VITE_N8N_WEBHOOK_URL=your_n8n_webhook_url
 ```
+Set this variable when deploying.
 
-## Project Structure
+---
 
-```
+## **Project Structure**
+```sh
 src/
 ├── components/     # Reusable UI components
-├── hooks/         # Custom React hooks
-├── pages/         # Route components
-├── types/         # TypeScript definitions
-└── utils/         # Helper functions
+├── hooks/          # Custom React hooks
+├── pages/          # Route components
+├── types/          # TypeScript definitions
+└── utils/          # Helper functions
 ```
 
-## Deployment
+---
 
-### Quick Deploy
+## **Contributing**
+1. **Fork** the repository
+2. **Create a feature branch** (`git checkout -b feature-branch`)
+3. **Commit your changes** (`git commit -m "Added new feature"`)
+4. **Push to GitHub** (`git push origin feature-branch`)
+5. **Open a Pull Request**
 
-Open [Lovable](https://lovable.dev/projects/d5d4b31a-09c7-475c-a998-94f5a4cb4b09) and click on Share -> Publish.
+---
 
-### Custom Domain
-
-While we don't currently support custom domains directly, you can deploy to Netlify:
-1. Fork this repository
-2. Connect it to Netlify
-3. Configure your custom domain
-
-Visit our docs for more details: [Custom domains](https://docs.lovable.dev/tips-tricks/custom-domain/)
-
-## Contributing
-
-1. Fork the repository
-2. Create a feature branch
-3. Commit your changes
-4. Push to the branch
-5. Open a Pull Request
-
-## License
-
-This project is open source and available under the MIT License.
+## **License**
+This project is **open-source** and available under the **MIT License**.
+```

@@ -27,8 +27,8 @@ const SUPPORTED_LANGUAGES = [
   { value: 'css', label: 'CSS' },
   { value: 'json', label: 'JSON' },
   { value: 'markdown', label: 'Markdown' },
+  { value: 'hcl', label: 'Terraform' },  // Updated to use 'hcl' for Terraform files
   { value: 'bicep', label: 'Bicep' },
-  { value: 'terraform', label: 'Terraform' },
   { value: 'powershell', label: 'PowerShell' },
   { value: 'shell', label: 'Bash/Shell' },
 ];

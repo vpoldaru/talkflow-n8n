@@ -64,8 +64,10 @@ export const ChatMessage = ({ message }: ChatMessageProps) => {
 
   const handleCopyToPlayground = (code: string, language?: string) => {
     localStorage.setItem('playground-code', code);
-    if (language) {
-      localStorage.setItem('playground-language', language);
+    // Map 'terraform' to 'hcl' for Monaco editor compatibility
+    const mappedLanguage = language?.toLowerCase() === 'terraform' ? 'hcl' : language;
+    if (mappedLanguage) {
+      localStorage.setItem('playground-language', mappedLanguage);
     }
     navigate('/playground');
     toast({

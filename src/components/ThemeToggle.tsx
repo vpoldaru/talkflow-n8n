@@ -3,11 +3,21 @@ import { Switch } from "@/components/ui/switch";
 import { useEffect, useState } from "react";
 
 export function ThemeToggle() {
-  const [isDark, setIsDark] = useState(false);
+  const [isDark, setIsDark] = useState(() => {
+    // Initialize with system preference or existing class
+    if (typeof window !== 'undefined') {
+      return document.documentElement.classList.contains("dark") ||
+             window.matchMedia("(prefers-color-scheme: dark)").matches;
+    }
+    return false;
+  });
 
   useEffect(() => {
+    // Sync the UI with the actual theme state
     const isDarkMode = document.documentElement.classList.contains("dark");
-    setIsDark(isDarkMode);
+    if (isDark !== isDarkMode) {
+      setIsDark(isDarkMode);
+    }
   }, []);
 
   const toggleTheme = () => {

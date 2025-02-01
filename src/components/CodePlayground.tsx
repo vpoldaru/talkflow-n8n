@@ -35,7 +35,6 @@ const CodePlayground: React.FC<CodePlaygroundProps> = ({
 
   const handleRun = () => {
     try {
-      // Using Function constructor to create a new function from the code string
       const result = new Function(code)();
       console.log('Code execution result:', result);
       toast({
@@ -52,15 +51,16 @@ const CodePlayground: React.FC<CodePlaygroundProps> = ({
   };
 
   return (
-    <Card className="w-full max-w-4xl mx-auto">
-      <CardHeader>
+    <Card className="w-full max-w-5xl mx-auto bg-card shadow-lg">
+      <CardHeader className="border-b border-border/20">
         <CardTitle className="flex justify-between items-center">
-          <span>Code Playground</span>
-          <div className="space-x-2">
+          <span className="text-xl font-semibold text-card-foreground">Code Playground</span>
+          <div className="space-x-3">
             <Button
               variant="outline"
               size="sm"
               onClick={handleCopy}
+              className="hover:bg-accent"
             >
               <Copy className="w-4 h-4 mr-2" />
               Copy
@@ -69,6 +69,7 @@ const CodePlayground: React.FC<CodePlaygroundProps> = ({
               variant="default"
               size="sm"
               onClick={handleRun}
+              className="bg-primary hover:bg-primary/90"
             >
               <Play className="w-4 h-4 mr-2" />
               Run
@@ -76,10 +77,10 @@ const CodePlayground: React.FC<CodePlaygroundProps> = ({
           </div>
         </CardTitle>
       </CardHeader>
-      <CardContent>
-        <div className="min-h-[400px] border rounded-md overflow-hidden">
+      <CardContent className="p-4">
+        <div className="rounded-md overflow-hidden border border-border/20">
           <Editor
-            height="400px"
+            height="500px"
             defaultLanguage={defaultLanguage}
             value={code}
             onChange={(value) => setCode(value || '')}
@@ -91,6 +92,8 @@ const CodePlayground: React.FC<CodePlaygroundProps> = ({
               roundedSelection: false,
               scrollBeyondLastLine: false,
               automaticLayout: true,
+              padding: { top: 16, bottom: 16 },
+              fontFamily: 'ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace',
             }}
           />
         </div>

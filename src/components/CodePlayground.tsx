@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Editor from '@monaco-editor/react';
 import { Card, CardContent, CardHeader, CardTitle } from './ui/card';
 import { Button } from './ui/button';
@@ -16,6 +16,14 @@ const CodePlayground: React.FC<CodePlaygroundProps> = ({
 }) => {
   const [code, setCode] = useState(defaultValue);
   const { toast } = useToast();
+
+  useEffect(() => {
+    const savedCode = localStorage.getItem('playground-code');
+    if (savedCode) {
+      setCode(savedCode);
+      localStorage.removeItem('playground-code');
+    }
+  }, []);
 
   const handleCopy = async () => {
     try {

@@ -3,10 +3,11 @@ import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
 import { vscDarkPlus } from 'react-syntax-highlighter/dist/esm/styles/prism';
 import { Message } from '@/types/chat';
 import { cn } from '@/lib/utils';
-import { Copy } from 'lucide-react';
+import { Copy, PlayCircle } from 'lucide-react';
 import { Button } from './ui/button';
 import { useToast } from '@/hooks/use-toast';
 import { format } from 'date-fns';
+import { useNavigate } from 'react-router-dom';
 
 interface ChatMessageProps {
   message: Message;
@@ -15,6 +16,7 @@ interface ChatMessageProps {
 export const ChatMessage = ({ message }: ChatMessageProps) => {
   const isAssistant = message.role === 'assistant';
   const { toast } = useToast();
+  const navigate = useNavigate();
   const formattedTime = format(new Date(message.timestamp), 'MMM d, yyyy h:mm a');
 
   const handleCopy = async (text: string) => {
@@ -58,6 +60,15 @@ export const ChatMessage = ({ message }: ChatMessageProps) => {
         duration: 2000,
       });
     }
+  };
+
+  const handleCopyToPlayground = (code: string) => {
+    localStorage.setItem('playground-code', code);
+    navigate('/playground');
+    toast({
+      description: "Code copied to playground",
+      duration: 2000,
+    });
   };
 
   return (
@@ -136,6 +147,14 @@ export const ChatMessage = ({ message }: ChatMessageProps) => {
                       <span className="text-xs text-slate-600 dark:text-slate-400 font-mono px-2 py-1 rounded-md bg-slate-100/80 dark:bg-slate-800/80 backdrop-blur-sm border border-slate-200/50 dark:border-slate-700/50 opacity-100 group-hover:opacity-0 transition-opacity">
                         {match[1].toUpperCase()}
                       </span>
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        className="bg-slate-100/80 dark:bg-slate-800/80 backdrop-blur-sm hover:bg-slate-200/80 dark:hover:bg-slate-700/80"
+                        onClick={() => handleCopyToPlayground(codeText)}
+                      >
+                        <PlayCircle className="h-4 w-4" />
+                      </Button>
                       <Button
                         variant="ghost"
                         size="icon"

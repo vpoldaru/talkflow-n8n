@@ -7,9 +7,11 @@ import { ChatMessages } from "@/components/chat/ChatMessages";
 import { ChatInput } from "@/components/chat/ChatInput";
 import { ChatSidebar } from "@/components/chat/ChatSidebar";
 import { v4 as uuidv4 } from 'uuid';
+import { DEFAULT_WELCOME_MESSAGE } from "@/config/messages";
 
 const WEBHOOK_URL = import.meta.env.VITE_N8N_WEBHOOK_URL || "https://n8n.martinclan.org/webhook/0949763f-f3f7-46bf-8676-c050d92e6966/chat";
 const STORAGE_KEY = "chat_sessions";
+const WELCOME_MESSAGE = import.meta.env.VITE_WELCOME_MESSAGE || DEFAULT_WELCOME_MESSAGE;
 
 const Index = () => {
   const [sessions, setSessions] = useState<ChatSession[]>([]);
@@ -27,8 +29,13 @@ const Index = () => {
 
   const createNewSession = () => {
     const newSession: ChatSession = {
-      id: uuidv4(), // Changed from crypto.randomUUID()
-      messages: [],
+      id: uuidv4(),
+      messages: [{
+        id: uuidv4(),
+        content: WELCOME_MESSAGE,
+        role: "assistant",
+        timestamp: Date.now(),
+      }],
       createdAt: Date.now(),
       lastUpdated: Date.now(),
     };

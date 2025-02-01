@@ -13,7 +13,6 @@ const Playground = () => {
         <div className="flex items-center justify-between">
           <div>
             <h1 className="text-4xl font-bold text-foreground tracking-tight">Code Playground</h1>
-            <p className="text-muted-foreground text-lg">Write, test, and run your code in real-time.</p>
           </div>
           <Button
             variant="outline"

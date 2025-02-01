@@ -69,7 +69,7 @@ export const ChatMessage = ({ message }: ChatMessageProps) => {
     >
       <div
         className={cn(
-          "max-w-[85%] rounded-2xl p-6 transition-all duration-200 backdrop-blur-sm hover:-translate-y-1 relative",
+          "max-w-[85%] rounded-2xl px-4 py-3 transition-all duration-200 backdrop-blur-sm hover:-translate-y-1 relative",
           isAssistant
             ? "bg-gradient-to-br from-slate-50 to-blue-50 dark:from-slate-900 dark:to-blue-900 border border-blue-100/50 dark:border-blue-800/30"
             : "bg-gradient-to-br from-violet-500 to-purple-500 text-white border border-violet-400/20 dark:border-violet-500/20"
@@ -86,7 +86,7 @@ export const ChatMessage = ({ message }: ChatMessageProps) => {
           <ReactMarkdown
             components={{
               p: ({ children }) => (
-                <p className="mb-4 last:mb-0 leading-relaxed text-left">{children}</p>
+                <p className="mb-2 last:mb-0 leading-relaxed text-left">{children}</p>
               ),
               h1: ({ children }) => (
                 <h1 className="text-2xl font-bold mb-4 bg-clip-text text-transparent bg-gradient-to-r from-slate-900 to-slate-700 dark:from-slate-100 dark:to-slate-300 text-left">{children}</h1>
@@ -166,7 +166,7 @@ export const ChatMessage = ({ message }: ChatMessageProps) => {
             {message.content}
           </ReactMarkdown>
         </div>
-        <div className="mt-4 flex justify-between items-center">
+        <div className="mt-2 flex justify-between items-center">
           <span className="text-xs text-slate-500 dark:text-slate-400 opacity-0 group-hover:opacity-100 transition-opacity duration-200">
             {formattedTime}
           </span>

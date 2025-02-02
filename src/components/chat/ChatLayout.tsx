@@ -2,9 +2,10 @@ import { ChatMessages } from "@/components/chat/ChatMessages";
 import { ChatInput } from "@/components/chat/ChatInput";
 import { ChatSidebar } from "@/components/chat/ChatSidebar";
 import { ChatSession } from "@/types/chat";
-import { useState } from "react";
+import { useState, useCallback } from "react";
 import { useIsMobile } from "@/hooks/use-mobile";
-import { Menu } from "lucide-react"; // Added this import
+import { Menu } from "lucide-react";
+import { useToast } from "@/hooks/use-toast";
 
 interface ChatLayoutProps {
   sessions: ChatSession[];
@@ -14,7 +15,7 @@ interface ChatLayoutProps {
   onNewChat: () => void;
   onSessionSelect: (sessionId: string) => void;
   onDeleteSession: (sessionId: string) => void;
-  onSendMessage: (message: string) => void;
+  onSendMessage: (message: string, file?: File) => void;
 }
 
 export const ChatLayout = ({
@@ -30,15 +31,39 @@ export const ChatLayout = ({
   const [input, setInput] = useState("");
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const isMobile = useIsMobile();
+  const { toast } = useToast();
+  const [pendingImage, setPendingImage] = useState<File | null>(null);
 
   const currentSession = sessions.find(s => s.id === currentSessionId);
 
-  const handleSend = (e: React.FormEvent) => {
+  const handleSend = useCallback(async (e: React.FormEvent, file?: File) => {
     e.preventDefault();
     if (!input.trim()) return;
-    onSendMessage(input);
-    setInput("");
-  };
+
+    console.log('ChatLayout handleSend called with pending file:', file ? {
+      fileName: file.name,
+      fileSize: file.size,
+      fileType: file.type
+    } : null);
+
+    try {
+      await onSendMessage(input, file);
+      setInput("");
+      console.log('Message sent successfully');
+    } catch (error) {
+      toast({
+        description: "Failed to send message",
+        variant: "destructive",
+      });
+    }
+  }, [input, onSendMessage, toast]);  const handleImageSelect = useCallback((file: File) => {
+    console.log('ChatLayout handleImageSelect called with file:', {
+      fileName: file.name,
+      fileSize: file.size,
+      fileType: file.type
+    });
+    setPendingImage(file);
+  }, []);
 
   const handleSessionClick = (sessionId: string) => {
     onSessionSelect(sessionId);
@@ -76,6 +101,7 @@ export const ChatLayout = ({
               isLoading={isLoading}
               onInputChange={setInput}
               onSend={handleSend}
+              onImageSelect={handleImageSelect}
             />
           </>
         )}

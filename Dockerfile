@@ -24,12 +24,23 @@ COPY --from=builder /app/dist /usr/share/nginx/html
 # Copy nginx configuration
 COPY nginx.conf /etc/nginx/conf.d/default.conf
 
+# Create env-config.js template
+RUN echo "window.env = {" > /usr/share/nginx/html/env-config.template.js && \
+    echo "  VITE_N8N_WEBHOOK_URL: \"\$VITE_N8N_WEBHOOK_URL\"," >> /usr/share/nginx/html/env-config.template.js && \
+    echo "  VITE_WELCOME_MESSAGE: \"\$VITE_WELCOME_MESSAGE\"" >> /usr/share/nginx/html/env-config.template.js && \
+    echo "};" >> /usr/share/nginx/html/env-config.template.js
+
 # Create a script to replace environment variables
-RUN echo "#!/bin/sh\n\
-    envsubst '\$VITE_N8N_WEBHOOK_URL \$VITE_WELCOME_MESSAGE' < /usr/share/nginx/html/index.html > /usr/share/nginx/html/index.html.tmp\n\
-    mv /usr/share/nginx/html/index.html.tmp /usr/share/nginx/html/index.html\n\
-    nginx -g 'daemon off;'" > /docker-entrypoint.sh \
+RUN echo '#!/bin/sh\n\
+    # Replace environment variables in env-config.js\n\
+    envsubst < /usr/share/nginx/html/env-config.template.js > /usr/share/nginx/html/env-config.js\n\
+    \n\
+    # Start nginx\n\
+    nginx -g "daemon off;"' > /docker-entrypoint.sh \
     && chmod +x /docker-entrypoint.sh
+
+# Install envsubst
+RUN apt-get update && apt-get install -y gettext-base && rm -rf /var/lib/apt/lists/*
 
 # Expose port 80
 EXPOSE 80

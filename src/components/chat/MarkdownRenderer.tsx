@@ -1,67 +1,48 @@
-import ReactMarkdown from 'react-markdown';
 import { cn } from '@/lib/utils';
 import { CodeBlock } from './CodeBlock';
+import { createMarkdownRenderer } from './KaTeXConfig';
+import { StyleProvider, getCustomStyles } from './StyleProvider';
+import 'katex/dist/katex.min.css';
 
 interface MarkdownRendererProps {
   content: string;
 }
 
 export const MarkdownRenderer = ({ content }: MarkdownRendererProps) => {
+  const md = createMarkdownRenderer();
+
+  // Handle code blocks
+  md.renderer.rules.fence = (tokens, idx) => {
+    const token = tokens[idx];
+    const code = token.content.trim();
+    const lang = token.info || 'text';
+
+    return `<div class="my-4">${CodeBlock({ language: lang, children: code })}</div>`;
+  };
+
+  // Process content
+  const processedContent = (typeof content === 'string' ? content : JSON.stringify(content))
+    .replace(/^```markdown\n([\s\S]*?)```$/g, '$1')
+    .replace(/\s*\$\$\s*/g, '$$')
+    .replace(/\s*\$\s*/g, '$');
+
+  // Render the markdown content
+  const renderedContent = md.render(processedContent);
+
   return (
-    <ReactMarkdown
-      components={{
-        p: ({ children }) => (
-          <p className="mb-2 last:mb-0 leading-relaxed text-left">{children}</p>
-        ),
-        h1: ({ children }) => (
-          <h1 className="text-2xl font-bold mb-4 bg-clip-text text-transparent bg-gradient-to-r from-slate-900 to-slate-700 dark:from-slate-100 dark:to-slate-300 text-left">{children}</h1>
-        ),
-        h2: ({ children }) => (
-          <h2 className="text-xl font-bold mb-3 bg-clip-text text-transparent bg-gradient-to-r from-slate-900 to-slate-700 dark:from-slate-100 dark:to-slate-300 text-left">{children}</h2>
-        ),
-        h3: ({ children }) => (
-          <h3 className="text-lg font-bold mb-2 bg-clip-text text-transparent bg-gradient-to-r from-slate-900 to-slate-700 dark:from-slate-100 dark:to-slate-300 text-left">{children}</h3>
-        ),
-        ul: ({ children }) => (
-          <ul className="list-disc pl-6 mb-4 space-y-2 marker:text-slate-500 dark:marker:text-slate-400 text-left">
-            {children}
-          </ul>
-        ),
-        ol: ({ children }) => (
-          <ol className="list-decimal pl-6 mb-4 space-y-2 marker:text-slate-500 dark:marker:text-slate-400 text-left">
-            {children}
-          </ol>
-        ),
-        li: ({ children }) => (
-          <li className="mb-1 leading-relaxed text-left">{children}</li>
-        ),
-        blockquote: ({ children }) => (
-          <blockquote className="border-l-4 border-violet-300 dark:border-violet-600 pl-4 my-4 italic bg-violet-50/30 dark:bg-violet-900/20 py-2 rounded-r text-left">
-            {children}
-          </blockquote>
-        ),
-        code: ({ className, children, ...props }) => {
-          const match = /language-(\w+)/.exec(className || '');
-          const isInline = !match;
-          return isInline ? (
-            <code
-              className={cn(
-                "bg-slate-100 dark:bg-slate-800 backdrop-blur-sm px-1.5 py-0.5 rounded font-mono text-sm border border-slate-200 dark:border-slate-700",
-                className
-              )}
-              {...props}
-            >
-              {children}
-            </code>
-          ) : (
-            <CodeBlock language={match[1]}>
-              {String(children).replace(/\n$/, '')}
-            </CodeBlock>
-          );
-        },
-      }}
-    >
-      {content}
-    </ReactMarkdown>
+    <StyleProvider>
+      <div 
+        className={cn(
+          "prose prose-slate dark:prose-invert max-w-none break-words text-left",
+          "prose-headings:font-bold prose-headings:text-slate-900 dark:prose-headings:text-slate-100",
+          "prose-p:text-slate-700 dark:prose-p:text-slate-300",
+          "prose-strong:text-slate-900 dark:prose-strong:text-white",
+          "prose-code:text-slate-900 dark:prose-code:text-slate-100",
+          "prose-pre:bg-slate-900 dark:prose-pre:bg-slate-800",
+          "prose-hr:border-slate-200 dark:prose-hr:border-slate-700"
+        )}
+        dangerouslySetInnerHTML={{ __html: getCustomStyles() + renderedContent }}
+      />
+    </StyleProvider>
   );
 };

@@ -30,6 +30,15 @@ export const ChatInput = ({
   const handleKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
     if (e.key === "Enter" && !e.shiftKey) {
       e.preventDefault();
+      if (!isLoading && input.trim()) {
+        onSend(e);
+      }
+    }
+  };
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!isLoading && input.trim()) {
       onSend(e);
     }
   };
@@ -68,7 +77,7 @@ export const ChatInput = ({
   const isInputEmpty = input.length === 0 || !input.trim();
 
   return (
-    <form onSubmit={onSend} className="fixed bottom-0 left-0 right-0 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
+    <form onSubmit={handleSubmit} className="fixed bottom-0 left-0 right-0 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
       <div className="w-full max-w-[900px] mx-auto px-4 py-4">
         <div className="relative">
           <Textarea

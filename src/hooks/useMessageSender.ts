@@ -18,6 +18,17 @@ export const useMessageSender = (
     currentMessages: Message[],
     file?: File
   ) => {
+    console.log('sendMessage called with:', {
+      input,
+      sessionId,
+      hasFile: !!file,
+      fileDetails: file ? {
+        name: file.name,
+        type: file.type,
+        size: file.size
+      } : null
+    });
+
     if (!input.trim() || !webhook_url) return;
 
     let userMessage: Message = {
@@ -29,11 +40,19 @@ export const useMessageSender = (
 
     // If there's a file, process it and add it to the message
     if (file) {
+      console.log('Processing file in useMessageSender:', file.name);
       try {
         const formData = await createFormDataWithFile(input, sessionId, file);
         const base64Data = formData.get('data') as string;
         const mimeType = formData.get('mimeType') as string;
         const fileName = formData.get('fileName') as string;
+
+        console.log('File data retrieved from FormData:', {
+          hasBase64Data: !!base64Data,
+          mimeType,
+          fileName,
+          base64Length: base64Data?.length
+        });
 
         userMessage = {
           ...userMessage,
@@ -44,13 +63,10 @@ export const useMessageSender = (
           }
         };
 
-        // Log the data being sent
-        console.log('Sending data to webhook:', {
-          chatInput: input,
-          sessionId: sessionId,
-          data: base64Data,
-          mimeType: mimeType,
-          fileName: fileName
+        console.log('User message updated with image data:', {
+          messageId: userMessage.id,
+          hasImageData: !!userMessage.imageData,
+          imageDataLength: userMessage.imageData?.data.length
         });
       } catch (error) {
         console.error('Error processing file:', error);
@@ -79,7 +95,13 @@ export const useMessageSender = (
         })
       };
 
-      console.log('Sending request to webhook URL:', webhook_url);
+      console.log('Preparing webhook request:', {
+        url: webhook_url,
+        payloadKeys: Object.keys(payload),
+        hasImageData: !!userMessage.imageData,
+        payloadSize: JSON.stringify(payload).length
+      });
+
       const response = await fetch(webhook_url, {
         method: "POST",
         headers: {
@@ -88,11 +110,15 @@ export const useMessageSender = (
         body: JSON.stringify(payload)
       });
 
+      console.log('Webhook response status:', response.status);
+
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
       }
 
       const data = await response.json();
+      console.log('Webhook response data:', data);
+
       const assistantMessage: Message = {
         id: uuidv4(),
         content: data[0]?.output || "Sorry, I couldn't process that.",
@@ -102,7 +128,7 @@ export const useMessageSender = (
 
       updateSession(sessionId, [...newMessages, assistantMessage]);
     } catch (error) {
-      console.error('Error sending message:', error);
+      console.error('Error in webhook request:', error);
       const errorMessage: Message = {
         id: uuidv4(),
         content: "Sorry, there was an error processing your message. Please try again later.",

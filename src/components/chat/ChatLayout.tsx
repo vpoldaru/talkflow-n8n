@@ -42,13 +42,32 @@ export const ChatLayout = ({
     setInput("");
   };
 
-  const handleImageSelect = (base64Image: string) => {
-    const imageMarkdown = `![Uploaded Image](${base64Image})`;
-    onSendMessage(imageMarkdown);
-    toast({
-      description: "Image uploaded successfully",
-      duration: 2000,
-    });
+  const handleImageSelect = async (file: File) => {
+    const formData = new FormData();
+    formData.append('file', file);
+    
+    try {
+      const response = await fetch('/api/upload', {
+        method: 'POST',
+        body: formData
+      });
+      
+      if (!response.ok) throw new Error('Upload failed');
+      
+      const { url } = await response.json();
+      const imageMarkdown = `![Uploaded Image](${url})`;
+      onSendMessage(imageMarkdown);
+      
+      toast({
+        description: "Image uploaded successfully",
+        duration: 2000,
+      });
+    } catch (error) {
+      toast({
+        description: "Failed to upload image",
+        variant: "destructive",
+      });
+    }
   };
 
   const handleSessionClick = (sessionId: string) => {

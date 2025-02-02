@@ -11,7 +11,7 @@ interface ChatInputProps {
   isLoading: boolean;
   onInputChange: (value: string) => void;
   onSend: (e: React.FormEvent) => void;
-  onImageSelect?: (base64Image: string) => void;
+  onImageSelect?: (file: File) => void;
 }
 
 export const ChatInput = ({
@@ -63,14 +63,9 @@ export const ChatInput = ({
         return;
       }
 
-      const reader = new FileReader();
-      reader.onload = (e) => {
-        const base64 = e.target?.result as string;
-        if (onImageSelect) {
-          onImageSelect(base64);
-        }
-      };
-      reader.readAsDataURL(file);
+      if (onImageSelect) {
+        onImageSelect(file);
+      }
     }
   };
 

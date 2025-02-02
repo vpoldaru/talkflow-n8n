@@ -4,7 +4,7 @@ import { useToast } from "@/hooks/use-toast";
 import { useRef } from "react";
 
 interface ImageUploadProps {
-  onImageSelect: (base64Image: string) => void;
+  onImageSelect: (file: File) => void;
   disabled?: boolean;
 }
 
@@ -34,12 +34,7 @@ export const ImageUpload = ({ onImageSelect, disabled }: ImageUploadProps) => {
       return;
     }
 
-    const reader = new FileReader();
-    reader.onload = (e) => {
-      const base64 = e.target?.result as string;
-      onImageSelect(base64);
-    };
-    reader.readAsDataURL(file);
+    onImageSelect(file);
   };
 
   return (

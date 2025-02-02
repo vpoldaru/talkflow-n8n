@@ -4,6 +4,7 @@ import { useRef } from "react";
 import { Loader2, Send, Mic } from "lucide-react";
 import { useSpeechRecognition } from "@/hooks/useSpeechRecognition";
 import { ImageUpload } from "./ImageUpload";
+import { useToast } from "@/hooks/use-toast";
 
 interface ChatInputProps {
   input: string;
@@ -21,6 +22,7 @@ export const ChatInput = ({
   onImageSelect,
 }: ChatInputProps) => {
   const textareaRef = useRef<HTMLTextAreaElement>(null);
+  const { toast } = useToast();
   const { isListening, startListening } = useSpeechRecognition({
     onTranscript: (transcript) => onInputChange(input + transcript)
   });
@@ -32,6 +34,38 @@ export const ChatInput = ({
     }
   };
 
+  const handlePaste = async (e: React.ClipboardEvent) => {
+    if (!onImageSelect) return;
+
+    const items = e.clipboardData?.items;
+    const imageItem = Array.from(items).find(item => item.type.indexOf('image') !== -1);
+
+    if (imageItem) {
+      e.preventDefault();
+      const file = imageItem.getAsFile();
+      
+      if (!file) return;
+
+      // Check file size (5MB limit)
+      if (file.size > 5 * 1024 * 1024) {
+        toast({
+          description: "Image must be less than 5MB",
+          variant: "destructive",
+        });
+        return;
+      }
+
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        const base64 = e.target?.result as string;
+        if (onImageSelect) {
+          onImageSelect(base64);
+        }
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+
   const isInputEmpty = input.length === 0 || !input.trim();
 
   return (
@@ -40,10 +74,11 @@ export const ChatInput = ({
         <div className="flex gap-4">
           <div className="relative flex-1">
             <Textarea
-              placeholder="Type a message..."
+              placeholder="Type a message or paste an image..."
               value={input}
               onChange={(e) => onInputChange(e.target.value)}
               onKeyDown={handleKeyDown}
+              onPaste={handlePaste}
               ref={textareaRef}
               rows={2}
               className="min-h-[68px] w-full resize-none bg-background px-4 py-3 focus-visible:ring-1"

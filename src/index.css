@@ -81,14 +81,14 @@
 .katex-display {
   overflow-x: auto;
   overflow-y: hidden;
-  padding: 0.5em 1em;
+  padding: 1em;
   margin: 0.75em 0;
   background: rgba(15, 23, 42, 0.03);
   border-radius: 0.5rem;
   border: 1px solid rgba(148, 163, 184, 0.1);
   display: flex;
   justify-content: center;
-  align-items: center;
+  min-height: 3em;
 }
 
 .dark .katex-display {
@@ -120,16 +120,14 @@
 
 .markdown-content .katex-display {
   margin: 1em 0;
-  text-align: center;
 }
 
 /* Adjust spacing for multi-line equations */
 .katex-display > .katex {
-  display: inline-block;
-  white-space: nowrap;
+  display: block;
   max-width: 100%;
-  text-align: center;
   padding: 0.25em 0;
+  text-align: center;
 }
 
 /* Ensure equations don't overflow on mobile */

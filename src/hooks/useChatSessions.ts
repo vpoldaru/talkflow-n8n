@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { Message, ChatSession } from "@/types/chat";
 import { v4 as uuidv4 } from 'uuid';
 import { DEFAULT_WELCOME_MESSAGE } from "@/config/messages";
+import { useMessageSender } from "./useMessageSender";
 
 const STORAGE_KEY = "chat_sessions";
 
@@ -51,8 +52,19 @@ const WELCOME_MESSAGE = (() => {
 export const useChatSessions = () => {
   const [sessions, setSessions] = useState<ChatSession[]>([]);
   const [currentSessionId, setCurrentSessionId] = useState<string>("");
-  const [isLoading, setIsLoading] = useState(false);
-  const [isTyping, setIsTyping] = useState(false);
+
+  const updateSession = (sessionId: string, messages: Message[]) => {
+    setSessions(prev => prev.map(session => 
+      session.id === sessionId 
+        ? { ...session, messages, lastUpdated: Date.now() }
+        : session
+    ));
+  };
+
+  const { sendMessage: sendMessageToWebhook, isLoading, isTyping } = useMessageSender(
+    WEBHOOK_URL,
+    updateSession
+  );
 
   useEffect(() => {
     const savedSessions = localStorage.getItem(STORAGE_KEY);
@@ -96,14 +108,6 @@ export const useChatSessions = () => {
     return sessions.find(s => s.id === currentSessionId);
   };
 
-  const updateSession = (sessionId: string, messages: Message[]) => {
-    setSessions(prev => prev.map(session => 
-      session.id === sessionId 
-        ? { ...session, messages, lastUpdated: Date.now() }
-        : session
-    ));
-  };
-
   const deleteSession = (sessionId: string) => {
     setSessions(prev => prev.filter(session => session.id !== sessionId));
     if (sessionId === currentSessionId) {
@@ -118,61 +122,14 @@ export const useChatSessions = () => {
 
   const sendMessage = async (input: string, file?: File) => {
     const currentSession = getCurrentSession();
-    if (!currentSession || !input.trim() || !WEBHOOK_URL) return;
-
-    const formData = new FormData();
-    formData.append('chatInput', input);
-    formData.append('sessionId', currentSession.id);
-    if (file) {
-      formData.append('file', file);
-    }
-
-    const userMessage: Message = {
-      id: uuidv4(),
-      content: input,
-      role: "user",
-      timestamp: Date.now(),
-    };
-
-    const newMessages = [...currentSession.messages, userMessage];
-    updateSession(currentSession.id, newMessages);
+    if (!currentSession) return;
     
-    setIsLoading(true);
-    setIsTyping(true);
-
-    try {
-      console.log('Sending request to webhook URL:', WEBHOOK_URL);
-      const response = await fetch(WEBHOOK_URL, {
-        method: "POST",
-        body: formData,
-      });
-
-      if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
-      }
-
-      const data = await response.json();
-      const assistantMessage: Message = {
-        id: uuidv4(),
-        content: data[0]?.output || "Sorry, I couldn't process that.",
-        role: "assistant",
-        timestamp: Date.now(),
-      };
-
-      updateSession(currentSession.id, [...newMessages, assistantMessage]);
-    } catch (error) {
-      console.error('Error sending message:', error);
-      const errorMessage: Message = {
-        id: uuidv4(),
-        content: "Sorry, there was an error processing your message. Please try again later.",
-        role: "assistant",
-        timestamp: Date.now(),
-      };
-      updateSession(currentSession.id, [...newMessages, errorMessage]);
-    } finally {
-      setIsLoading(false);
-      setIsTyping(false);
-    }
+    await sendMessageToWebhook(
+      input,
+      currentSession.id,
+      currentSession.messages,
+      file
+    );
   };
 
   return {

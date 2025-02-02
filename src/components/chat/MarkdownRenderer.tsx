@@ -9,20 +9,6 @@ interface MarkdownRendererProps {
 }
 
 export const MarkdownRenderer = ({ content }: MarkdownRendererProps) => {
-  // Check if content is LaTeX-heavy (contains multiple LaTeX expressions)
-  const latexPatterns = [/\\\[.*?\\\]/gs, /\\\(.*?\\\)/gs, /\$\$.*?\$\$/gs, /\$.*?\$/gs];
-  const latexCount = latexPatterns.reduce((count, pattern) => 
-    count + (content.match(pattern)?.length || 0), 0);
-  
-  // If there are multiple LaTeX expressions, render the entire content as a code block
-  if (latexCount > 2) {
-    return (
-      <CodeBlock language="latex">
-        {content}
-      </CodeBlock>
-    );
-  }
-
   const md = new MarkdownIt({
     html: true,
     linkify: true,
@@ -47,10 +33,6 @@ export const MarkdownRenderer = ({ content }: MarkdownRendererProps) => {
     const token = tokens[idx];
     const code = token.content.trim();
     const lang = token.info || 'text';
-
-    if (lang === 'math' || /^\$.*\$$/s.test(code)) {
-      return `<div class="my-4 p-4 bg-slate-100 dark:bg-slate-800 rounded-lg font-mono text-sm overflow-x-auto">${code}</div>`;
-    }
 
     return `<div class="my-4">${CodeBlock({ language: lang, children: code })}</div>`;
   };

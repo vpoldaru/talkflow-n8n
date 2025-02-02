@@ -36,33 +36,28 @@ export const ChatLayout = ({
 
   const currentSession = sessions.find(s => s.id === currentSessionId);
 
-  const handleSend = useCallback(async (e: React.FormEvent) => {
+  const handleSend = useCallback(async (e: React.FormEvent, file?: File) => {
     e.preventDefault();
     if (!input.trim()) return;
 
-    console.log('ChatLayout handleSend called with pendingImage:', pendingImage ? {
-      fileName: pendingImage.name,
-      fileSize: pendingImage.size,
-      fileType: pendingImage.type
+    console.log('ChatLayout handleSend called with pending file:', file ? {
+      fileName: file.name,
+      fileSize: file.size,
+      fileType: file.type
     } : null);
 
     try {
-      const currentImage = pendingImage; // Store current image reference
-      console.log('Sending message with image:', currentImage?.name);
-      
-      await onSendMessage(input, currentImage || undefined);
-      
+      await onSendMessage(input, file);
       setInput("");
-      setPendingImage(null);
-      
-      console.log('Message sent successfully, states cleared');
+      // Optionally clear any internal file state in ChatLayout if maintained
+      console.log('Message sent successfully');
     } catch (error) {
       toast({
         description: "Failed to send message",
         variant: "destructive",
       });
     }
-  }, [input, pendingImage, onSendMessage, toast]);
+  }, [input, onSendMessage, toast]);
 
   const handleImageSelect = useCallback((file: File) => {
     console.log('ChatLayout handleImageSelect called with file:', {

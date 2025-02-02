@@ -127,7 +127,7 @@ export const useMessageSender = (
 
       const assistantMessage: Message = {
         id: uuidv4(),
-        content: data[0]?.output || "Sorry, I couldn't process that.",
+        content: data[0]?.output || data[0]?.content || "Sorry, I couldn't process that.",
         role: "assistant",
         timestamp: Date.now(),
       };

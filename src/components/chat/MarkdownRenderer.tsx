@@ -18,8 +18,10 @@ export const MarkdownRenderer = ({ content }: MarkdownRendererProps) => {
   }).use(mk, {
     throwOnError: false,
     errorColor: ' #cc0000',
-    strict: false,
-    trust: true,
+    delimiters: [
+      { left: "$$", right: "$$", display: true },
+      { left: "$", right: "$", display: false },
+    ],
     macros: {
       "\\RR": "\\mathbb{R}"
     }
@@ -55,12 +57,9 @@ export const MarkdownRenderer = ({ content }: MarkdownRendererProps) => {
   const processedContent = (typeof content === 'string' ? content : JSON.stringify(content))
     // Remove markdown code block markers if present
     .replace(/^```markdown\n([\s\S]*?)```$/g, '$1')
-    // Handle block math mode ($$...$$) - must be on separate lines
-    .replace(/\$\$([\s\S]*?)\$\$/g, (_, math) => `\n\\[\n${math.trim()}\n\\]\n`)
-    // Handle inline math mode ($...$) - must not break across lines
-    .replace(/\$([^\n$]*?)\$/g, (_, math) => `\\(${math.trim()}\\)`)
-    // Handle already processed KaTeX
-    .replace(/\\[\[\(]([\s\S]*?)\\[\]\)]/g, (match) => match);
+    // Clean up any extra whitespace around math delimiters
+    .replace(/\s*\$\$\s*/g, '$$')
+    .replace(/\s*\$\s*/g, '$');
 
   // Add custom styles for KaTeX
   const customStyles = `

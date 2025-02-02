@@ -12,6 +12,63 @@ export const useMessageSender = (
   const [isTyping, setIsTyping] = useState(false);
   const { toast } = useToast();
 
+  const extractResponseContent = (data: any): string => {
+    console.log('Extracting content from response:', data);
+    
+    // If data is a string, return it directly
+    if (typeof data === 'string') return data;
+    
+    // If data is an array, process the first item
+    if (Array.isArray(data)) {
+      const firstItem = data[0];
+      if (!firstItem) return "No response content available";
+      
+      // Handle different response formats
+      if (typeof firstItem === 'string') return firstItem;
+      
+      // Handle object responses
+      if (typeof firstItem === 'object') {
+        // Check common response patterns
+        const possibleContent = firstItem.message?.content || 
+                              firstItem.content ||
+                              firstItem.output ||
+                              firstItem.text ||
+                              firstItem.response;
+                              
+        if (possibleContent) return possibleContent;
+        
+        // If no standard fields found, try to stringify the object
+        try {
+          return JSON.stringify(firstItem);
+        } catch (e) {
+          console.warn('Failed to stringify response:', e);
+          return "Unable to process response format";
+        }
+      }
+    }
+    
+    // Handle single object response
+    if (typeof data === 'object') {
+      const possibleContent = data.message?.content || 
+                            data.content ||
+                            data.output ||
+                            data.text ||
+                            data.response;
+                            
+      if (possibleContent) return possibleContent;
+      
+      try {
+        return JSON.stringify(data);
+      } catch (e) {
+        console.warn('Failed to stringify response:', e);
+        return "Unable to process response format";
+      }
+    }
+    
+    // Fallback
+    return "Unexpected response format";
+  };
+
   const sendMessage = async (
     input: string,
     sessionId: string,
@@ -38,7 +95,6 @@ export const useMessageSender = (
       timestamp: Date.now(),
     };
 
-    // If there's a file, process it and add it to the message
     if (file) {
       console.log('Processing file in useMessageSender:', {
         fileName: file.name,
@@ -125,31 +181,8 @@ export const useMessageSender = (
       const data = await response.json();
       console.log('Webhook response data:', data);
 
-      // Extract the content from the response, handling both output and content properties
-      let responseContent = '';
-      if (data && data.length > 0) {
-        const firstResponse = data[0];
-        if (typeof firstResponse === 'object') {
-          // Try to get either output or content property
-          responseContent = firstResponse.output || firstResponse.content || '';
-          
-          // If the content is truncated or malformed, try to reconstruct it
-          if (responseContent && typeof responseContent === 'string') {
-            // Remove any malformed parts and clean up the string
-            responseContent = responseContent.replace(/\u0000/g, ''); // Remove null characters
-            responseContent = responseContent.replace(/\\{2,}/g, '\\'); // Fix double backslashes
-            
-            // Ensure LaTeX delimiters are properly formatted
-            responseContent = responseContent.replace(/\\\[([^\]]*)\\\]/g, '$$$$1$$');
-            responseContent = responseContent.replace(/\\\(([^\)]*)\\\)/g, '$$$1$$');
-          }
-        }
-      }
-
-      // If we still don't have valid content, use the fallback message
-      if (!responseContent) {
-        responseContent = "Sorry, I couldn't process that.";
-      }
+      const responseContent = extractResponseContent(data);
+      console.log('Extracted response content:', responseContent);
 
       const assistantMessage: Message = {
         id: uuidv4(),

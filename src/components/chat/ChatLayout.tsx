@@ -40,6 +40,12 @@ export const ChatLayout = ({
     e.preventDefault();
     if (!input.trim()) return;
 
+    console.log('ChatLayout handleSend called with pendingImage:', pendingImage ? {
+      fileName: pendingImage.name,
+      fileSize: pendingImage.size,
+      fileType: pendingImage.type
+    } : null);
+
     try {
       onSendMessage(input, pendingImage || undefined);
       setInput("");
@@ -53,6 +59,11 @@ export const ChatLayout = ({
   };
 
   const handleImageSelect = (file: File) => {
+    console.log('ChatLayout handleImageSelect called with file:', {
+      fileName: file.name,
+      fileSize: file.size,
+      fileType: file.type
+    });
     setPendingImage(file);
   };
 

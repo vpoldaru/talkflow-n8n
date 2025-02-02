@@ -43,10 +43,9 @@ export const ChatInput = ({
     if (!isLoading && (input.trim() || previewImage)) {
       let messageText = input;
       
-      // If there's an image but no text, set a default message
+      // If there's an image but no text, set a default message before sending
       if (previewImage && !input.trim()) {
         messageText = "See image for details";
-        onInputChange(messageText);
       }
 
       console.log('ChatInput handleSubmit called with previewImage:', previewImage ? {
@@ -57,7 +56,13 @@ export const ChatInput = ({
       
       // Send the message with the current image file
       const currentFile = previewImage?.file;
+      
+      // Update the input text first, then send
+      onInputChange(messageText);
       await onSend(e, currentFile);
+      
+      // Clear the input after successful send
+      onInputChange("");
       
       // Only clear the preview after the message has been sent
       if (previewImage) {

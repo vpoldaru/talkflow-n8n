@@ -15,6 +15,8 @@ interface ChatLayoutProps {
   onNewChat: () => void;
   onSessionSelect: (sessionId: string) => void;
   onDeleteSession: (sessionId: string) => void;
+  onRenameSession: (sessionId: string, newName: string) => void;
+  onToggleFavorite: (sessionId: string) => void;
   onSendMessage: (message: string, file?: File) => void;
 }
 
@@ -26,6 +28,8 @@ export const ChatLayout = ({
   onNewChat,
   onSessionSelect,
   onDeleteSession,
+  onRenameSession,
+  onToggleFavorite,
   onSendMessage,
 }: ChatLayoutProps) => {
   const [input, setInput] = useState("");
@@ -56,7 +60,9 @@ export const ChatLayout = ({
         variant: "destructive",
       });
     }
-  }, [input, onSendMessage, toast]);  const handleImageSelect = useCallback((file: File) => {
+  }, [input, onSendMessage, toast]);
+
+  const handleImageSelect = useCallback((file: File) => {
     console.log('ChatLayout handleImageSelect called with file:', {
       fileName: file.name,
       fileSize: file.size,
@@ -90,6 +96,8 @@ export const ChatLayout = ({
         onNewChat={onNewChat}
         onSessionSelect={handleSessionClick}
         onDeleteSession={onDeleteSession}
+        onRenameSession={onRenameSession}
+        onToggleFavorite={onToggleFavorite}
       />
 
       <div className="flex-1 flex flex-col bg-background relative pb-6">

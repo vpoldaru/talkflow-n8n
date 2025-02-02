@@ -17,41 +17,11 @@ export const ChatMessage = ({ message }: ChatMessageProps) => {
 
   const handleCopy = async () => {
     try {
-      // Create a temporary container
-      const tempDiv = document.createElement('div');
-      
-      // Clone the markdown content
-      const contentDiv = document.querySelector('.markdown-content');
-      if (!contentDiv) {
-        throw new Error('Content not found');
-      }
-      
-      tempDiv.innerHTML = contentDiv.innerHTML;
-      
-      // Remove style tags
-      const styleTags = tempDiv.getElementsByTagName('style');
-      while (styleTags.length > 0) {
-        styleTags[0].parentNode?.removeChild(styleTags[0]);
-      }
-      
-      // Clean up KaTeX elements
-      const katexElements = tempDiv.querySelectorAll('.katex');
-      katexElements.forEach(elem => {
-        const texSource = elem.getAttribute('data-tex-source');
-        if (texSource) {
-          elem.textContent = texSource;
-        }
-      });
-      
-      // Get clean text
-      const cleanText = tempDiv.innerText
-        .replace(/\n{3,}/g, '\n\n')
-        .trim();
-
-      await navigator.clipboard.writeText(cleanText);
+      // Copy only the message content
+      await navigator.clipboard.writeText(message.content);
       
       toast({
-        description: "Content copied to clipboard",
+        description: "Message copied to clipboard",
         duration: 2000,
       });
     } catch (err) {

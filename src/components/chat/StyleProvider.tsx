@@ -8,8 +8,8 @@ export const getCustomStyles = () => `
     }
     .katex-display { 
       overflow: auto hidden;
-      margin: 1.5em 0 !important;
-      padding: 1.5em !important;
+      margin: 1em 0;
+      padding: 1em;
       background: rgba(0, 0, 0, 0.02);
       border-radius: 0.5rem;
       border: 1px solid rgba(0, 0, 0, 0.05);
@@ -17,7 +17,6 @@ export const getCustomStyles = () => `
     .katex-display > .katex { 
       white-space: normal !important;
       text-align: center !important;
-      max-width: 100% !important;
     }
     .katex-html {
       max-width: 100%;
@@ -30,20 +29,6 @@ export const getCustomStyles = () => `
       background: rgba(30, 41, 59, 0.3);
       border-color: rgba(255, 255, 255, 0.05);
     }
-    /* Additional styles for better visibility */
-    .markdown-content { 
-      color: inherit;
-      font-size: 1rem;
-      line-height: 1.75;
-    }
-    .markdown-content p { margin-bottom: 1.25em; }
-    .markdown-content hr { margin: 2em 0; }
-    .markdown-content h3 { 
-      color: #1e293b;
-      margin-top: 1.5em;
-      margin-bottom: 0.75em;
-    }
-    .dark .markdown-content h3 { color: #e5e7eb; }
   </style>
 `;
 

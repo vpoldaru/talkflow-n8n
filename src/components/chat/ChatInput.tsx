@@ -10,10 +10,9 @@ interface ChatInputProps {
   input: string;
   isLoading: boolean;
   onInputChange: (value: string) => void;
-  onSend: (e: React.FormEvent) => void;
+  onSend: (e: React.FormEvent, file?: File) => void;
   onImageSelect?: (file: File) => void;
 }
-
 export const ChatInput = ({
   input,
   isLoading,
@@ -44,23 +43,16 @@ export const ChatInput = ({
       fileSize: previewImage.file.size,
       fileType: previewImage.file.type
     } : null);
-
+  
     if (!isLoading && input.trim()) {
-      if (previewImage && onImageSelect) {
-        console.log('Calling onImageSelect with file:', {
-          fileName: previewImage.file.name,
-          fileSize: previewImage.file.size,
-          fileType: previewImage.file.type
-        });
-        onImageSelect(previewImage.file);
-      }
-      onSend(e);
+      onSend(e, previewImage?.file);
       if (previewImage) {
         URL.revokeObjectURL(previewImage.url);
         setPreviewImage(null);
       }
     }
   };
+  
 
   const handlePaste = async (e: React.ClipboardEvent) => {
     if (!onImageSelect) return;

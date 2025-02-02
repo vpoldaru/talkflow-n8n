@@ -49,7 +49,6 @@ export const ChatLayout = ({
     try {
       await onSendMessage(input, file);
       setInput("");
-      // Optionally clear any internal file state in ChatLayout if maintained
       console.log('Message sent successfully');
     } catch (error) {
       toast({
@@ -57,9 +56,7 @@ export const ChatLayout = ({
         variant: "destructive",
       });
     }
-  }, [input, onSendMessage, toast]);
-
-  const handleImageSelect = useCallback((file: File) => {
+  }, [input, onSendMessage, toast]);  const handleImageSelect = useCallback((file: File) => {
     console.log('ChatLayout handleImageSelect called with file:', {
       fileName: file.name,
       fileSize: file.size,

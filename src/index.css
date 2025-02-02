@@ -81,14 +81,15 @@
 .katex-display {
   overflow-x: auto;
   overflow-y: hidden;
-  padding: 1em;
+  padding: 0.75em;
   margin: 0.75em 0;
   background: rgba(15, 23, 42, 0.03);
   border-radius: 0.5rem;
   border: 1px solid rgba(148, 163, 184, 0.1);
   display: flex;
   justify-content: center;
-  min-height: 3em;
+  align-items: center;
+  min-height: 2.5em;
 }
 
 .dark .katex-display {
@@ -126,7 +127,7 @@
 .katex-display > .katex {
   display: block;
   max-width: 100%;
-  padding: 0.25em 0;
+  padding: 0.15em 0;
   text-align: center;
 }
 

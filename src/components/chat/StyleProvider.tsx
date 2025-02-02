@@ -6,32 +6,44 @@ export const getCustomStyles = () => `
       font-size: 1.1em !important;
       font-family: KaTeX_Main, 'Times New Roman', serif !important;
     }
-    .katex-block { 
-      margin: 2em 0 !important;
-      padding: 1.5em !important;
-      background: rgba(30, 41, 59, 0.05);
-      border: 1px solid rgba(30, 41, 59, 0.1);
-      border-radius: 0.5rem;
+    
+    /* Code block style for block LaTeX */
+    .code-block-latex {
+      margin: 1.5rem 0;
+      background: rgb(15 23 42 / 0.95);
+      border-radius: 0.75rem;
+      overflow: hidden;
+      border: 1px solid rgb(51 65 85 / 0.5);
+    }
+
+    .code-block-header {
+      padding: 0.5rem 1rem;
+      background: rgb(30 41 59 / 0.95);
+      border-bottom: 1px solid rgb(51 65 85 / 0.5);
+    }
+
+    .code-block-content {
+      padding: 1rem;
       overflow-x: auto;
+      color: #e2e8f0;
       font-family: 'Fira Code', monospace;
-      white-space: pre;
-      font-size: 0.9em;
+      font-size: 0.875rem;
       line-height: 1.5;
     }
-    .dark .katex-block {
-      background: rgba(30, 41, 59, 0.3);
-      border-color: rgba(255, 255, 255, 0.1);
-    }
+
     /* Inline math styling */
     .katex-inline {
       padding: 0.2em 0.4em;
       margin: 0 0.2em;
-      background: rgba(0, 0, 0, 0.01);
+      background: rgba(30, 41, 59, 0.05);
       border-radius: 0.25rem;
+      display: inline-block;
     }
+
     .dark .katex-inline {
-      background: rgba(255, 255, 255, 0.02);
+      background: rgba(255, 255, 255, 0.05);
     }
+
     /* Additional styles for better visibility */
     .markdown-content { 
       color: inherit;

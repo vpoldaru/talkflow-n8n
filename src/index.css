@@ -83,12 +83,52 @@
 .katex-display {
   overflow-x: auto;
   overflow-y: hidden;
-  padding: 0.5em 0;
-  margin: 0.5em 0 !important;
+  padding: 1.5em 0;
+  margin: 2em 0 !important;
+  background: rgba(0, 0, 0, 0.02);
+  border-radius: 0.5rem;
+}
+
+.dark .katex-display {
+  background: rgba(255, 255, 255, 0.02);
 }
 
 .dark .katex {
   color: #e5e7eb;
+}
+
+/* Markdown content styling */
+.markdown-content h1,
+.markdown-content h2,
+.markdown-content h3,
+.markdown-content h4,
+.markdown-content h5,
+.markdown-content h6 {
+  margin-top: 1.5em;
+  margin-bottom: 0.75em;
+  font-weight: 600;
+  line-height: 1.25;
+}
+
+.markdown-content p {
+  margin: 1.25em 0;
+  line-height: 1.75;
+}
+
+.markdown-content .katex-display {
+  position: relative;
+}
+
+.markdown-content .katex-display::before,
+.markdown-content .katex-display::after {
+  content: '';
+  display: block;
+  height: 1em;
+}
+
+/* Inline math styling */
+.katex-inline {
+  padding: 0 0.15em;
 }
 
 .dark .katex .mord,

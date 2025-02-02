@@ -17,11 +17,26 @@ export const ChatMessage = ({ message }: ChatMessageProps) => {
 
   const handleCopy = async () => {
     try {
+      const tempDiv = document.createElement('div');
+      tempDiv.innerHTML = document.querySelector('.markdown-content')?.innerHTML || '';
+      
+      // Clean up the HTML content
+      const mathElements = tempDiv.querySelectorAll('.katex-html');
+      mathElements.forEach(elem => {
+        const textContent = elem.textContent?.trim() || '';
+        elem.textContent = textContent;
+      });
+
+      // Remove unnecessary elements and preserve spacing
+      const cleanText = tempDiv.innerText
+        .replace(/\n{3,}/g, '\n\n')
+        .trim();
+
       if (navigator.clipboard && window.isSecureContext) {
-        await navigator.clipboard.writeText(message.content);
+        await navigator.clipboard.writeText(cleanText);
       } else {
         const textArea = document.createElement('textarea');
-        textArea.value = message.content;
+        textArea.value = cleanText;
         textArea.style.position = 'fixed';
         textArea.style.left = '-999999px';
         textArea.style.top = '-999999px';
@@ -45,7 +60,7 @@ export const ChatMessage = ({ message }: ChatMessageProps) => {
       }
       
       toast({
-        description: "Message copied to clipboard",
+        description: "Rendered text copied to clipboard",
         duration: 2000,
       });
     } catch (err) {

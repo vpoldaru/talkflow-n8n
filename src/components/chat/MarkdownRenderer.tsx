@@ -55,10 +55,10 @@ export const MarkdownRenderer = ({ content }: MarkdownRendererProps) => {
   const processedContent = (typeof content === 'string' ? content : JSON.stringify(content))
     // Remove markdown code block markers if present
     .replace(/^```markdown\n([\s\S]*?)```$/g, '$1')
-    // Handle display math mode
-    .replace(/\$\$([\s\S]*?)\$\$/g, (_, math) => `\\[${math.trim()}\\]`)
-    // Handle inline math mode
-    .replace(/\$([^$\n]+?)\$/g, (_, math) => `\\(${math.trim()}\\)`)
+    // Handle block math mode ($$...$$) - must be on separate lines
+    .replace(/\$\$([\s\S]*?)\$\$/g, (_, math) => `\n\\[\n${math.trim()}\n\\]\n`)
+    // Handle inline math mode ($...$) - must not break across lines
+    .replace(/\$([^\n$]*?)\$/g, (_, math) => `\\(${math.trim()}\\)`)
     // Handle already processed KaTeX
     .replace(/\\[\[\(]([\s\S]*?)\\[\]\)]/g, (match) => match);
 
@@ -69,7 +69,7 @@ export const MarkdownRenderer = ({ content }: MarkdownRendererProps) => {
       .katex-display { 
         overflow: auto hidden;
         margin: 1em 0;
-        padding: 0.5em 0;
+        padding: 1em;
         background: rgba(0, 0, 0, 0.03);
         border-radius: 0.375rem;
       }

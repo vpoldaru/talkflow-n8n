@@ -41,10 +41,10 @@ export const ChatInput = ({
     e.preventDefault();
     
     if (!isLoading && (input.trim() || previewImage)) {
-      let messageText = input;
+      let messageText = input.trim();
       
-      // If there's an image but no text, set a default message before sending
-      if (previewImage && !input.trim()) {
+      // If there's an image but no text, set a default message
+      if (previewImage && !messageText) {
         messageText = "See image for details";
       }
 
@@ -54,20 +54,22 @@ export const ChatInput = ({
         fileType: previewImage.file.type
       } : null);
       
-      // Send the message with the current image file
       const currentFile = previewImage?.file;
       
-      // Update the input text first, then send
-      onInputChange(messageText);
-      await onSend(e, currentFile);
-      
-      // Clear the input after successful send
-      onInputChange("");
-      
-      // Only clear the preview after the message has been sent
-      if (previewImage) {
-        URL.revokeObjectURL(previewImage.url);
-        setPreviewImage(null);
+      try {
+        await onSend(e, currentFile);
+        onInputChange("");
+        
+        if (previewImage) {
+          URL.revokeObjectURL(previewImage.url);
+          setPreviewImage(null);
+        }
+      } catch (error) {
+        console.error('Error sending message:', error);
+        toast({
+          description: "Failed to send message",
+          variant: "destructive",
+        });
       }
     }
   };

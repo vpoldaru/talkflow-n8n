@@ -1,14 +1,28 @@
 import ReactMarkdown from 'react-markdown';
 import { cn } from '@/lib/utils';
 import { CodeBlock } from './CodeBlock';
+import 'katex/dist/katex.min.css';
+import remarkMath from 'remark-math';
+import rehypeKatex from 'rehype-katex';
 
 interface MarkdownRendererProps {
   content: string;
 }
 
 export const MarkdownRenderer = ({ content }: MarkdownRendererProps) => {
+  // Clean up LaTeX delimiters
+  const cleanContent = content
+    .replace(/\\\[/g, '$$')
+    .replace(/\\\]/g, '$$')
+    .replace(/\\\(/g, '$')
+    .replace(/\\\)/g, '$')
+    .replace(/\u0000/g, '') // Remove null characters
+    .replace(/\\{2,}/g, '\\'); // Fix double backslashes
+
   return (
     <ReactMarkdown
+      remarkPlugins={[remarkMath]}
+      rehypePlugins={[rehypeKatex]}
       components={{
         p: ({ children }) => (
           <p className="mb-2 last:mb-0 leading-relaxed text-left">{children}</p>
@@ -69,7 +83,7 @@ export const MarkdownRenderer = ({ content }: MarkdownRendererProps) => {
         },
       }}
     >
-      {content}
+      {cleanContent}
     </ReactMarkdown>
   );
 };

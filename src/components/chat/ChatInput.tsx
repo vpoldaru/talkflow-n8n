@@ -5,7 +5,6 @@ import { Loader2, Send, Mic, X } from "lucide-react";
 import { useSpeechRecognition } from "@/hooks/useSpeechRecognition";
 import { ImageUpload } from "./ImageUpload";
 import { useToast } from "@/hooks/use-toast";
-import Image from "next/image";
 
 interface ChatInputProps {
   input: string;

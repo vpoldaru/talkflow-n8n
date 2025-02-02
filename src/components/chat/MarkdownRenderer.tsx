@@ -52,7 +52,7 @@ export const MarkdownRenderer = ({ content }: MarkdownRendererProps) => {
   };
 
   // Process content to properly handle LaTeX delimiters
-  const processedContent = content
+  const processedContent = (typeof content === 'string' ? content : JSON.stringify(content))
     // Remove markdown code block markers if present
     .replace(/^```markdown\n([\s\S]*?)```$/g, '$1')
     // Handle display math mode

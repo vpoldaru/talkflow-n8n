@@ -41,6 +41,11 @@ export const ChatInput = ({
     e.preventDefault();
     
     if (!isLoading && (input.trim() || previewImage)) {
+      // If there's an image but no text, set a default message
+      if (previewImage && !input.trim()) {
+        onInputChange("See image for details");
+      }
+
       console.log('ChatInput handleSubmit called with previewImage:', previewImage ? {
         fileName: previewImage.file.name,
         fileSize: previewImage.file.size,

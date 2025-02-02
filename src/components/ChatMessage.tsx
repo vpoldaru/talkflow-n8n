@@ -81,6 +81,15 @@ export const ChatMessage = ({ message }: ChatMessageProps) => {
         }}
       >
         <div className="prose prose-slate dark:prose-invert max-w-none break-words text-left">
+          {message.imageData && (
+            <div className="mb-2">
+              <img
+                src={`data:${message.imageData.mimeType};base64,${message.imageData.data}`}
+                alt={message.imageData.fileName}
+                className="max-w-[200px] rounded-lg"
+              />
+            </div>
+          )}
           <MarkdownRenderer content={message.content} />
         </div>
         <div className="mt-2 flex justify-between items-center">

@@ -20,14 +20,47 @@ export const useMessageSender = (
   ) => {
     if (!input.trim() || !webhook_url) return;
 
-    const formData = await createFormDataWithFile(input, sessionId, file);
-
-    const userMessage: Message = {
+    let userMessage: Message = {
       id: uuidv4(),
       content: input,
       role: "user",
       timestamp: Date.now(),
     };
+
+    // If there's a file, process it and add it to the message
+    if (file) {
+      try {
+        const formData = await createFormDataWithFile(input, sessionId, file);
+        const base64Data = formData.get('data') as string;
+        const mimeType = formData.get('mimeType') as string;
+        const fileName = formData.get('fileName') as string;
+
+        userMessage = {
+          ...userMessage,
+          imageData: {
+            data: base64Data,
+            mimeType: mimeType,
+            fileName: fileName
+          }
+        };
+
+        // Log the data being sent
+        console.log('Sending data to webhook:', {
+          chatInput: input,
+          sessionId: sessionId,
+          data: base64Data,
+          mimeType: mimeType,
+          fileName: fileName
+        });
+      } catch (error) {
+        console.error('Error processing file:', error);
+        toast({
+          description: "Error processing image file",
+          variant: "destructive",
+        });
+        return;
+      }
+    }
 
     const newMessages = [...currentMessages, userMessage];
     updateSession(sessionId, newMessages);
@@ -36,10 +69,23 @@ export const useMessageSender = (
     setIsTyping(true);
 
     try {
+      const payload = {
+        chatInput: input,
+        sessionId: sessionId,
+        ...(userMessage.imageData && {
+          data: userMessage.imageData.data,
+          mimeType: userMessage.imageData.mimeType,
+          fileName: userMessage.imageData.fileName
+        })
+      };
+
       console.log('Sending request to webhook URL:', webhook_url);
       const response = await fetch(webhook_url, {
         method: "POST",
-        body: formData,
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(payload)
       });
 
       if (!response.ok) {

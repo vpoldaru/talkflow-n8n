@@ -13,12 +13,15 @@ console.log('import.meta.env:', import.meta.env);
 console.log('DEFAULT_WELCOME_MESSAGE:', DEFAULT_WELCOME_MESSAGE);
 
 const WEBHOOK_URL = (() => {
+  // For Lovable development environment
+  if (import.meta.env.DEV) {
+    return import.meta.env.VITE_N8N_WEBHOOK_URL;
+  }
+  
+  // For Docker production environment
   const windowEnvUrl = window.env?.VITE_N8N_WEBHOOK_URL;
   const viteEnvUrl = import.meta.env.VITE_N8N_WEBHOOK_URL;
   const fallbackUrl = "https://n8n.martinclan.org/webhook/0949763f-f3f7-46bf-8676-c050d92e6966/chat";
-  
-  // Clean the URL by removing any template literals or quotes
-  const cleanUrl = (url: string) => url.replace(/\${.*}/, '').replace(/['"]/g, '');
   
   console.log('WEBHOOK_URL sources:');
   console.log('- window.env.VITE_N8N_WEBHOOK_URL:', windowEnvUrl);
@@ -26,13 +29,18 @@ const WEBHOOK_URL = (() => {
   console.log('- fallback URL:', fallbackUrl);
   
   const selectedUrl = windowEnvUrl || viteEnvUrl || fallbackUrl;
-  const cleanedUrl = cleanUrl(selectedUrl);
   
-  console.log('Selected WEBHOOK_URL:', cleanedUrl);
-  return cleanedUrl;
+  console.log('Selected WEBHOOK_URL:', selectedUrl);
+  return selectedUrl;
 })();
 
 const WELCOME_MESSAGE = (() => {
+  // For Lovable development environment
+  if (import.meta.env.DEV) {
+    return import.meta.env.VITE_WELCOME_MESSAGE || DEFAULT_WELCOME_MESSAGE;
+  }
+  
+  // For Docker production environment
   const windowEnvMsg = window.env?.VITE_WELCOME_MESSAGE;
   const viteEnvMsg = import.meta.env.VITE_WELCOME_MESSAGE;
   
@@ -41,10 +49,7 @@ const WELCOME_MESSAGE = (() => {
   console.log('- import.meta.env.VITE_WELCOME_MESSAGE:', viteEnvMsg);
   console.log('- DEFAULT_WELCOME_MESSAGE:', DEFAULT_WELCOME_MESSAGE);
   
-  // Remove any extra quotes from the message
-  const cleanMessage = (msg: string) => msg.replace(/^["'](.*)["']$/, '$1');
-  
-  const finalMsg = windowEnvMsg ? cleanMessage(windowEnvMsg) : (viteEnvMsg ? cleanMessage(viteEnvMsg) : DEFAULT_WELCOME_MESSAGE);
+  const finalMsg = windowEnvMsg || viteEnvMsg || DEFAULT_WELCOME_MESSAGE;
   console.log('Selected WELCOME_MESSAGE:', finalMsg);
   return finalMsg;
 })();

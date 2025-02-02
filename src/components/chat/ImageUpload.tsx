@@ -1,6 +1,7 @@
 import { Button } from "@/components/ui/button";
-import { Image } from "lucide-react";
+import { ImageIcon } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
+import { useRef } from "react";
 
 interface ImageUploadProps {
   onImageSelect: (base64Image: string) => void;
@@ -8,12 +9,23 @@ interface ImageUploadProps {
 }
 
 export const ImageUpload = ({ onImageSelect, disabled }: ImageUploadProps) => {
+  const fileInputRef = useRef<HTMLInputElement>(null);
   const { toast } = useToast();
 
-  const handleImageSelect = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
+  const handleImageSelect = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
     if (!file) return;
 
+    // Check file type
+    if (!file.type.startsWith('image/')) {
+      toast({
+        description: "Please select an image file",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    // Check file size (5MB limit)
     if (file.size > 5 * 1024 * 1024) {
       toast({
         description: "Image must be less than 5MB",
@@ -31,13 +43,14 @@ export const ImageUpload = ({ onImageSelect, disabled }: ImageUploadProps) => {
   };
 
   return (
-    <div className="relative">
+    <>
       <input
         type="file"
+        ref={fileInputRef}
+        onChange={handleImageSelect}
         accept="image/*"
         capture="environment"
-        onChange={handleImageSelect}
-        className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
+        className="hidden"
         disabled={disabled}
       />
       <Button
@@ -45,10 +58,11 @@ export const ImageUpload = ({ onImageSelect, disabled }: ImageUploadProps) => {
         size="icon"
         variant="ghost"
         className="h-8 w-8 text-white hover:bg-[#2A2F3C]"
+        onClick={() => fileInputRef.current?.click()}
         disabled={disabled}
       >
-        <Image className="h-4 w-4" />
+        <ImageIcon className="h-4 w-4" />
       </Button>
-    </div>
+    </>
   );
 };

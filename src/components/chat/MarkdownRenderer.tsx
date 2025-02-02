@@ -1,6 +1,7 @@
 import ReactMarkdown from 'react-markdown';
 import { cn } from '@/lib/utils';
 import { CodeBlock } from './CodeBlock';
+import { LaTeXBlock } from './LaTeXBlock';
 import 'katex/dist/katex.min.css';
 import remarkMath from 'remark-math';
 import rehypeKatex from 'rehype-katex';
@@ -65,6 +66,19 @@ export const MarkdownRenderer = ({ content }: MarkdownRendererProps) => {
         code: ({ className, children, ...props }) => {
           const match = /language-(\w+)/.exec(className || '');
           const isInline = !match;
+          
+          // Check if it's LaTeX content
+          const isLatex = className === 'math' || /^\$.*\$$/.test(String(children));
+          
+          if (isLatex) {
+            return (
+              <LaTeXBlock 
+                content={String(children).replace(/^\$|\$$/g, '')}
+                inline={isInline}
+              />
+            );
+          }
+          
           return isInline ? (
             <code
               className={cn(

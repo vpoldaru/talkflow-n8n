@@ -2,27 +2,55 @@ import React from 'react';
 
 export const getCustomStyles = () => `
   <style>
-    .katex { font-size: 1.1em; }
-    .katex-display { 
-      overflow: auto hidden;
-      margin: 1em 0;
-      padding: 1em;
-      background: rgba(0, 0, 0, 0.03);
-      border-radius: 0.375rem;
+    /* KaTeX base styles */
+    .katex { 
+      font-size: 1.1em !important;
+      font-family: KaTeX_Main, 'Times New Roman', serif !important;
     }
-    .katex-display > .katex { 
-      white-space: normal;
-      text-align: center;
+    
+    /* Block LaTeX styles */
+    .code-block-latex {
+      margin: 1.5rem 0;
+      background: rgb(15 23 42 / 0.95);
+      border-radius: 0.75rem;
+      overflow: hidden;
+      border: 1px solid rgb(51 65 85 / 0.5);
     }
-    /* Dark mode styles */
-    .dark .katex { color: #e5e7eb; }
-    .dark .katex-display { background: rgba(30, 41, 59, 0.5); }
-    /* Additional styles for better visibility */
-    .markdown-content { color: inherit; }
-    .markdown-content p { margin-bottom: 1rem; }
-    .markdown-content hr { margin: 1.5rem 0; }
-    .markdown-content h3 { color: #1e293b; }
-    .dark .markdown-content h3 { color: #e5e7eb; }
+
+    .code-block-header {
+      padding: 0.5rem 1rem;
+      background: rgb(30 41 59 / 0.95);
+      border-bottom: 1px solid rgb(51 65 85 / 0.5);
+      color: #e2e8f0;
+      font-family: ui-monospace, monospace;
+      font-size: 0.875rem;
+    }
+
+    .code-block-content {
+      padding: 1rem;
+      overflow-x: auto;
+      color: #e2e8f0;
+      font-family: KaTeX_Main, 'Times New Roman', serif;
+      font-size: 1.1em;
+    }
+
+    /* Inline math styling */
+    .katex-inline {
+      padding: 0.2em 0.4em;
+      margin: 0 0.2em;
+      background: rgba(30, 41, 59, 0.05);
+      border-radius: 0.25rem;
+      display: inline-block;
+    }
+
+    .dark .katex-inline {
+      background: rgba(255, 255, 255, 0.05);
+    }
+
+    /* Dark mode adjustments */
+    .dark .katex { color: #e2e8f0; }
+    .dark .code-block-latex { background: rgb(15 23 42 / 0.95); }
+    .dark .code-block-header { background: rgb(30 41 59 / 0.95); }
   </style>
 `;
 

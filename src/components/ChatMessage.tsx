@@ -17,32 +17,16 @@ export const ChatMessage = ({ message }: ChatMessageProps) => {
 
   const handleCopy = async () => {
     try {
-      if (navigator.clipboard && window.isSecureContext) {
-        await navigator.clipboard.writeText(message.content);
-      } else {
-        const textArea = document.createElement('textarea');
-        textArea.value = message.content;
-        textArea.style.position = 'fixed';
-        textArea.style.left = '-999999px';
-        textArea.style.top = '-999999px';
-        document.body.appendChild(textArea);
-        textArea.focus();
-        textArea.select();
-        
-        try {
-          document.execCommand('copy');
-        } catch (err) {
-          console.error('Failed to copy text:', err);
-          toast({
-            description: "Failed to copy text",
-            variant: "destructive",
-            duration: 2000,
-          });
-          return;
-        } finally {
-          textArea.remove();
-        }
-      }
+      // Create a temporary container
+      const tempDiv = document.createElement('div');
+      tempDiv.innerHTML = message.content;
+      
+      // Get clean text
+      const cleanText = tempDiv.innerText
+        .replace(/\n{3,}/g, '\n\n')
+        .trim();
+
+      await navigator.clipboard.writeText(cleanText);
       
       toast({
         description: "Message copied to clipboard",

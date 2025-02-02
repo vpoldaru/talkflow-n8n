@@ -1,12 +1,11 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
- 
+
 @layer base {
   :root {
     --background: 0 0% 100%;
     --foreground: 222.2 84% 4.9%;
-
     --card: 0 0% 100%;
     --card-foreground: 222.2 84% 4.9%;
  
@@ -38,7 +37,6 @@
   .dark {
     --background: 222.2 84% 4.9%;
     --foreground: 210 40% 98%;
- 
     --card: 222.2 84% 4.9%;
     --card-foreground: 210 40% 98%;
  
@@ -81,22 +79,50 @@
 }
 
 .katex-display {
-  overflow-x: auto;
+  overflow-x: hidden;
   overflow-y: hidden;
-  padding: 0.5em 0;
-  margin: 0.5em 0 !important;
+  padding: 1em;
+  margin: 0.75em 0;
+  display: flex;
+  justify-content: center;
+  min-height: 2em;
 }
 
 .dark .katex {
   color: #e5e7eb;
 }
 
-.dark .katex .mord,
-.dark .katex .mbin,
-.dark .katex .mrel,
-.dark .katex .mopen,
-.dark .katex .mclose,
-.dark .katex .mpunct,
-.dark .katex .minner {
-  color: inherit;
+/* Inline math styling */
+.katex-inline {
+  padding: 0.2em 0.4em;
+  margin: 0 0.2em;
+}
+
+/* Ensure proper spacing in markdown content */
+.markdown-content p {
+  margin: 1em 0;
+  line-height: 1.75;
+}
+
+.markdown-content .katex-display {
+  margin: 1em 0;
+}
+
+/* Adjust spacing for multi-line equations */
+.katex-display > .katex {
+  display: block;
+  max-width: 100%;
+  padding: 0.15em 0;
+  text-align: center;
+}
+
+/* Ensure equations don't overflow on mobile */
+@media (max-width: 640px) {
+  .katex-display {
+    padding: 0.5em;
+  }
+  
+  .katex-display > .katex {
+    font-size: 0.9em !important;
+  }
 }

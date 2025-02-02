@@ -53,6 +53,8 @@ export const MarkdownRenderer = ({ content }: MarkdownRendererProps) => {
 
   // Process content to properly handle LaTeX delimiters
   const processedContent = content
+    // Remove markdown code block markers if present
+    .replace(/^```markdown\n([\s\S]*?)```$/g, '$1')
     // Handle display math mode
     .replace(/\$\$([\s\S]*?)\$\$/g, (_, math) => `\\[${math.trim()}\\]`)
     // Handle inline math mode
@@ -69,6 +71,10 @@ export const MarkdownRenderer = ({ content }: MarkdownRendererProps) => {
       /* Dark mode styles */
       .dark .katex { color: #e5e7eb; }
       .dark .katex-display { background: rgba(30, 41, 59, 0.5); }
+      /* Additional styles for better visibility */
+      .markdown-content { color: inherit; }
+      .markdown-content p { margin-bottom: 1rem; }
+      .markdown-content hr { margin: 1.5rem 0; }
     </style>
   `;
 
@@ -78,12 +84,13 @@ export const MarkdownRenderer = ({ content }: MarkdownRendererProps) => {
   return (
     <div 
       className={cn(
-        "prose prose-slate dark:prose-invert max-w-none break-words text-left",
+        "prose prose-slate dark:prose-invert max-w-none break-words text-left markdown-content",
         "prose-headings:font-bold prose-headings:text-slate-900 dark:prose-headings:text-slate-100",
         "prose-p:text-slate-700 dark:prose-p:text-slate-300",
         "prose-strong:text-slate-900 dark:prose-strong:text-white",
         "prose-code:text-slate-900 dark:prose-code:text-slate-100",
-        "prose-pre:bg-slate-900 dark:prose-pre:bg-slate-800"
+        "prose-pre:bg-slate-900 dark:prose-pre:bg-slate-800",
+        "prose-hr:border-slate-200 dark:prose-hr:border-slate-700"
       )}
       dangerouslySetInnerHTML={{ __html: customStyles + renderedContent }}
     />

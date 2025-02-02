@@ -13,6 +13,7 @@ interface ChatInputProps {
   onSend: (e: React.FormEvent, file?: File) => void;
   onImageSelect?: (file: File) => void;
 }
+
 export const ChatInput = ({
   input,
   isLoading,
@@ -38,21 +39,25 @@ export const ChatInput = ({
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    console.log('ChatInput handleSubmit called with previewImage:', previewImage ? {
-      fileName: previewImage.file.name,
-      fileSize: previewImage.file.size,
-      fileType: previewImage.file.type
-    } : null);
-  
+    
     if (!isLoading && input.trim()) {
-      onSend(e, previewImage?.file);
+      console.log('ChatInput handleSubmit called with previewImage:', previewImage ? {
+        fileName: previewImage.file.name,
+        fileSize: previewImage.file.size,
+        fileType: previewImage.file.type
+      } : null);
+      
+      // Send the message with the current image file
+      const currentFile = previewImage?.file;
+      await onSend(e, currentFile);
+      
+      // Only clear the preview after the message has been sent
       if (previewImage) {
         URL.revokeObjectURL(previewImage.url);
         setPreviewImage(null);
       }
     }
   };
-  
 
   const handlePaste = async (e: React.ClipboardEvent) => {
     if (!onImageSelect) return;
@@ -91,6 +96,15 @@ export const ChatInput = ({
     });
     const imageUrl = URL.createObjectURL(file);
     setPreviewImage({ file, url: imageUrl });
+    
+    if (onImageSelect) {
+      console.log('Calling onImageSelect with file:', {
+        fileName: file.name,
+        fileSize: file.size,
+        fileType: file.type
+      });
+      onImageSelect(file);
+    }
   };
 
   const clearPreviewImage = () => {

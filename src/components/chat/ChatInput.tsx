@@ -31,7 +31,7 @@ export const ChatInput = ({
   const handleKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
     if (e.key === "Enter" && !e.shiftKey) {
       e.preventDefault();
-      if (!isLoading && input.trim()) {
+      if (!isLoading && (input.trim() || previewImage)) {
         handleSubmit(e);
       }
     }
@@ -40,7 +40,7 @@ export const ChatInput = ({
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
-    if (!isLoading && input.trim()) {
+    if (!isLoading && (input.trim() || previewImage)) {
       console.log('ChatInput handleSubmit called with previewImage:', previewImage ? {
         fileName: previewImage.file.name,
         fileSize: previewImage.file.size,
@@ -115,7 +115,7 @@ export const ChatInput = ({
     }
   };
 
-  const isInputEmpty = input.length === 0 || !input.trim();
+  const isInputEmpty = !input.trim() && !previewImage;
 
   return (
     <form onSubmit={handleSubmit} className="fixed bottom-0 left-0 right-0 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">

@@ -47,21 +47,14 @@ export const ChatLayout = ({
     } : null);
 
     try {
-      // Store image before clearing state
-      const imageToSend = pendingImage;
+      // Send message with image first
+      await onSendMessage(input, pendingImage || undefined);
       
-      // Clear states first
+      console.log('ChatLayout message sent successfully, clearing states');
+      
+      // Clear states after successful send
       setInput("");
       setPendingImage(null);
-      
-      console.log('ChatLayout sending message with image:', imageToSend ? {
-        fileName: imageToSend.name,
-        fileSize: imageToSend.size,
-        fileType: imageToSend.type
-      } : null);
-      
-      // Send message with stored image
-      onSendMessage(input, imageToSend || undefined);
     } catch (error) {
       toast({
         description: "Failed to send message",

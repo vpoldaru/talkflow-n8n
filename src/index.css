@@ -79,8 +79,8 @@
 }
 
 .katex-display {
-  overflow-x: auto;
-  overflow-y: visible;
+  overflow-x: hidden;
+  overflow-y: hidden;
   padding: 1em;
   margin: 0.75em 0;
   display: flex;

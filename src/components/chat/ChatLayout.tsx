@@ -40,6 +40,8 @@ export const ChatLayout = ({
     e.preventDefault();
     if (!input.trim()) return;
 
+    let messageText = input;
+
     if (pendingImage) {
       const formData = new FormData();
       formData.append('file', pendingImage);
@@ -53,14 +55,8 @@ export const ChatLayout = ({
         if (!response.ok) throw new Error('Upload failed');
         
         const { url } = await response.json();
-        const imageMarkdown = `${input}\n\n![Uploaded Image](${url})`;
-        onSendMessage(imageMarkdown);
+        messageText = `${input}\n\n![Uploaded Image](${url})`;
         setPendingImage(null);
-        
-        toast({
-          description: "Message with image sent successfully",
-          duration: 2000,
-        });
       } catch (error) {
         toast({
           description: "Failed to upload image",
@@ -68,10 +64,9 @@ export const ChatLayout = ({
         });
         return;
       }
-    } else {
-      onSendMessage(input);
     }
     
+    onSendMessage(messageText);
     setInput("");
   };
 

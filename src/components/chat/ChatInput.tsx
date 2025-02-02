@@ -32,19 +32,25 @@ export const ChatInput = ({
     if (e.key === "Enter" && !e.shiftKey) {
       e.preventDefault();
       if (!isLoading && input.trim()) {
-        onSend(e);
+        handleSubmit(e);
       }
     }
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!isLoading && input.trim()) {
       if (previewImage && onImageSelect) {
+        // First handle the image upload
         onImageSelect(previewImage.file);
       }
+      // Then send the message
       onSend(e);
-      setPreviewImage(null);
+      // Clear the preview image after sending
+      if (previewImage) {
+        URL.revokeObjectURL(previewImage.url);
+        setPreviewImage(null);
+      }
     }
   };
 

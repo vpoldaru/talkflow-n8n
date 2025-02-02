@@ -16,12 +16,19 @@ const WEBHOOK_URL = (() => {
   const viteEnvUrl = import.meta.env.VITE_N8N_WEBHOOK_URL;
   const fallbackUrl = "https://n8n.martinclan.org/webhook/0949763f-f3f7-46bf-8676-c050d92e6966/chat";
   
+  // Clean the URL by removing any template literals or quotes
+  const cleanUrl = (url: string) => url.replace(/\${.*}/, '').replace(/['"]/g, '');
+  
   console.log('WEBHOOK_URL sources:');
   console.log('- window.env.VITE_N8N_WEBHOOK_URL:', windowEnvUrl);
   console.log('- import.meta.env.VITE_N8N_WEBHOOK_URL:', viteEnvUrl);
   console.log('- fallback URL:', fallbackUrl);
   
-  return windowEnvUrl || viteEnvUrl || fallbackUrl;
+  const selectedUrl = windowEnvUrl || viteEnvUrl || fallbackUrl;
+  const cleanedUrl = cleanUrl(selectedUrl);
+  
+  console.log('Selected WEBHOOK_URL:', cleanedUrl);
+  return cleanedUrl;
 })();
 
 const WELCOME_MESSAGE = (() => {
@@ -127,6 +134,7 @@ export const useChatSessions = () => {
     setIsTyping(true);
 
     try {
+      console.log('Sending request to webhook URL:', WEBHOOK_URL);
       const response = await fetch(WEBHOOK_URL, {
         method: "POST",
         headers: {
@@ -151,6 +159,15 @@ export const useChatSessions = () => {
       };
 
       updateSession(currentSession.id, [...newMessages, assistantMessage]);
+    } catch (error) {
+      console.error('Error sending message:', error);
+      const errorMessage: Message = {
+        id: uuidv4(),
+        content: "Sorry, there was an error processing your message. Please try again later.",
+        role: "assistant",
+        timestamp: Date.now(),
+      };
+      updateSession(currentSession.id, [...newMessages, errorMessage]);
     } finally {
       setIsLoading(false);
       setIsTyping(false);

@@ -17,8 +17,16 @@ export const ChatMessage = ({ message }: ChatMessageProps) => {
 
   const handleCopy = async () => {
     try {
-      // Copy only the message content
-      await navigator.clipboard.writeText(message.content);
+      // Create a temporary container
+      const tempDiv = document.createElement('div');
+      tempDiv.innerHTML = message.content;
+      
+      // Get clean text
+      const cleanText = tempDiv.innerText
+        .replace(/\n{3,}/g, '\n\n')
+        .trim();
+
+      await navigator.clipboard.writeText(cleanText);
       
       toast({
         description: "Message copied to clipboard",

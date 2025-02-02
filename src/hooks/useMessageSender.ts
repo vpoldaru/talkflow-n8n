@@ -28,6 +28,11 @@ export const useMessageSender = (
       
       // Handle object responses
       if (typeof firstItem === 'object') {
+        // First check for message object with content
+        if (firstItem.message?.content && firstItem.message?.role === 'assistant') {
+          return firstItem.message.content;
+        }
+        
         // Check common response patterns
         const possibleContent = firstItem.message?.content || 
                               firstItem.content ||
@@ -49,6 +54,11 @@ export const useMessageSender = (
     
     // Handle single object response
     if (typeof data === 'object') {
+      // First check for message object with content
+      if (data.message?.content && data.message?.role === 'assistant') {
+        return data.message.content;
+      }
+      
       const possibleContent = data.message?.content || 
                             data.content ||
                             data.output ||

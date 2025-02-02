@@ -21,7 +21,7 @@ const WEBHOOK_URL = (() => {
   // For Docker production environment
   const windowEnvUrl = window.env?.VITE_N8N_WEBHOOK_URL;
   const viteEnvUrl = import.meta.env.VITE_N8N_WEBHOOK_URL;
-  const fallbackUrl = "https://n8n.martinclan.org/webhook/0949763f-f3f7-46bf-8676-c050d92e6966/chat";
+  const fallbackUrl = "https://n8n.martinclan.org/webhook/b7950eca-f56e-4307-85bc-e2d69a19c332/chat";
   
   console.log('WEBHOOK_URL sources:');
   console.log('- window.env.VITE_N8N_WEBHOOK_URL:', windowEnvUrl);

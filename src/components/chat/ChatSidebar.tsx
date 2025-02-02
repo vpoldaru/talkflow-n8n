@@ -2,7 +2,7 @@ import { Button } from "@/components/ui/button";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { ThemeToggle } from "@/components/ThemeToggle";
 import { ChatSession } from "@/types/chat";
-import { MessageSquare, PlusCircle, Trash2, Pencil, Check, X } from "lucide-react";
+import { MessageSquare, PlusCircle, Trash2, Pencil, Check, X, Star } from "lucide-react";
 import { format } from "date-fns";
 import { cn } from "@/lib/utils";
 import { toast } from "sonner";
@@ -17,6 +17,7 @@ interface ChatSidebarProps {
   onSessionSelect: (sessionId: string) => void;
   onDeleteSession: (sessionId: string) => void;
   onRenameSession: (sessionId: string, newName: string) => void;
+  onToggleFavorite: (sessionId: string) => void;
 }
 
 export const ChatSidebar = ({
@@ -27,6 +28,7 @@ export const ChatSidebar = ({
   onSessionSelect,
   onDeleteSession,
   onRenameSession,
+  onToggleFavorite,
 }: ChatSidebarProps) => {
   const [editingSessionId, setEditingSessionId] = useState<string | null>(null);
   const [editingName, setEditingName] = useState("");
@@ -38,12 +40,26 @@ export const ChatSidebar = ({
 
   const handleDelete = (e: React.MouseEvent, sessionId: string) => {
     e.stopPropagation();
+    const session = sessions.find(s => s.id === sessionId);
+    
+    if (session?.favorite) {
+      toast.error("Cannot delete a favorite chat");
+      return;
+    }
+    
     if (sessions.length === 1) {
       toast.error("Cannot delete the last chat session");
       return;
     }
     onDeleteSession(sessionId);
     toast.success("Chat deleted successfully");
+  };
+
+  const handleToggleFavorite = (e: React.MouseEvent, sessionId: string) => {
+    e.stopPropagation();
+    onToggleFavorite(sessionId);
+    const session = sessions.find(s => s.id === sessionId);
+    toast.success(session?.favorite ? "Chat removed from favorites" : "Chat added to favorites");
   };
 
   const startEditing = (e: React.MouseEvent, session: ChatSession) => {
@@ -122,6 +138,17 @@ export const ChatSidebar = ({
               </div>
               {editingSessionId !== session.id && (
                 <div className="opacity-0 group-hover:opacity-100 absolute right-2 flex gap-1">
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    className={cn(
+                      "h-6 w-6",
+                      session.favorite && "text-yellow-500 opacity-100"
+                    )}
+                    onClick={(e) => handleToggleFavorite(e, session.id)}
+                  >
+                    <Star className="h-3 w-3" fill={session.favorite ? "currentColor" : "none"} />
+                  </Button>
                   <Button
                     variant="ghost"
                     size="icon"

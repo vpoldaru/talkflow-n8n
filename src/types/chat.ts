@@ -16,4 +16,5 @@ export interface ChatSession {
   messages: Message[];
   createdAt: number;
   lastUpdated: number;
+  favorite?: boolean;
 }

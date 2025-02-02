@@ -46,9 +46,9 @@ export const MarkdownRenderer = ({ content }: MarkdownRendererProps) => {
   // Process the content to properly handle LaTeX delimiters
   let processedContent = content
     // Handle display math mode
-    .replace(/\$\$(.*?)\$\$/gs, '\\[$1\\]')
+    .replace(/\$\$([\s\S]*?)\$\$/g, (_, math) => `\\[${math.trim()}\\]`)
     // Handle inline math mode
-    .replace(/\$(.*?)\$/g, '\\($1\\)');
+    .replace(/\$([^$\n]+?)\$/g, (_, math) => `\\(${math.trim()}\\)`);
 
   // Render the markdown content
   const renderedContent = md.render(processedContent);

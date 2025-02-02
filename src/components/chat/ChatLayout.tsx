@@ -32,42 +32,51 @@ export const ChatLayout = ({
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const isMobile = useIsMobile();
   const { toast } = useToast();
+  const [pendingImage, setPendingImage] = useState<File | null>(null);
 
   const currentSession = sessions.find(s => s.id === currentSessionId);
 
-  const handleSend = (e: React.FormEvent) => {
+  const handleSend = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!input.trim()) return;
-    onSendMessage(input);
+
+    if (pendingImage) {
+      const formData = new FormData();
+      formData.append('file', pendingImage);
+      
+      try {
+        const response = await fetch('/api/upload', {
+          method: 'POST',
+          body: formData
+        });
+        
+        if (!response.ok) throw new Error('Upload failed');
+        
+        const { url } = await response.json();
+        const imageMarkdown = `${input}\n\n![Uploaded Image](${url})`;
+        onSendMessage(imageMarkdown);
+        setPendingImage(null);
+        
+        toast({
+          description: "Message with image sent successfully",
+          duration: 2000,
+        });
+      } catch (error) {
+        toast({
+          description: "Failed to upload image",
+          variant: "destructive",
+        });
+        return;
+      }
+    } else {
+      onSendMessage(input);
+    }
+    
     setInput("");
   };
 
-  const handleImageSelect = async (file: File) => {
-    const formData = new FormData();
-    formData.append('file', file);
-    
-    try {
-      const response = await fetch('/api/upload', {
-        method: 'POST',
-        body: formData
-      });
-      
-      if (!response.ok) throw new Error('Upload failed');
-      
-      const { url } = await response.json();
-      const imageMarkdown = `![Uploaded Image](${url})`;
-      onSendMessage(imageMarkdown);
-      
-      toast({
-        description: "Image uploaded successfully",
-        duration: 2000,
-      });
-    } catch (error) {
-      toast({
-        description: "Failed to upload image",
-        variant: "destructive",
-      });
-    }
+  const handleImageSelect = (file: File) => {
+    setPendingImage(file);
   };
 
   const handleSessionClick = (sessionId: string) => {

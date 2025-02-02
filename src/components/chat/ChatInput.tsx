@@ -1,10 +1,11 @@
 import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
-import { useRef } from "react";
-import { Loader2, Send, Mic } from "lucide-react";
+import { useRef, useState } from "react";
+import { Loader2, Send, Mic, X } from "lucide-react";
 import { useSpeechRecognition } from "@/hooks/useSpeechRecognition";
 import { ImageUpload } from "./ImageUpload";
 import { useToast } from "@/hooks/use-toast";
+import Image from "next/image";
 
 interface ChatInputProps {
   input: string;
@@ -23,6 +24,7 @@ export const ChatInput = ({
 }: ChatInputProps) => {
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const { toast } = useToast();
+  const [previewImage, setPreviewImage] = useState<{ file: File; url: string } | null>(null);
   const { isListening, startListening } = useSpeechRecognition({
     onTranscript: (transcript) => onInputChange(input + transcript)
   });
@@ -39,7 +41,11 @@ export const ChatInput = ({
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (!isLoading && input.trim()) {
+      if (previewImage && onImageSelect) {
+        onImageSelect(previewImage.file);
+      }
       onSend(e);
+      setPreviewImage(null);
     }
   };
 
@@ -63,9 +69,19 @@ export const ChatInput = ({
         return;
       }
 
-      if (onImageSelect) {
-        onImageSelect(file);
-      }
+      handleImageSelection(file);
+    }
+  };
+
+  const handleImageSelection = (file: File) => {
+    const imageUrl = URL.createObjectURL(file);
+    setPreviewImage({ file, url: imageUrl });
+  };
+
+  const clearPreviewImage = () => {
+    if (previewImage) {
+      URL.revokeObjectURL(previewImage.url);
+      setPreviewImage(null);
     }
   };
 
@@ -73,8 +89,26 @@ export const ChatInput = ({
 
   return (
     <form onSubmit={handleSubmit} className="fixed bottom-0 left-0 right-0 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
-      <div className="w-full max-w-[900px] mx-auto px-4 py-4">
-        <div className="relative">
+      <div className="w-full max-w-[900px] mx-auto px-4">
+        {previewImage && (
+          <div className="relative inline-block mb-2">
+            <div className="relative w-16 h-16 rounded-lg overflow-hidden">
+              <img
+                src={previewImage.url}
+                alt="Preview"
+                className="object-cover w-full h-full"
+              />
+              <button
+                type="button"
+                onClick={clearPreviewImage}
+                className="absolute top-0 right-0 p-1 bg-black/50 rounded-bl hover:bg-black/70"
+              >
+                <X className="h-4 w-4 text-white" />
+              </button>
+            </div>
+          </div>
+        )}
+        <div className="relative py-4">
           <Textarea
             placeholder="Type a message or paste an image..."
             value={input}
@@ -94,7 +128,7 @@ export const ChatInput = ({
           <div className="absolute left-2 bottom-2.5">
             {onImageSelect && (
               <ImageUpload 
-                onImageSelect={onImageSelect}
+                onImageSelect={handleImageSelection}
                 disabled={isLoading}
               />
             )}

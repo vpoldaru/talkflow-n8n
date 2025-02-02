@@ -26,14 +26,14 @@ COPY nginx.conf /etc/nginx/conf.d/default.conf
 
 # Create env-config.js template
 RUN echo "window.env = {" > /usr/share/nginx/html/env-config.template.js && \
-    echo "  VITE_N8N_WEBHOOK_URL: \"__VITE_N8N_WEBHOOK_URL__\"," >> /usr/share/nginx/html/env-config.template.js && \
-    echo "  VITE_WELCOME_MESSAGE: \"__VITE_WELCOME_MESSAGE__\"" >> /usr/share/nginx/html/env-config.template.js && \
+    echo "  VITE_N8N_WEBHOOK_URL: \"\$VITE_N8N_WEBHOOK_URL\"," >> /usr/share/nginx/html/env-config.template.js && \
+    echo "  VITE_WELCOME_MESSAGE: \"\$VITE_WELCOME_MESSAGE\"" >> /usr/share/nginx/html/env-config.template.js && \
     echo "};" >> /usr/share/nginx/html/env-config.template.js
 
 # Create a script to replace environment variables
 RUN echo '#!/bin/sh\n\
     # Replace environment variables in env-config.js\n\
-    envsubst "$(printf \"$%s \" $(env | cut -d= -f1))" < /usr/share/nginx/html/env-config.template.js > /usr/share/nginx/html/env-config.js\n\
+    envsubst < /usr/share/nginx/html/env-config.template.js > /usr/share/nginx/html/env-config.js\n\
     \n\
     # Start nginx\n\
     nginx -g "daemon off;"' > /docker-entrypoint.sh \

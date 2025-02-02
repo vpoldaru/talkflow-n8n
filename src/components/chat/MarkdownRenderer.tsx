@@ -13,6 +13,14 @@ export const MarkdownRenderer = ({ content }: MarkdownRendererProps) => {
         p: ({ children }) => (
           <p className="mb-2 last:mb-0 leading-relaxed text-left">{children}</p>
         ),
+        img: ({ src, alt }) => (
+          <img 
+            src={src} 
+            alt={alt} 
+            className="max-w-full h-auto rounded-lg my-2 border border-slate-200 dark:border-slate-700"
+            style={{ maxHeight: '400px' }}
+          />
+        ),
         h1: ({ children }) => (
           <h1 className="text-2xl font-bold mb-4 bg-clip-text text-transparent bg-gradient-to-r from-slate-900 to-slate-700 dark:from-slate-100 dark:to-slate-300 text-left">{children}</h1>
         ),

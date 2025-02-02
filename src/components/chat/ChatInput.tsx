@@ -3,12 +3,14 @@ import { Button } from "@/components/ui/button";
 import { useRef } from "react";
 import { Loader2, Send, Mic } from "lucide-react";
 import { useSpeechRecognition } from "@/hooks/useSpeechRecognition";
+import { ImageUpload } from "./ImageUpload";
 
 interface ChatInputProps {
   input: string;
   isLoading: boolean;
   onInputChange: (value: string) => void;
   onSend: (e: React.FormEvent) => void;
+  onImageSelect?: (base64Image: string) => void;
 }
 
 export const ChatInput = ({
@@ -16,6 +18,7 @@ export const ChatInput = ({
   isLoading,
   onInputChange,
   onSend,
+  onImageSelect,
 }: ChatInputProps) => {
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const { isListening, startListening } = useSpeechRecognition({
@@ -48,6 +51,12 @@ export const ChatInput = ({
             />
           </div>
           <div className="flex flex-col gap-2">
+            {onImageSelect && (
+              <ImageUpload 
+                onImageSelect={onImageSelect}
+                disabled={isLoading}
+              />
+            )}
             <Button 
               type="button" 
               size="icon" 

@@ -4,7 +4,8 @@ import { ChatSidebar } from "@/components/chat/ChatSidebar";
 import { ChatSession } from "@/types/chat";
 import { useState } from "react";
 import { useIsMobile } from "@/hooks/use-mobile";
-import { Menu } from "lucide-react"; // Added this import
+import { Menu } from "lucide-react";
+import { useToast } from "@/hooks/use-toast";
 
 interface ChatLayoutProps {
   sessions: ChatSession[];
@@ -30,6 +31,7 @@ export const ChatLayout = ({
   const [input, setInput] = useState("");
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const isMobile = useIsMobile();
+  const { toast } = useToast();
 
   const currentSession = sessions.find(s => s.id === currentSessionId);
 
@@ -38,6 +40,15 @@ export const ChatLayout = ({
     if (!input.trim()) return;
     onSendMessage(input);
     setInput("");
+  };
+
+  const handleImageSelect = (base64Image: string) => {
+    const imageMarkdown = `![Uploaded Image](${base64Image})`;
+    onSendMessage(imageMarkdown);
+    toast({
+      description: "Image uploaded successfully",
+      duration: 2000,
+    });
   };
 
   const handleSessionClick = (sessionId: string) => {
@@ -76,6 +87,7 @@ export const ChatLayout = ({
               isLoading={isLoading}
               onInputChange={setInput}
               onSend={handleSend}
+              onImageSelect={handleImageSelect}
             />
           </>
         )}

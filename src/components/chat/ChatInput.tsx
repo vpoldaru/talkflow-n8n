@@ -39,14 +39,22 @@ export const ChatInput = ({
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    console.log('ChatInput handleSubmit called with previewImage:', previewImage ? {
+      fileName: previewImage.file.name,
+      fileSize: previewImage.file.size,
+      fileType: previewImage.file.type
+    } : null);
+
     if (!isLoading && input.trim()) {
       if (previewImage && onImageSelect) {
-        // First handle the image upload
+        console.log('Calling onImageSelect with file:', {
+          fileName: previewImage.file.name,
+          fileSize: previewImage.file.size,
+          fileType: previewImage.file.type
+        });
         onImageSelect(previewImage.file);
       }
-      // Then send the message
       onSend(e);
-      // Clear the preview image after sending
       if (previewImage) {
         URL.revokeObjectURL(previewImage.url);
         setPreviewImage(null);
@@ -74,17 +82,28 @@ export const ChatInput = ({
         return;
       }
 
+      console.log('Image pasted:', {
+        fileName: file.name,
+        fileSize: file.size,
+        fileType: file.type
+      });
       handleImageSelection(file);
     }
   };
 
   const handleImageSelection = (file: File) => {
+    console.log('handleImageSelection called with file:', {
+      fileName: file.name,
+      fileSize: file.size,
+      fileType: file.type
+    });
     const imageUrl = URL.createObjectURL(file);
     setPreviewImage({ file, url: imageUrl });
   };
 
   const clearPreviewImage = () => {
     if (previewImage) {
+      console.log('Clearing preview image:', previewImage.file.name);
       URL.revokeObjectURL(previewImage.url);
       setPreviewImage(null);
     }

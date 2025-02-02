@@ -9,20 +9,13 @@ interface MarkdownRendererProps {
 }
 
 export const MarkdownRenderer = ({ content }: MarkdownRendererProps) => {
+  // Create markdown renderer with KaTeX support
   const md = createMarkdownRenderer();
 
-  // Handle code blocks
-  md.renderer.rules.fence = (tokens, idx) => {
-    const token = tokens[idx];
-    const code = token.content.trim();
-    const lang = token.info || 'text';
-
-    return `<div class="my-4">${CodeBlock({ language: lang, children: code })}</div>`;
-  };
-
-  // Process content
+  // Process content to handle LaTeX delimiters
   const processedContent = (typeof content === 'string' ? content : JSON.stringify(content))
     .replace(/^```markdown\n([\s\S]*?)```$/g, '$1')
+    // Ensure proper spacing around LaTeX delimiters
     .replace(/\s*\$\$\s*/g, '$$')
     .replace(/\s*\$\s*/g, '$');
 

@@ -124,7 +124,7 @@ export const ChatInput = ({
               maxHeight: '200px'
             }}
           />
-          <div className="absolute left-2 bottom-2.5">
+          <div className="absolute left-3 bottom-6">
             {onImageSelect && (
               <ImageUpload 
                 onImageSelect={handleImageSelection}
@@ -132,7 +132,7 @@ export const ChatInput = ({
               />
             )}
           </div>
-          <div className="absolute right-2 bottom-2.5 flex items-center gap-2">
+          <div className="absolute right-3 bottom-6 flex items-center gap-2">
             <Button 
               type="button" 
               size="icon" 

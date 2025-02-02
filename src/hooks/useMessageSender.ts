@@ -18,7 +18,7 @@ export const useMessageSender = (
     currentMessages: Message[],
     file?: File
   ) => {
-    console.log('sendMessage called with:', {
+    console.log('useMessageSender sendMessage called with:', {
       input,
       sessionId,
       hasFile: !!file,
@@ -40,7 +40,12 @@ export const useMessageSender = (
 
     // If there's a file, process it and add it to the message
     if (file) {
-      console.log('Processing file in useMessageSender:', file.name);
+      console.log('Processing file in useMessageSender:', {
+        fileName: file.name,
+        fileSize: file.size,
+        fileType: file.type
+      });
+      
       try {
         const formData = await createFormDataWithFile(input, sessionId, file);
         const base64Data = formData.get('data') as string;
@@ -99,7 +104,8 @@ export const useMessageSender = (
         url: webhook_url,
         payloadKeys: Object.keys(payload),
         hasImageData: !!userMessage.imageData,
-        payloadSize: JSON.stringify(payload).length
+        payloadSize: JSON.stringify(payload).length,
+        imageDataPreview: userMessage.imageData ? `${userMessage.imageData.data.substring(0, 50)}...` : null
       });
 
       const response = await fetch(webhook_url, {

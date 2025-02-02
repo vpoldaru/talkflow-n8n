@@ -46,7 +46,6 @@ export const ChatInput = ({
       
       if (!file) return;
 
-      // Check file size (5MB limit)
       if (file.size > 5 * 1024 * 1024) {
         toast({
           description: "Image must be less than 5MB",
@@ -69,43 +68,44 @@ export const ChatInput = ({
   const isInputEmpty = input.length === 0 || !input.trim();
 
   return (
-    <form onSubmit={onSend} className="fixed bottom-0 left-0 right-0 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 flex justify-center items-center">
-      <div className="w-full max-w-[900px] px-4 py-4">
-        <div className="flex gap-4">
-          <div className="relative flex-1">
-            <Textarea
-              placeholder="Type a message or paste an image..."
-              value={input}
-              onChange={(e) => onInputChange(e.target.value)}
-              onKeyDown={handleKeyDown}
-              onPaste={handlePaste}
-              ref={textareaRef}
-              rows={2}
-              className="min-h-[68px] w-full resize-none bg-background px-4 py-3 focus-visible:ring-1"
-              disabled={isLoading}
-            />
-          </div>
-          <div className="flex flex-col gap-2">
+    <form onSubmit={onSend} className="fixed bottom-0 left-0 right-0 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
+      <div className="w-full max-w-[900px] mx-auto px-4 py-4">
+        <div className="relative">
+          <Textarea
+            placeholder="Type a message or paste an image..."
+            value={input}
+            onChange={(e) => onInputChange(e.target.value)}
+            onKeyDown={handleKeyDown}
+            onPaste={handlePaste}
+            ref={textareaRef}
+            rows={1}
+            className="min-h-[24px] w-full resize-none bg-background pr-24 pl-12 py-3 focus-visible:ring-1"
+            disabled={isLoading}
+          />
+          <div className="absolute left-2 bottom-2.5">
             {onImageSelect && (
               <ImageUpload 
                 onImageSelect={onImageSelect}
                 disabled={isLoading}
               />
             )}
+          </div>
+          <div className="absolute right-2 bottom-2.5 flex items-center gap-2">
             <Button 
               type="button" 
               size="icon" 
               variant={isListening ? "default" : "ghost"}
-              className="shrink-0"
+              className="h-8 w-8"
               onClick={startListening}
+              disabled={isLoading}
             >
               <Mic className="h-4 w-4" />
             </Button>
             <Button 
               type="submit" 
-              size="icon" 
+              size="icon"
+              className="h-8 w-8"
               disabled={isLoading || isInputEmpty}
-              className="shrink-0"
             >
               {isLoading ? (
                 <Loader2 className="h-4 w-4 animate-spin" />

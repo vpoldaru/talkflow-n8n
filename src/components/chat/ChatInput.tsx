@@ -31,46 +31,40 @@ export const ChatInput = ({
   const handleKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
     if (e.key === "Enter" && !e.shiftKey) {
       e.preventDefault();
-      if (!isLoading && (input.trim() || previewImage)) {
-        handleSubmit(e);
-      }
+      handleSubmit(e);
     }
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
-    if (!isLoading && (input.trim() || previewImage)) {
-      let messageText = input.trim();
-      
-      // If there's an image but no text, set a default message
-      if (previewImage && !messageText) {
-        messageText = "See image for details";
-      }
+    // Only proceed if we have an image or text input
+    if (isLoading || (!input.trim() && !previewImage)) {
+      return;
+    }
 
-      console.log('ChatInput handleSubmit called with previewImage:', previewImage ? {
-        fileName: previewImage.file.name,
-        fileSize: previewImage.file.size,
-        fileType: previewImage.file.type
-      } : null);
+    // Set message text - if there's no input but there is an image, use default message
+    const messageText = input.trim() || (previewImage ? "See image for details" : "");
+    
+    try {
+      // Update input with message text before sending
+      onInputChange(messageText);
       
-      const currentFile = previewImage?.file;
+      // Send the message with image if present
+      await onSend(e, previewImage?.file);
       
-      try {
-        await onSend(e, currentFile);
-        onInputChange("");
-        
-        if (previewImage) {
-          URL.revokeObjectURL(previewImage.url);
-          setPreviewImage(null);
-        }
-      } catch (error) {
-        console.error('Error sending message:', error);
-        toast({
-          description: "Failed to send message",
-          variant: "destructive",
-        });
+      // Clear input and image after successful send
+      onInputChange("");
+      if (previewImage) {
+        URL.revokeObjectURL(previewImage.url);
+        setPreviewImage(null);
       }
+    } catch (error) {
+      console.error('Error sending message:', error);
+      toast({
+        description: "Failed to send message",
+        variant: "destructive",
+      });
     }
   };
 

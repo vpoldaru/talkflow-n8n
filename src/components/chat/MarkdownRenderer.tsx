@@ -11,7 +11,21 @@ interface MarkdownRendererProps {
 }
 
 export const MarkdownRenderer = ({ content }: MarkdownRendererProps) => {
-  // Clean up LaTeX delimiters and prepare content
+  // Check if content is LaTeX-heavy (contains multiple LaTeX expressions)
+  const latexPatterns = [/\\\[.*?\\\]/gs, /\\\(.*?\\\)/gs, /\$\$.*?\$\$/gs, /\$.*?\$/gs];
+  const latexCount = latexPatterns.reduce((count, pattern) => 
+    count + (content.match(pattern)?.length || 0), 0);
+  
+  // If there are multiple LaTeX expressions, render the entire content as a code block
+  if (latexCount > 2) {
+    return (
+      <CodeBlock language="latex">
+        {content}
+      </CodeBlock>
+    );
+  }
+
+  // Clean up LaTeX delimiters and prepare content for normal rendering
   const cleanContent = content
     .replace(/\\\[/g, '```math\n')
     .replace(/\\\]/g, '\n```')

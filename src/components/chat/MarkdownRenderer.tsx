@@ -11,14 +11,16 @@ interface MarkdownRendererProps {
 }
 
 export const MarkdownRenderer = ({ content }: MarkdownRendererProps) => {
-  // Clean up LaTeX delimiters
+  // Clean up LaTeX delimiters and prepare content
   const cleanContent = content
-    .replace(/\\\[/g, '$$')
-    .replace(/\\\]/g, '$$')
-    .replace(/\\\(/g, '$')
-    .replace(/\\\)/g, '$')
-    .replace(/\u0000/g, '') // Remove null characters
-    .replace(/\\{2,}/g, '\\'); // Fix double backslashes
+    .replace(/\\\[/g, '```math\n')
+    .replace(/\\\]/g, '\n```')
+    .replace(/\\\(/g, '`')
+    .replace(/\\\)/g, '`')
+    .replace(/\$\$(.*?)\$\$/g, '```math\n$1\n```')
+    .replace(/\$(.*?)\$/g, '`$1`')
+    .replace(/\u0000/g, '')
+    .replace(/\\{2,}/g, '\\');
 
   return (
     <ReactMarkdown
@@ -67,13 +69,14 @@ export const MarkdownRenderer = ({ content }: MarkdownRendererProps) => {
           const match = /language-(\w+)/.exec(className || '');
           const isInline = !match;
           
-          // Check if it's LaTeX content
-          const isLatex = className === 'math' || /^\$.*\$$/.test(String(children));
-          
-          if (isLatex) {
+          // Handle LaTeX content
+          if (match?.[1] === 'math' || /^\$.*\$$/.test(String(children))) {
+            const cleanLatex = String(children)
+              .replace(/^\$|\$$/g, '')
+              .trim();
             return (
               <LaTeXBlock 
-                content={String(children).replace(/^\$|\$$/g, '')}
+                content={cleanLatex}
                 inline={isInline}
               />
             );

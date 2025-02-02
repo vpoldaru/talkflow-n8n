@@ -12,6 +12,7 @@ export interface Message {
 
 export interface ChatSession {
   id: string;
+  name?: string;
   messages: Message[];
   createdAt: number;
   lastUpdated: number;

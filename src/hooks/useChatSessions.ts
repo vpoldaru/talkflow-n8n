@@ -125,6 +125,14 @@ export const useChatSessions = () => {
     }
   };
 
+  const renameSession = (sessionId: string, newName: string) => {
+    setSessions(prev => prev.map(session =>
+      session.id === sessionId
+        ? { ...session, name: newName }
+        : session
+    ));
+  };
+
   const sendMessage = async (input: string, file?: File) => {
     const currentSession = getCurrentSession();
     if (!currentSession) return;
@@ -145,6 +153,7 @@ export const useChatSessions = () => {
     getCurrentSession,
     createNewSession,
     deleteSession,
+    renameSession,
     sendMessage,
     setCurrentSessionId,
   };

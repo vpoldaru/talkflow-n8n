@@ -2,10 +2,12 @@ import { Button } from "@/components/ui/button";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { ThemeToggle } from "@/components/ThemeToggle";
 import { ChatSession } from "@/types/chat";
-import { MessageSquare, PlusCircle, Trash2 } from "lucide-react";
+import { MessageSquare, PlusCircle, Trash2, Pencil, Check, X } from "lucide-react";
 import { format } from "date-fns";
 import { cn } from "@/lib/utils";
 import { toast } from "sonner";
+import { useState } from "react";
+import { Input } from "@/components/ui/input";
 
 interface ChatSidebarProps {
   sessions: ChatSession[];
@@ -14,6 +16,7 @@ interface ChatSidebarProps {
   onNewChat: () => void;
   onSessionSelect: (sessionId: string) => void;
   onDeleteSession: (sessionId: string) => void;
+  onRenameSession: (sessionId: string, newName: string) => void;
 }
 
 export const ChatSidebar = ({
@@ -23,7 +26,11 @@ export const ChatSidebar = ({
   onNewChat,
   onSessionSelect,
   onDeleteSession,
+  onRenameSession,
 }: ChatSidebarProps) => {
+  const [editingSessionId, setEditingSessionId] = useState<string | null>(null);
+  const [editingName, setEditingName] = useState("");
+
   const getFirstMessage = (messages: ChatSession["messages"]) => {
     const userMessage = messages.find(m => m.role === "user");
     return userMessage ? userMessage.content : "New Chat";
@@ -37,6 +44,26 @@ export const ChatSidebar = ({
     }
     onDeleteSession(sessionId);
     toast.success("Chat deleted successfully");
+  };
+
+  const startEditing = (e: React.MouseEvent, session: ChatSession) => {
+    e.stopPropagation();
+    setEditingSessionId(session.id);
+    setEditingName(session.name || getFirstMessage(session.messages));
+  };
+
+  const handleRename = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (editingSessionId && editingName.trim()) {
+      onRenameSession(editingSessionId, editingName.trim());
+      setEditingSessionId(null);
+      toast.success("Chat renamed successfully");
+    }
+  };
+
+  const cancelEditing = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    setEditingSessionId(null);
   };
 
   return (
@@ -67,21 +94,52 @@ export const ChatSidebar = ({
             >
               <MessageSquare className="w-4 h-4 shrink-0" />
               <div className="truncate flex-1">
-                <div className="font-medium truncate">
-                  {getFirstMessage(session.messages)}
-                </div>
-                <div className="text-xs text-muted-foreground">
-                  {format(session.lastUpdated, 'MMM d, h:mm a')}
-                </div>
+                {editingSessionId === session.id ? (
+                  <form onSubmit={handleRename} onClick={e => e.stopPropagation()} className="flex items-center gap-2">
+                    <Input
+                      value={editingName}
+                      onChange={e => setEditingName(e.target.value)}
+                      className="h-6 text-sm"
+                      autoFocus
+                    />
+                    <Button type="submit" size="icon" variant="ghost" className="h-6 w-6">
+                      <Check className="h-4 w-4" />
+                    </Button>
+                    <Button type="button" size="icon" variant="ghost" className="h-6 w-6" onClick={cancelEditing}>
+                      <X className="h-4 w-4" />
+                    </Button>
+                  </form>
+                ) : (
+                  <>
+                    <div className="font-medium truncate">
+                      {session.name || getFirstMessage(session.messages)}
+                    </div>
+                    <div className="text-xs text-muted-foreground">
+                      {format(session.lastUpdated, 'MMM d, h:mm a')}
+                    </div>
+                  </>
+                )}
               </div>
-              <Button
-                variant="ghost"
-                size="icon"
-                className="opacity-0 group-hover:opacity-100 absolute right-2 hover:bg-destructive hover:text-destructive-foreground"
-                onClick={(e) => handleDelete(e, session.id)}
-              >
-                <Trash2 className="h-4 w-4" />
-              </Button>
+              {editingSessionId !== session.id && (
+                <div className="opacity-0 group-hover:opacity-100 absolute right-2 flex gap-1">
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    className="h-6 w-6"
+                    onClick={(e) => startEditing(e, session)}
+                  >
+                    <Pencil className="h-3 w-3" />
+                  </Button>
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    className="h-6 w-6 hover:bg-destructive hover:text-destructive-foreground"
+                    onClick={(e) => handleDelete(e, session.id)}
+                  >
+                    <Trash2 className="h-3 w-3" />
+                  </Button>
+                </div>
+              )}
             </button>
           ))}
         </div>

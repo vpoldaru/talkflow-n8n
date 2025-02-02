@@ -1,7 +1,7 @@
 import { cn } from '@/lib/utils';
 import { CodeBlock } from './CodeBlock';
 import { createMarkdownRenderer } from './KaTeXConfig';
-import { StyleProvider, getCustomStyles } from './StyleProvider';
+import { StyleProvider } from './StyleProvider';
 import 'katex/dist/katex.min.css';
 
 interface MarkdownRendererProps {
@@ -9,15 +9,14 @@ interface MarkdownRendererProps {
 }
 
 export const MarkdownRenderer = ({ content }: MarkdownRendererProps) => {
-  // Create markdown renderer with KaTeX support
   const md = createMarkdownRenderer();
 
-  // Process content to handle LaTeX delimiters
+  // Process the content
   const processedContent = (typeof content === 'string' ? content : JSON.stringify(content))
     .replace(/^```markdown\n([\s\S]*?)```$/g, '$1')
-    // Ensure proper spacing around LaTeX delimiters
-    .replace(/\s*\$\$\s*/g, '$$')
-    .replace(/\s*\$\s*/g, '$');
+    .replace(/\$\$\s*([\s\S]*?)\s*\$\$/g, (_, math) => {
+      return `\`\`\`math\n$$${math}$$\n\`\`\``;
+    });
 
   // Render the markdown content
   const renderedContent = md.render(processedContent);
@@ -34,7 +33,7 @@ export const MarkdownRenderer = ({ content }: MarkdownRendererProps) => {
           "prose-pre:bg-slate-900 dark:prose-pre:bg-slate-800",
           "prose-hr:border-slate-200 dark:prose-hr:border-slate-700"
         )}
-        dangerouslySetInnerHTML={{ __html: getCustomStyles() + renderedContent }}
+        dangerouslySetInnerHTML={{ __html: renderedContent }}
       />
     </StyleProvider>
   );

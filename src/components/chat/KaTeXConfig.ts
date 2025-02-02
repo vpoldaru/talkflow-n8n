@@ -9,65 +9,35 @@ export const createMarkdownRenderer = () => {
     breaks: true
   });
 
-  // Custom renderer for block math
-  md.use((md) => {
-    const defaultRender = md.renderer.rules.fence || ((tokens, idx, options, env, self) => {
-      return self.renderToken(tokens, idx, options);
-    });
-
-    // Handle block math
-    const renderBlockMath = (content: string) => {
-      return `<div class="code-block-latex">
-        <div class="code-block-header">
-          <span class="text-xs text-slate-400">LaTeX</span>
+  // Custom renderer for code blocks
+  md.renderer.rules.fence = (tokens, idx, options, env, self) => {
+    const token = tokens[idx];
+    const content = token.content.trim();
+    
+    // Check if this is a LaTeX block
+    if (content.startsWith('$$') && content.endsWith('$$')) {
+      const math = content.slice(2, -2).trim();
+      return `
+        <div class="code-block-latex">
+          <div class="code-block-header">LaTeX</div>
+          <div class="code-block-content">${math}</div>
         </div>
-        <div class="code-block-content">
-          ${content}
-        </div>
-      </div>`;
-    };
+      `;
+    }
+    
+    // Regular code block
+    return `<pre class="language-${token.info}"><code>${content}</code></pre>`;
+  };
 
-    md.renderer.rules.fence = (tokens, idx, options, env, self) => {
-      const token = tokens[idx];
-      const content = token.content.trim();
-      
-      // Check if content is wrapped in $$ and handle as block math
-      if (content.startsWith('$$') && content.endsWith('$$')) {
-        const math = content.slice(2, -2).trim();
-        return renderBlockMath(math);
-      }
-      
-      return defaultRender(tokens, idx, options, env, self);
-    };
-
-    // Handle inline math with custom renderer
-    md.renderer.rules.text = (tokens, idx) => {
-      const text = tokens[idx].content;
-      const parts = text.split(/(\$[^\$]+\$)/g);
-      
-      return parts.map(part => {
-        if (part.startsWith('$') && part.endsWith('$')) {
-          const math = part.slice(1, -1);
-          return `<span class="katex-inline">${math}</span>`;
-        }
-        return part;
-      }).join('');
-    };
-
-    return md;
-  });
-
-  // Apply KaTeX plugin with configuration
+  // Configure KaTeX
   md.use(mk, {
     throwOnError: false,
     errorColor: '#cc0000',
+    displayMode: true,
     delimiters: [
-      { left: "$$", right: "$$", display: true },
-      { left: "$", right: "$", display: false }
-    ],
-    macros: {
-      "\\RR": "\\mathbb{R}"
-    }
+      { left: '$$', right: '$$', display: true },
+      { left: '$', right: '$', display: false }
+    ]
   });
 
   return md;

@@ -2,12 +2,13 @@ import React from 'react';
 
 export const getCustomStyles = () => `
   <style>
+    /* KaTeX base styles */
     .katex { 
       font-size: 1.1em !important;
       font-family: KaTeX_Main, 'Times New Roman', serif !important;
     }
     
-    /* Code block style for block LaTeX */
+    /* Block LaTeX styles */
     .code-block-latex {
       margin: 1.5rem 0;
       background: rgb(15 23 42 / 0.95);
@@ -20,15 +21,17 @@ export const getCustomStyles = () => `
       padding: 0.5rem 1rem;
       background: rgb(30 41 59 / 0.95);
       border-bottom: 1px solid rgb(51 65 85 / 0.5);
+      color: #e2e8f0;
+      font-family: ui-monospace, monospace;
+      font-size: 0.875rem;
     }
 
     .code-block-content {
       padding: 1rem;
       overflow-x: auto;
       color: #e2e8f0;
-      font-family: 'Fira Code', monospace;
-      font-size: 0.875rem;
-      line-height: 1.5;
+      font-family: KaTeX_Main, 'Times New Roman', serif;
+      font-size: 1.1em;
     }
 
     /* Inline math styling */
@@ -44,20 +47,10 @@ export const getCustomStyles = () => `
       background: rgba(255, 255, 255, 0.05);
     }
 
-    /* Additional styles for better visibility */
-    .markdown-content { 
-      color: inherit;
-      font-size: 1rem;
-      line-height: 1.75;
-    }
-    .markdown-content p { margin: 1.5em 0; }
-    .markdown-content h3 { 
-      color: #1e293b;
-      font-size: 1.3em;
-      margin: 2em 0 1em 0;
-      font-weight: 600;
-    }
-    .dark .markdown-content h3 { color: #e5e7eb; }
+    /* Dark mode adjustments */
+    .dark .katex { color: #e2e8f0; }
+    .dark .code-block-latex { background: rgb(15 23 42 / 0.95); }
+    .dark .code-block-header { background: rgb(30 41 59 / 0.95); }
   </style>
 `;
 

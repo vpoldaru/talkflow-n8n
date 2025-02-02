@@ -79,7 +79,7 @@ export const ChatInput = ({
             onPaste={handlePaste}
             ref={textareaRef}
             rows={1}
-            className="min-h-[24px] w-full resize-none bg-muted rounded-xl pr-24 pl-12 py-3 focus-visible:ring-1"
+            className="min-h-[24px] w-full resize-none bg-[#1A1F2C] text-white rounded-xl pr-24 pl-12 py-3 focus-visible:ring-1 border-none"
             disabled={isLoading}
           />
           <div className="absolute left-2 bottom-2.5">
@@ -95,7 +95,7 @@ export const ChatInput = ({
               type="button" 
               size="icon" 
               variant="ghost"
-              className="h-8 w-8"
+              className="h-8 w-8 text-white hover:bg-[#2A2F3C]"
               onClick={startListening}
               disabled={isLoading}
             >

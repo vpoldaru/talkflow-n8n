@@ -80,7 +80,7 @@
 
 .katex-display {
   overflow-x: auto;
-  overflow-y: hidden;
+  overflow-y: visible;
   padding: 0.5em;
   margin: 0.5em 0;
   background: rgba(15, 23, 42, 0.03);

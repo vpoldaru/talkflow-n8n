@@ -116,9 +116,16 @@ export const useChatSessions = () => {
     }
   };
 
-  const sendMessage = async (input: string) => {
+  const sendMessage = async (input: string, file?: File) => {
     const currentSession = getCurrentSession();
     if (!currentSession || !input.trim() || !WEBHOOK_URL) return;
+
+    const formData = new FormData();
+    formData.append('chatInput', input);
+    formData.append('sessionId', currentSession.id);
+    if (file) {
+      formData.append('file', file);
+    }
 
     const userMessage: Message = {
       id: uuidv4(),
@@ -137,13 +144,7 @@ export const useChatSessions = () => {
       console.log('Sending request to webhook URL:', WEBHOOK_URL);
       const response = await fetch(WEBHOOK_URL, {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ 
-          chatInput: input,
-          sessionId: currentSession.id 
-        }),
+        body: formData,
       });
 
       if (!response.ok) {

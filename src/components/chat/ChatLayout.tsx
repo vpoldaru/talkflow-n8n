@@ -15,7 +15,7 @@ interface ChatLayoutProps {
   onNewChat: () => void;
   onSessionSelect: (sessionId: string) => void;
   onDeleteSession: (sessionId: string) => void;
-  onSendMessage: (message: string) => void;
+  onSendMessage: (message: string, file?: File) => void;
 }
 
 export const ChatLayout = ({
@@ -40,34 +40,16 @@ export const ChatLayout = ({
     e.preventDefault();
     if (!input.trim()) return;
 
-    let messageText = input;
-
-    if (pendingImage) {
-      const formData = new FormData();
-      formData.append('file', pendingImage);
-      
-      try {
-        const response = await fetch('/api/upload', {
-          method: 'POST',
-          body: formData
-        });
-        
-        if (!response.ok) throw new Error('Upload failed');
-        
-        const { url } = await response.json();
-        messageText = `${input}\n\n![Uploaded Image](${url})`;
-        setPendingImage(null);
-      } catch (error) {
-        toast({
-          description: "Failed to upload image",
-          variant: "destructive",
-        });
-        return;
-      }
+    try {
+      onSendMessage(input, pendingImage || undefined);
+      setInput("");
+      setPendingImage(null);
+    } catch (error) {
+      toast({
+        description: "Failed to send message",
+        variant: "destructive",
+      });
     }
-    
-    onSendMessage(messageText);
-    setInput("");
   };
 
   const handleImageSelect = (file: File) => {

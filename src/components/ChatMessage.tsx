@@ -17,50 +17,41 @@ export const ChatMessage = ({ message }: ChatMessageProps) => {
 
   const handleCopy = async () => {
     try {
+      // Create a temporary container
       const tempDiv = document.createElement('div');
-      tempDiv.innerHTML = document.querySelector('.markdown-content')?.innerHTML || '';
       
-      // Clean up the HTML content
-      const mathElements = tempDiv.querySelectorAll('.katex-html');
-      mathElements.forEach(elem => {
-        const textContent = elem.textContent?.trim() || '';
-        elem.textContent = textContent;
+      // Clone the markdown content
+      const contentDiv = document.querySelector('.markdown-content');
+      if (!contentDiv) {
+        throw new Error('Content not found');
+      }
+      
+      tempDiv.innerHTML = contentDiv.innerHTML;
+      
+      // Remove style tags
+      const styleTags = tempDiv.getElementsByTagName('style');
+      while (styleTags.length > 0) {
+        styleTags[0].parentNode?.removeChild(styleTags[0]);
+      }
+      
+      // Clean up KaTeX elements
+      const katexElements = tempDiv.querySelectorAll('.katex');
+      katexElements.forEach(elem => {
+        const texSource = elem.getAttribute('data-tex-source');
+        if (texSource) {
+          elem.textContent = texSource;
+        }
       });
-
-      // Remove unnecessary elements and preserve spacing
+      
+      // Get clean text
       const cleanText = tempDiv.innerText
         .replace(/\n{3,}/g, '\n\n')
         .trim();
 
-      if (navigator.clipboard && window.isSecureContext) {
-        await navigator.clipboard.writeText(cleanText);
-      } else {
-        const textArea = document.createElement('textarea');
-        textArea.value = cleanText;
-        textArea.style.position = 'fixed';
-        textArea.style.left = '-999999px';
-        textArea.style.top = '-999999px';
-        document.body.appendChild(textArea);
-        textArea.focus();
-        textArea.select();
-        
-        try {
-          document.execCommand('copy');
-        } catch (err) {
-          console.error('Failed to copy text:', err);
-          toast({
-            description: "Failed to copy text",
-            variant: "destructive",
-            duration: 2000,
-          });
-          return;
-        } finally {
-          textArea.remove();
-        }
-      }
+      await navigator.clipboard.writeText(cleanText);
       
       toast({
-        description: "Rendered text copied to clipboard",
+        description: "Content copied to clipboard",
         duration: 2000,
       });
     } catch (err) {

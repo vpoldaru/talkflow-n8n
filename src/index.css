@@ -37,7 +37,6 @@
   .dark {
     --background: 222.2 84% 4.9%;
     --foreground: 210 40% 98%;
-    
     --card: 222.2 84% 4.9%;
     --card-foreground: 210 40% 98%;
  
@@ -83,7 +82,7 @@
   overflow-x: hidden;
   overflow-y: hidden;
   padding: 1em;
-  margin: 2em 0;
+  margin: 0.75em 0;
   display: flex;
   justify-content: center;
   min-height: 2em;
@@ -101,20 +100,12 @@
 
 /* Ensure proper spacing in markdown content */
 .markdown-content p {
-  margin: 2em 0;
+  margin: 1em 0;
   line-height: 1.75;
 }
 
-.markdown-content h1,
-.markdown-content h2,
-.markdown-content h3,
-.markdown-content h4 {
-  margin-top: 2.5em;
-  margin-bottom: 1em;
-}
-
 .markdown-content .katex-display {
-  margin: 2em 0;
+  margin: 1em 0;
 }
 
 /* Adjust spacing for multi-line equations */

@@ -6,29 +6,31 @@ export const getCustomStyles = () => `
       font-size: 1.1em !important;
       font-family: KaTeX_Main, 'Times New Roman', serif !important;
     }
-    .katex-display { 
-      overflow: auto hidden;
+    .katex-block { 
       margin: 2em 0 !important;
-      padding: 2em !important;
-      background: rgba(0, 0, 0, 0.02);
+      padding: 1.5em !important;
+      background: rgba(30, 41, 59, 0.05);
+      border: 1px solid rgba(30, 41, 59, 0.1);
       border-radius: 0.5rem;
-      border: 1px solid rgba(0, 0, 0, 0.05);
-    }
-    .katex-display > .katex { 
-      white-space: normal !important;
-      text-align: center !important;
-      max-width: 100% !important;
-    }
-    .katex-html {
-      max-width: 100%;
       overflow-x: auto;
-      overflow-y: hidden;
+      font-family: 'Fira Code', monospace;
+      white-space: pre;
+      font-size: 0.9em;
+      line-height: 1.5;
     }
-    /* Dark mode styles */
-    .dark .katex { color: #e5e7eb !important; }
-    .dark .katex-display { 
+    .dark .katex-block {
       background: rgba(30, 41, 59, 0.3);
-      border-color: rgba(255, 255, 255, 0.05);
+      border-color: rgba(255, 255, 255, 0.1);
+    }
+    /* Inline math styling */
+    .katex-inline {
+      padding: 0.2em 0.4em;
+      margin: 0 0.2em;
+      background: rgba(0, 0, 0, 0.01);
+      border-radius: 0.25rem;
+    }
+    .dark .katex-inline {
+      background: rgba(255, 255, 255, 0.02);
     }
     /* Additional styles for better visibility */
     .markdown-content { 
@@ -44,16 +46,6 @@ export const getCustomStyles = () => `
       font-weight: 600;
     }
     .dark .markdown-content h3 { color: #e5e7eb; }
-    /* Inline math styling */
-    .katex-inline {
-      padding: 0.2em 0.4em;
-      margin: 0 0.2em;
-      background: rgba(0, 0, 0, 0.01);
-      border-radius: 0.25rem;
-    }
-    .dark .katex-inline {
-      background: rgba(255, 255, 255, 0.02);
-    }
   </style>
 `;
 

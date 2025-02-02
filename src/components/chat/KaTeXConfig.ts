@@ -7,12 +7,31 @@ export const createMarkdownRenderer = () => {
     linkify: true,
     typographer: true,
     breaks: true
-  }).use(mk, {
+  });
+
+  // Custom renderer for block math
+  md.use((md) => {
+    const defaultRender = md.renderer.rules.fence || ((tokens, idx, options, env, self) => {
+      return self.renderToken(tokens, idx, options);
+    });
+
+    md.renderer.rules.fence = (tokens, idx, options, env, self) => {
+      const token = tokens[idx];
+      if (token.content.startsWith('$$') && token.content.endsWith('$$')) {
+        const math = token.content.slice(2, -2).trim();
+        return `<div class="katex-block">${math}</div>`;
+      }
+      return defaultRender(tokens, idx, options, env, self);
+    };
+
+    return md;
+  });
+
+  md.use(mk, {
     throwOnError: false,
     errorColor: ' #cc0000',
     delimiters: [
-      { left: "$$", right: "$$", display: true },
-      { left: "$", right: "$", display: false },
+      { left: "$", right: "$", display: false }, // inline only
     ],
     macros: {
       "\\RR": "\\mathbb{R}"

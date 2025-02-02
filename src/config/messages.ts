@@ -1,1 +1,1 @@
-export const DEFAULT_WELCOME_MESSAGE = "Welcome to AVS Chat! This chat bot is trained to answer questions about Azure VMware Solution. If the environment variable isn't set, you'll see this message.";
+export const DEFAULT_WELCOME_MESSAGE = "Welcome to the chat!.";

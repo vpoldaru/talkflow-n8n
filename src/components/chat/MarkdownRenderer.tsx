@@ -9,14 +9,20 @@ interface MarkdownRendererProps {
 }
 
 export const MarkdownRenderer = ({ content }: MarkdownRendererProps) => {
+  // Initialize markdown-it with katex plugin
   const md = new MarkdownIt({
     html: true,
     linkify: true,
     typographer: true,
-  }).use(mk);
+  }).use(mk, {
+    throwOnError: false,
+    errorColor: ' #cc0000',
+    strict: false
+  });
 
   // Custom renderer configuration
   md.renderer.rules.paragraph_open = () => '<p class="mb-2 last:mb-0 leading-relaxed text-left">';
+  
   md.renderer.rules.heading_open = (tokens, idx) => {
     const level = tokens[idx].tag;
     const classes = {
@@ -25,7 +31,7 @@ export const MarkdownRenderer = ({ content }: MarkdownRendererProps) => {
       h3: 'text-lg font-bold mb-2'
     }[level] || '';
     
-    return `<${level} class="${classes} bg-clip-text text-transparent bg-gradient-to-r from-slate-900 to-slate-700 dark:from-slate-100 dark:to-slate-300 text-left">`;
+    return `<${level} class="${classes} text-left">`;
   };
 
   // Handle code blocks
@@ -37,8 +43,15 @@ export const MarkdownRenderer = ({ content }: MarkdownRendererProps) => {
     return `<div class="my-4">${CodeBlock({ language: lang, children: code })}</div>`;
   };
 
+  // Process the content to properly handle LaTeX delimiters
+  let processedContent = content
+    // Handle display math mode
+    .replace(/\$\$(.*?)\$\$/gs, '\\[$1\\]')
+    // Handle inline math mode
+    .replace(/\$(.*?)\$/g, '\\($1\\)');
+
   // Render the markdown content
-  const renderedContent = md.render(content);
+  const renderedContent = md.render(processedContent);
 
   return (
     <div 

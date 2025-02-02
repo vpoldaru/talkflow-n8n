@@ -20,7 +20,7 @@ export const useMessageSender = (
   ) => {
     if (!input.trim() || !webhook_url) return;
 
-    const formData = createFormDataWithFile(input, sessionId, file);
+    const formData = await createFormDataWithFile(input, sessionId, file);
 
     const userMessage: Message = {
       id: uuidv4(),

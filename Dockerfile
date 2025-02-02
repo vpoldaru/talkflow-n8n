@@ -24,19 +24,23 @@ COPY --from=builder /app/dist /usr/share/nginx/html
 # Copy nginx configuration
 COPY nginx.conf /etc/nginx/conf.d/default.conf
 
+# Create env-config.js template
+RUN echo "window.env = {" > /usr/share/nginx/html/env-config.template.js && \
+    echo "  VITE_N8N_WEBHOOK_URL: \"__VITE_N8N_WEBHOOK_URL__\"," >> /usr/share/nginx/html/env-config.template.js && \
+    echo "  VITE_WELCOME_MESSAGE: \"__VITE_WELCOME_MESSAGE__\"" >> /usr/share/nginx/html/env-config.template.js && \
+    echo "};" >> /usr/share/nginx/html/env-config.template.js
+
 # Create a script to replace environment variables
 RUN echo '#!/bin/sh\n\
-    # Escape special characters in environment variables\n\
-    escaped_webhook_url=$(printf "%s" "$VITE_N8N_WEBHOOK_URL" | sed "s/[\\"]/\\\\&/g")\n\
-    escaped_welcome_message=$(printf "%s" "$VITE_WELCOME_MESSAGE" | sed "s/[\\"]/\\\\&/g")\n\
-    \n\
     # Replace environment variables in env-config.js\n\
-    sed -i "s|\${VITE_N8N_WEBHOOK_URL}|$escaped_webhook_url|g" /usr/share/nginx/html/env-config.js\n\
-    sed -i "s|\${VITE_WELCOME_MESSAGE}|$escaped_welcome_message|g" /usr/share/nginx/html/env-config.js\n\
+    envsubst "$(printf \"$%s \" $(env | cut -d= -f1))" < /usr/share/nginx/html/env-config.template.js > /usr/share/nginx/html/env-config.js\n\
     \n\
     # Start nginx\n\
     nginx -g "daemon off;"' > /docker-entrypoint.sh \
     && chmod +x /docker-entrypoint.sh
+
+# Install envsubst
+RUN apt-get update && apt-get install -y gettext-base && rm -rf /var/lib/apt/lists/*
 
 # Expose port 80
 EXPOSE 80

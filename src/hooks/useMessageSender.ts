@@ -125,9 +125,35 @@ export const useMessageSender = (
       const data = await response.json();
       console.log('Webhook response data:', data);
 
+      // Extract the content from the response, handling both output and content properties
+      let responseContent = '';
+      if (data && data.length > 0) {
+        const firstResponse = data[0];
+        if (typeof firstResponse === 'object') {
+          // Try to get either output or content property
+          responseContent = firstResponse.output || firstResponse.content || '';
+          
+          // If the content is truncated or malformed, try to reconstruct it
+          if (responseContent && typeof responseContent === 'string') {
+            // Remove any malformed parts and clean up the string
+            responseContent = responseContent.replace(/\u0000/g, ''); // Remove null characters
+            responseContent = responseContent.replace(/\\{2,}/g, '\\'); // Fix double backslashes
+            
+            // Ensure LaTeX delimiters are properly formatted
+            responseContent = responseContent.replace(/\\\[([^\]]*)\\\]/g, '$$$$1$$');
+            responseContent = responseContent.replace(/\\\(([^\)]*)\\\)/g, '$$$1$$');
+          }
+        }
+      }
+
+      // If we still don't have valid content, use the fallback message
+      if (!responseContent) {
+        responseContent = "Sorry, I couldn't process that.";
+      }
+
       const assistantMessage: Message = {
         id: uuidv4(),
-        content: data[0]?.output || data[0]?.content || "Sorry, I couldn't process that.",
+        content: responseContent,
         role: "assistant",
         timestamp: Date.now(),
       };

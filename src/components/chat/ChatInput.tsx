@@ -81,6 +81,11 @@ export const ChatInput = ({
             rows={1}
             className="min-h-[24px] w-full resize-none bg-[#1A1F2C] text-white rounded-xl pr-24 pl-12 py-3 focus-visible:ring-1 border-none"
             disabled={isLoading}
+            style={{
+              minHeight: '48px',
+              maxHeight: '200px',
+              overflowY: 'auto'
+            }}
           />
           <div className="absolute left-2 bottom-2.5">
             {onImageSelect && (

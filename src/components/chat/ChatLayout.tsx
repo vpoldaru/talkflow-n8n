@@ -2,7 +2,7 @@ import { ChatMessages } from "@/components/chat/ChatMessages";
 import { ChatInput } from "@/components/chat/ChatInput";
 import { ChatSidebar } from "@/components/chat/ChatSidebar";
 import { ChatSession } from "@/types/chat";
-import { useState } from "react";
+import { useState, useCallback } from "react";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { Menu } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
@@ -36,7 +36,7 @@ export const ChatLayout = ({
 
   const currentSession = sessions.find(s => s.id === currentSessionId);
 
-  const handleSend = async (e: React.FormEvent) => {
+  const handleSend = useCallback(async (e: React.FormEvent) => {
     e.preventDefault();
     if (!input.trim()) return;
 
@@ -47,30 +47,31 @@ export const ChatLayout = ({
     } : null);
 
     try {
-      // Send message with image first
-      await onSendMessage(input, pendingImage || undefined);
+      const currentImage = pendingImage; // Store current image reference
+      console.log('Sending message with image:', currentImage?.name);
       
-      console.log('ChatLayout message sent successfully, clearing states');
+      await onSendMessage(input, currentImage || undefined);
       
-      // Clear states after successful send
       setInput("");
       setPendingImage(null);
+      
+      console.log('Message sent successfully, states cleared');
     } catch (error) {
       toast({
         description: "Failed to send message",
         variant: "destructive",
       });
     }
-  };
+  }, [input, pendingImage, onSendMessage, toast]);
 
-  const handleImageSelect = (file: File) => {
+  const handleImageSelect = useCallback((file: File) => {
     console.log('ChatLayout handleImageSelect called with file:', {
       fileName: file.name,
       fileSize: file.size,
       fileType: file.type
     });
     setPendingImage(file);
-  };
+  }, []);
 
   const handleSessionClick = (sessionId: string) => {
     onSessionSelect(sessionId);

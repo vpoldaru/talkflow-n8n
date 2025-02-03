@@ -2,10 +2,11 @@ import { cn } from '@/lib/utils';
 import MarkdownIt from 'markdown-it';
 import markdownItKatex from 'markdown-it-katex';
 import markdownItHighlight from 'markdown-it-highlightjs';
-import { CodeBlock } from '../CodeBlock';
+import { CodeBlock } from './CodeBlock';
 import ReactDOM from 'react-dom';
 import React from 'react';
 import 'highlight.js/styles/github-dark.css';
+import 'highlight.js/lib/languages/hcl';
 
 interface MarkdownRendererProps {
   content: string;
@@ -18,9 +19,11 @@ export const MarkdownRenderer = ({ content }: MarkdownRendererProps) => {
     typographer: true,
     breaks: true,
     highlight: function (str, lang) {
-      if (lang && str) {
+      // Map 'terraform' to 'hcl' for proper syntax highlighting
+      const mappedLang = lang.toLowerCase() === 'terraform' ? 'hcl' : lang;
+      if (mappedLang && str) {
         // Return a placeholder that we'll replace with our CodeBlock component
-        return `<pre class="code-block-placeholder" data-language="${lang}" data-code="${encodeURIComponent(str)}"></pre>`;
+        return `<pre class="code-block-placeholder" data-language="${mappedLang}" data-code="${encodeURIComponent(str)}"></pre>`;
       }
       return ''; // use external default escaping
     }

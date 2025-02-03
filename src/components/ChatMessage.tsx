@@ -17,15 +17,8 @@ export const ChatMessage = ({ message }: ChatMessageProps) => {
 
   const handleCopy = async () => {
     try {
-      let contentToCopy = message.content;
-      
-      // If the content is an object, try to stringify it
-      if (typeof contentToCopy === 'object') {
-        contentToCopy = JSON.stringify(contentToCopy, null, 2);
-      }
-
       const tempDiv = document.createElement('div');
-      tempDiv.innerHTML = contentToCopy;
+      tempDiv.innerHTML = message.content;
       
       const cleanText = tempDiv.innerText
         .replace(/\n{3,}/g, '\n\n')
@@ -46,11 +39,6 @@ export const ChatMessage = ({ message }: ChatMessageProps) => {
       });
     }
   };
-
-  // Convert content to string if it's an object
-  const messageContent = typeof message.content === 'object' 
-    ? JSON.stringify(message.content, null, 2)
-    : message.content;
 
   return (
     <div
@@ -86,7 +74,7 @@ export const ChatMessage = ({ message }: ChatMessageProps) => {
           )}
           <div className="overflow-x-auto">
             <div className="markdown-content break-words">
-              <MarkdownRenderer content={messageContent} />
+              <MarkdownRenderer content={message.content} />
             </div>
           </div>
         </div>
@@ -95,17 +83,15 @@ export const ChatMessage = ({ message }: ChatMessageProps) => {
             {formattedTime}
           </span>
           {isAssistant && (
-            <div className="flex items-center">
-              <Button
-                variant="ghost"
-                size="sm"
-                className="text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-100"
-                onClick={handleCopy}
-              >
-                <Copy className="mr-2 h-4 w-4" />
-                Copy response
-              </Button>
-            </div>
+            <Button
+              variant="ghost"
+              size="sm"
+              className="text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-100"
+              onClick={handleCopy}
+            >
+              <Copy className="mr-2 h-4 w-4" />
+              Copy response
+            </Button>
           )}
         </div>
       </div>

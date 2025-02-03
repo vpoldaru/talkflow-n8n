@@ -17,52 +17,34 @@ export const useMessageSender = (
     currentMessages: Message[],
     file?: File
   ) => {
-    if (!webhook_url) {
+    // Get webhook URL from window.env if available, fallback to passed webhook_url
+    const effectiveWebhookUrl = window.env?.VITE_N8N_WEBHOOK_URL || webhook_url;
+
+    if (!effectiveWebhookUrl) {
       console.error('No webhook URL provided');
       toast({
-        description: "Configuration error: No webhook URL",
+        description: "Configuration error: No webhook URL available",
         variant: "destructive",
       });
       return;
     }
 
+    console.log('useMessageSender sendMessage called with:', {
+      input,
+      sessionId,
+      hasFile: !!file,
+      fileDetails: file ? {
+        name: file.name,
+        size: file.size,
+        type: file.type
+      } : null
+    });
+
     setIsLoading(true);
     setIsTyping(true);
 
-    let imageData;
-    if (file) {
-      try {
-        const base64Data = await fileToBase64(file);
-        imageData = {
-          data: base64Data,
-          mimeType: file.type,
-          fileName: file.name
-        };
-      } catch (error) {
-        console.error('Error processing file:', error);
-        toast({
-          description: "Error processing image file",
-          variant: "destructive",
-        });
-        setIsLoading(false);
-        setIsTyping(false);
-        return;
-      }
-    }
-
-    const userMessage: Message = {
-      id: uuidv4(),
-      content: input,
-      role: "user",
-      timestamp: Date.now(),
-      ...(imageData && { imageData })
-    };
-
-    const newMessages = [...currentMessages, userMessage];
-    updateSession(sessionId, newMessages);
-
     try {
-      const response = await fetch(webhook_url, {
+      const response = await fetch(effectiveWebhookUrl, {
         method: "POST",
         headers: {
           'Content-Type': 'application/json',
@@ -70,10 +52,10 @@ export const useMessageSender = (
         body: JSON.stringify({
           chatInput: input,
           sessionId: sessionId,
-          ...(imageData && {
-            data: imageData.data,
-            mimeType: imageData.mimeType,
-            fileName: imageData.fileName
+          ...(file && {
+            data: await fileToBase64(file),
+            mimeType: file.type,
+            fileName: file.name
           })
         })
       });
@@ -92,7 +74,8 @@ export const useMessageSender = (
         timestamp: Date.now(),
       };
 
-      updateSession(sessionId, [...newMessages, assistantMessage]);
+      updateSession(sessionId, [...currentMessages, assistantMessage]);
+      console.log('Message sent successfully');
     } catch (error) {
       console.error('Error in webhook request:', error);
       toast({

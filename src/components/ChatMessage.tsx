@@ -5,6 +5,11 @@ import { Button } from './ui/button';
 import { useToast } from '@/hooks/use-toast';
 import { format } from 'date-fns';
 import { MarkdownRenderer } from './chat/MarkdownRenderer';
+import {
+  Dialog,
+  DialogContent,
+  DialogTrigger,
+} from "@/components/ui/dialog";
 
 interface ChatMessageProps {
   message: Message;
@@ -65,11 +70,22 @@ export const ChatMessage = ({ message }: ChatMessageProps) => {
         <div className="prose prose-slate dark:prose-invert max-w-none">
           {message.imageData && (
             <div className="mb-2">
-              <img
-                src={`data:${message.imageData.mimeType};base64,${message.imageData.data}`}
-                alt={message.imageData.fileName}
-                className="max-w-[200px] rounded-lg"
-              />
+              <Dialog>
+                <DialogTrigger asChild>
+                  <img
+                    src={`data:${message.imageData.mimeType};base64,${message.imageData.data}`}
+                    alt={message.imageData.fileName}
+                    className="max-w-[200px] rounded-lg cursor-pointer hover:opacity-90 transition-opacity"
+                  />
+                </DialogTrigger>
+                <DialogContent className="max-w-[90vw] max-h-[90vh] p-0 overflow-auto">
+                  <img
+                    src={`data:${message.imageData.mimeType};base64,${message.imageData.data}`}
+                    alt={message.imageData.fileName}
+                    className="w-full h-full object-contain"
+                  />
+                </DialogContent>
+              </Dialog>
             </div>
           )}
           <div className="overflow-x-auto">

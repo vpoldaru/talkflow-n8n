@@ -7,10 +7,12 @@ import ReactDOM from 'react-dom';
 import React from 'react';
 import 'highlight.js/styles/github-dark.css';
 import hljs from 'highlight.js';
+import xml from 'highlight.js/lib/languages/xml';
 
-// Register HCL/Terraform language support
-hljs.registerLanguage('hcl', hljs.getLanguage('xml'));
-hljs.registerLanguage('terraform', hljs.getLanguage('xml'));
+// Register HCL/Terraform language support with XML highlighting as fallback
+hljs.registerLanguage('xml', xml);
+hljs.registerLanguage('hcl', xml);
+hljs.registerLanguage('terraform', xml);
 
 interface MarkdownRendererProps {
   content: string;

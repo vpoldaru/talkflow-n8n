@@ -95,15 +95,17 @@ export const ChatMessage = ({ message }: ChatMessageProps) => {
             {formattedTime}
           </span>
           {isAssistant && (
-            <Button
-              variant="ghost"
-              size="sm"
-              className="text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-100"
-              onClick={handleCopy}
-            >
-              <Copy className="mr-2 h-4 w-4" />
-              Copy response
-            </Button>
+            <div className="flex items-center">
+              <Button
+                variant="ghost"
+                size="sm"
+                className="text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-100"
+                onClick={handleCopy}
+              >
+                <Copy className="mr-2 h-4 w-4" />
+                Copy response
+              </Button>
+            </div>
           )}
         </div>
       </div>

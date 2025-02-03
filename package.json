@@ -53,6 +53,7 @@
     "katex": "^0.16.21",
     "lucide-react": "^0.462.0",
     "markdown-it": "^14.1.0",
+    "markdown-it-highlightjs": "^4.2.0",
     "markdown-it-katex": "^2.0.3",
     "next-themes": "^0.3.0",
     "react": "^18.3.1",

@@ -49,7 +49,7 @@ export const ChatMessage = ({ message }: ChatMessageProps) => {
     >
       <div
         className={cn(
-          "max-w-[85%] rounded-2xl px-4 py-3 transition-all duration-200 backdrop-blur-sm hover:-translate-y-1 relative break-words",
+          "max-w-[85%] rounded-2xl px-4 py-3 transition-all duration-200 backdrop-blur-sm hover:-translate-y-1 relative",
           isAssistant
             ? "bg-gradient-to-br from-slate-50 to-blue-50 dark:from-slate-900 dark:to-blue-900 border border-blue-100/50 dark:border-blue-800/30"
             : "bg-gradient-to-br from-violet-500 to-purple-500 text-white border border-violet-400/20 dark:border-violet-500/20"
@@ -72,8 +72,10 @@ export const ChatMessage = ({ message }: ChatMessageProps) => {
               />
             </div>
           )}
-          <div className="break-all whitespace-pre-line">
-            <MarkdownRenderer content={message.content} />
+          <div className="overflow-hidden">
+            <div className="break-words whitespace-pre-wrap overflow-wrap-anywhere">
+              <MarkdownRenderer content={message.content} />
+            </div>
           </div>
         </div>
         <div className="mt-2 flex justify-between items-center">

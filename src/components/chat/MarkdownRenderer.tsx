@@ -6,12 +6,12 @@ import { CodeBlock } from './CodeBlock';
 import ReactDOM from 'react-dom';
 import React from 'react';
 import 'highlight.js/styles/github-dark.css';
-import hljs from 'highlight.js';
-import hcl from 'highlight.js/languages/hcl';
+import hljs from 'highlight.js/lib/core';
+import terraform from 'highlight.js/lib/languages/terraform';
 
 // Register HCL/Terraform language support
-hljs.registerLanguage('hcl', hcl);
-hljs.registerLanguage('terraform', hcl);
+hljs.registerLanguage('hcl', terraform);
+hljs.registerLanguage('terraform', terraform);
 
 interface MarkdownRendererProps {
   content: string;

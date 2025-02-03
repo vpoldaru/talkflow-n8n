@@ -86,7 +86,8 @@ VITE_N8N_WEBHOOK_URL=your_n8n_webhook_url
 # Optional
 VITE_WELCOME_MESSAGE=your_welcome_message
 VITE_SITE_TITLE=your_site_title
-Features
+
+# Features
 Code Playground
 Syntax highlighting for multiple languages
 Copy code to clipboard
@@ -97,7 +98,8 @@ Upload images in chat
 Preview thumbnails
 Click to view full-size images
 Support for common image formats
-Project Structure
+
+# Project Structure
 
 src/
 ├── components/     # Reusable UI components
@@ -105,11 +107,13 @@ src/
 ├── pages/          # Route components
 ├── types/          # TypeScript definitions
 └── utils/          # Helper functions
-Contributing
+
+# Contributing
 Fork the repository
 Create a feature branch (git checkout -b feature-branch)
 Commit your changes (git commit -m "Added new feature")
 Push to GitHub (git push origin feature-branch)
 Open a Pull Request
-License
+
+# License
 This project is open-source and available under the MIT License.

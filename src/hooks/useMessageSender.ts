@@ -1,6 +1,5 @@
 import { useState } from 'react';
 import { useToast } from './use-toast';
-import { createFormDataWithFile } from '@/utils/fileUpload';
 import { Message } from '@/types/chat';
 import { v4 as uuidv4 } from 'uuid';
 
@@ -12,187 +11,79 @@ export const useMessageSender = (
   const [isTyping, setIsTyping] = useState(false);
   const { toast } = useToast();
 
-  const extractResponseContent = (data: any): string => {
-    console.log('Extracting content from response:', data);
-    
-    // If data is a string, return it directly
-    if (typeof data === 'string') return data;
-    
-    // If data is an array, process the first item
-    if (Array.isArray(data)) {
-      const firstItem = data[0];
-      if (!firstItem) return "No response content available";
-      
-      // Handle different response formats
-      if (typeof firstItem === 'string') return firstItem;
-      
-      // Handle object responses
-      if (typeof firstItem === 'object') {
-        // First check for message object with content
-        if (firstItem.message?.content && firstItem.message?.role === 'assistant') {
-          return firstItem.message.content;
-        }
-        
-        // Check common response patterns
-        const possibleContent = firstItem.message?.content || 
-                              firstItem.content ||
-                              firstItem.output ||
-                              firstItem.text ||
-                              firstItem.response;
-                              
-        if (possibleContent) return possibleContent;
-        
-        // If no standard fields found, try to stringify the object
-        try {
-          return JSON.stringify(firstItem);
-        } catch (e) {
-          console.warn('Failed to stringify response:', e);
-          return "Unable to process response format";
-        }
-      }
-    }
-    
-    // Handle single object response
-    if (typeof data === 'object') {
-      // First check for message object with content
-      if (data.message?.content && data.message?.role === 'assistant') {
-        return data.message.content;
-      }
-      
-      const possibleContent = data.message?.content || 
-                            data.content ||
-                            data.output ||
-                            data.text ||
-                            data.response;
-                            
-      if (possibleContent) return possibleContent;
-      
-      try {
-        return JSON.stringify(data);
-      } catch (e) {
-        console.warn('Failed to stringify response:', e);
-        return "Unable to process response format";
-      }
-    }
-    
-    // Fallback
-    return "Unexpected response format";
-  };
-
   const sendMessage = async (
     input: string,
     sessionId: string,
     currentMessages: Message[],
     file?: File
   ) => {
-    console.log('useMessageSender sendMessage called with:', {
-      input,
-      sessionId,
-      hasFile: !!file,
-      fileDetails: file ? {
-        name: file.name,
-        type: file.type,
-        size: file.size
-      } : null
-    });
-
-    if (!input.trim() || !webhook_url) return;
-
-    let userMessage: Message = {
-      id: uuidv4(),
-      content: input,
-      role: "user",
-      timestamp: Date.now(),
-    };
-
-    if (file) {
-      console.log('Processing file in useMessageSender:', {
-        fileName: file.name,
-        fileSize: file.size,
-        fileType: file.type
+    if (!webhook_url) {
+      console.error('No webhook URL provided');
+      toast({
+        description: "Configuration error: No webhook URL",
+        variant: "destructive",
       });
-      
+      return;
+    }
+
+    setIsLoading(true);
+    setIsTyping(true);
+
+    let imageData;
+    if (file) {
       try {
-        const formData = await createFormDataWithFile(input, sessionId, file);
-        const base64Data = formData.get('data') as string;
-        const mimeType = formData.get('mimeType') as string;
-        const fileName = formData.get('fileName') as string;
-
-        console.log('File data retrieved from FormData:', {
-          hasBase64Data: !!base64Data,
-          mimeType,
-          fileName,
-          base64Length: base64Data?.length
-        });
-
-        userMessage = {
-          ...userMessage,
-          imageData: {
-            data: base64Data,
-            mimeType: mimeType,
-            fileName: fileName
-          }
+        const base64Data = await fileToBase64(file);
+        imageData = {
+          data: base64Data,
+          mimeType: file.type,
+          fileName: file.name
         };
-
-        console.log('User message updated with image data:', {
-          messageId: userMessage.id,
-          hasImageData: !!userMessage.imageData,
-          imageDataLength: userMessage.imageData?.data.length
-        });
       } catch (error) {
         console.error('Error processing file:', error);
         toast({
           description: "Error processing image file",
           variant: "destructive",
         });
+        setIsLoading(false);
+        setIsTyping(false);
         return;
       }
     }
 
+    const userMessage: Message = {
+      id: uuidv4(),
+      content: input,
+      role: "user",
+      timestamp: Date.now(),
+      ...(imageData && { imageData })
+    };
+
     const newMessages = [...currentMessages, userMessage];
     updateSession(sessionId, newMessages);
-    
-    setIsLoading(true);
-    setIsTyping(true);
 
     try {
-      const payload = {
-        chatInput: input,
-        sessionId: sessionId,
-        ...(userMessage.imageData && {
-          data: userMessage.imageData.data,
-          mimeType: userMessage.imageData.mimeType,
-          fileName: userMessage.imageData.fileName
-        })
-      };
-
-      console.log('Preparing webhook request:', {
-        url: webhook_url,
-        payloadKeys: Object.keys(payload),
-        hasImageData: !!userMessage.imageData,
-        payloadSize: JSON.stringify(payload).length,
-        imageDataPreview: userMessage.imageData ? `${userMessage.imageData.data.substring(0, 50)}...` : null
-      });
-
       const response = await fetch(webhook_url, {
         method: "POST",
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify(payload)
+        body: JSON.stringify({
+          chatInput: input,
+          sessionId: sessionId,
+          ...(imageData && {
+            data: imageData.data,
+            mimeType: imageData.mimeType,
+            fileName: imageData.fileName
+          })
+        })
       });
-
-      console.log('Webhook response status:', response.status);
 
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
       }
 
       const data = await response.json();
-      console.log('Webhook response data:', data);
-
       const responseContent = extractResponseContent(data);
-      console.log('Extracted response content:', responseContent);
 
       const assistantMessage: Message = {
         id: uuidv4(),
@@ -204,13 +95,10 @@ export const useMessageSender = (
       updateSession(sessionId, [...newMessages, assistantMessage]);
     } catch (error) {
       console.error('Error in webhook request:', error);
-      const errorMessage: Message = {
-        id: uuidv4(),
-        content: "Sorry, there was an error processing your message. Please try again later.",
-        role: "assistant",
-        timestamp: Date.now(),
-      };
-      updateSession(sessionId, [...newMessages, errorMessage]);
+      toast({
+        description: "Error sending message",
+        variant: "destructive",
+      });
     } finally {
       setIsLoading(false);
       setIsTyping(false);
@@ -222,4 +110,72 @@ export const useMessageSender = (
     isLoading,
     isTyping
   };
+};
+
+const fileToBase64 = (file: File): Promise<string> => {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.readAsDataURL(file);
+    reader.onload = () => {
+      const base64String = reader.result as string;
+      const base64Data = base64String.split(',')[1];
+      resolve(base64Data);
+    };
+    reader.onerror = (error) => reject(error);
+  });
+};
+
+const extractResponseContent = (data: any): string => {
+  if (typeof data === 'string') return data;
+  
+  if (Array.isArray(data)) {
+    const firstItem = data[0];
+    if (!firstItem) return "No response content available";
+    
+    if (typeof firstItem === 'string') return firstItem;
+    
+    if (typeof firstItem === 'object') {
+      if (firstItem.message?.content && firstItem.message?.role === 'assistant') {
+        return firstItem.message.content;
+      }
+      
+      const possibleContent = firstItem.message?.content || 
+                            firstItem.content ||
+                            firstItem.output ||
+                            firstItem.text ||
+                            firstItem.response;
+                            
+      if (possibleContent) return possibleContent;
+      
+      try {
+        return JSON.stringify(firstItem);
+      } catch (e) {
+        console.warn('Failed to stringify response:', e);
+        return "Unable to process response format";
+      }
+    }
+  }
+  
+  if (typeof data === 'object') {
+    if (data.message?.content && data.message?.role === 'assistant') {
+      return data.message.content;
+    }
+    
+    const possibleContent = data.message?.content || 
+                          data.content ||
+                          data.output ||
+                          data.text ||
+                          data.response;
+                          
+    if (possibleContent) return possibleContent;
+    
+    try {
+      return JSON.stringify(data);
+    } catch (e) {
+      console.warn('Failed to stringify response:', e);
+      return "Unable to process response format";
+    }
+  }
+  
+  return "Unexpected response format";
 };

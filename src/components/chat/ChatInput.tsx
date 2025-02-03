@@ -38,37 +38,26 @@ export const ChatInput = ({
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
+    if (isLoading) return;
+
     const trimmedInput = input.trim();
-    
-    // Only proceed if we have an image or non-empty text input
-    if (isLoading || (!trimmedInput && !previewImage)) {
-      if (!trimmedInput && !previewImage) {
-        toast({
-          description: "Please enter a message or attach an image",
-          variant: "destructive",
-        });
-      }
+    if (!trimmedInput && !previewImage) {
+      toast({
+        description: "Please enter a message or attach an image",
+        variant: "destructive",
+      });
       return;
     }
 
-    // Set message text - if there's no input but there is an image, use default message
-    const messageText = trimmedInput || (previewImage ? "See image for details" : "");
-    
     try {
-      // Update input with message text before sending
-      onInputChange(messageText);
-      
-      // Send the message with image if present
       await onSend(e, previewImage?.file);
       
-      // Clear input and image after successful send
-      onInputChange("");
       if (previewImage) {
         URL.revokeObjectURL(previewImage.url);
         setPreviewImage(null);
       }
-    } catch (error) {
-      console.error('Error sending message:', error);
+    } catch (err) {
+      console.error('Failed to send message:', err);
       toast({
         description: "Failed to send message",
         variant: "destructive",
@@ -101,11 +90,6 @@ export const ChatInput = ({
   };
 
   const handleImageSelection = (file: File) => {
-    console.log('handleImageSelection called with file:', {
-      fileName: file.name,
-      fileSize: file.size,
-      fileType: file.type
-    });
     const imageUrl = URL.createObjectURL(file);
     setPreviewImage({ file, url: imageUrl });
     

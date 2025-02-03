@@ -5,11 +5,17 @@ import rehypeKatex from 'rehype-katex';
 import { CodeBlock } from './CodeBlock';
 import { LaTeXBlock } from './LaTeXBlock';
 import 'katex/dist/katex.min.css';
-import { Components } from 'react-markdown/lib/ast-to-react';
-import { CodeProps } from 'react-markdown/lib/ast-to-react';
+import type { Components } from 'react-markdown';
 
 interface MarkdownRendererProps {
   content: string;
+}
+
+interface CodeProps {
+  node?: any;
+  inline?: boolean;
+  className?: string;
+  children: React.ReactNode;
 }
 
 export const MarkdownRenderer: React.FC<MarkdownRendererProps> = ({ content }) => {

@@ -21,7 +21,7 @@ export const ChatMessage = ({ message }: ChatMessageProps) => {
       
       // If the content is an object, try to stringify it
       if (typeof contentToCopy === 'object') {
-        contentToCopy = JSON.stringify(contentToCopy);
+        contentToCopy = JSON.stringify(contentToCopy, null, 2);
       }
 
       const tempDiv = document.createElement('div');
@@ -49,7 +49,7 @@ export const ChatMessage = ({ message }: ChatMessageProps) => {
 
   // Convert content to string if it's an object
   const messageContent = typeof message.content === 'object' 
-    ? JSON.stringify(message.content) 
+    ? JSON.stringify(message.content, null, 2)
     : message.content;
 
   return (

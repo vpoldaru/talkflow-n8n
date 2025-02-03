@@ -38,13 +38,21 @@ export const ChatInput = ({
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
-    // Only proceed if we have an image or text input
-    if (isLoading || (!input.trim() && !previewImage)) {
+    const trimmedInput = input.trim();
+    
+    // Only proceed if we have an image or non-empty text input
+    if (isLoading || (!trimmedInput && !previewImage)) {
+      if (!trimmedInput && !previewImage) {
+        toast({
+          description: "Please enter a message or attach an image",
+          variant: "destructive",
+        });
+      }
       return;
     }
 
     // Set message text - if there's no input but there is an image, use default message
-    const messageText = input.trim() || (previewImage ? "See image for details" : "");
+    const messageText = trimmedInput || (previewImage ? "See image for details" : "");
     
     try {
       // Update input with message text before sending
@@ -88,11 +96,6 @@ export const ChatInput = ({
         return;
       }
 
-      console.log('Image pasted:', {
-        fileName: file.name,
-        fileSize: file.size,
-        fileType: file.type
-      });
       handleImageSelection(file);
     }
   };
@@ -107,18 +110,12 @@ export const ChatInput = ({
     setPreviewImage({ file, url: imageUrl });
     
     if (onImageSelect) {
-      console.log('Calling onImageSelect with file:', {
-        fileName: file.name,
-        fileSize: file.size,
-        fileType: file.type
-      });
       onImageSelect(file);
     }
   };
 
   const clearPreviewImage = () => {
     if (previewImage) {
-      console.log('Clearing preview image:', previewImage.file.name);
       URL.revokeObjectURL(previewImage.url);
       setPreviewImage(null);
     }

@@ -62,7 +62,7 @@ export const ChatMessage = ({ message }: ChatMessageProps) => {
             : '0 4px 6px -1px rgba(139, 92, 246, 0.3), 0 2px 4px -1px rgba(139, 92, 246, 0.15), 0 8px 24px -4px rgba(139, 92, 246, 0.25)'
         }}
       >
-        <div className="prose prose-slate dark:prose-invert max-w-none break-words text-left">
+        <div className="prose prose-slate dark:prose-invert max-w-none">
           {message.imageData && (
             <div className="mb-2">
               <img
@@ -72,7 +72,7 @@ export const ChatMessage = ({ message }: ChatMessageProps) => {
               />
             </div>
           )}
-          <div className="break-words whitespace-normal overflow-wrap-break-word">
+          <div className="break-all whitespace-pre-line">
             <MarkdownRenderer content={message.content} />
           </div>
         </div>

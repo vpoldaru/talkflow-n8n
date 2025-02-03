@@ -43,6 +43,39 @@ export const useMessageSender = (
     setIsLoading(true);
     setIsTyping(true);
 
+    let imageData;
+    if (file) {
+      try {
+        const base64Data = await fileToBase64(file);
+        imageData = {
+          data: base64Data,
+          mimeType: file.type,
+          fileName: file.name
+        };
+      } catch (error) {
+        console.error('Error processing file:', error);
+        toast({
+          description: "Error processing image file",
+          variant: "destructive",
+        });
+        setIsLoading(false);
+        setIsTyping(false);
+        return;
+      }
+    }
+
+    // Create and add the user message first
+    const userMessage: Message = {
+      id: uuidv4(),
+      content: input,
+      role: "user",
+      timestamp: Date.now(),
+      ...(imageData && { imageData })
+    };
+
+    const newMessages = [...currentMessages, userMessage];
+    updateSession(sessionId, newMessages);
+
     try {
       const response = await fetch(effectiveWebhookUrl, {
         method: "POST",
@@ -74,7 +107,7 @@ export const useMessageSender = (
         timestamp: Date.now(),
       };
 
-      updateSession(sessionId, [...currentMessages, assistantMessage]);
+      updateSession(sessionId, [...newMessages, assistantMessage]);
       console.log('Message sent successfully');
     } catch (error) {
       console.error('Error in webhook request:', error);

@@ -79,31 +79,43 @@
 }
 
 .katex-display {
-  overflow-x: hidden;
+  overflow-x: auto;
   overflow-y: hidden;
   padding: 1em;
   margin: 0.75em 0;
-  display: flex;
-  justify-content: center;
-  min-height: 2em;
 }
 
 .dark .katex {
   color: #e5e7eb;
 }
 
-/* Inline math styling */
-.katex-inline {
-  padding: 0.2em 0.4em;
-  margin: 0 0.2em;
+/* Markdown content styling */
+.markdown-content {
+  width: 100%;
+  max-width: 100%;
 }
 
-/* Ensure proper spacing in markdown content */
+.markdown-content pre {
+  white-space: pre-wrap;
+  word-break: break-word;
+  overflow-wrap: break-word;
+}
+
 .markdown-content p {
   margin: 1em 0;
   line-height: 1.75;
+  white-space: pre-wrap;
+  word-break: break-word;
+  overflow-wrap: break-word;
 }
 
+.markdown-content code {
+  white-space: pre-wrap;
+  word-break: break-word;
+  overflow-wrap: break-word;
+}
+
+/* Ensure proper spacing in markdown content */
 .markdown-content .katex-display {
   margin: 1em 0;
 }

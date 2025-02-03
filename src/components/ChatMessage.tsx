@@ -17,11 +17,9 @@ export const ChatMessage = ({ message }: ChatMessageProps) => {
 
   const handleCopy = async () => {
     try {
-      // Create a temporary container
       const tempDiv = document.createElement('div');
       tempDiv.innerHTML = message.content;
       
-      // Get clean text
       const cleanText = tempDiv.innerText
         .replace(/\n{3,}/g, '\n\n')
         .trim();
@@ -64,7 +62,7 @@ export const ChatMessage = ({ message }: ChatMessageProps) => {
             : '0 4px 6px -1px rgba(139, 92, 246, 0.3), 0 2px 4px -1px rgba(139, 92, 246, 0.15), 0 8px 24px -4px rgba(139, 92, 246, 0.25)'
         }}
       >
-        <div className="prose prose-slate dark:prose-invert max-w-none break-words text-left">
+        <div className="prose prose-slate dark:prose-invert max-w-none">
           {message.imageData && (
             <div className="mb-2">
               <img
@@ -74,7 +72,11 @@ export const ChatMessage = ({ message }: ChatMessageProps) => {
               />
             </div>
           )}
-          <MarkdownRenderer content={message.content} />
+          <div className="overflow-x-auto">
+            <div className="markdown-content break-words">
+              <MarkdownRenderer content={message.content} />
+            </div>
+          </div>
         </div>
         <div className="mt-2 flex justify-between items-center">
           <span className="text-xs text-slate-500 dark:text-slate-400 opacity-0 group-hover:opacity-100 transition-opacity duration-200">

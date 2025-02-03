@@ -145,6 +145,14 @@ export const useChatSessions = () => {
     );
   };
 
+  const toggleFavorite = (sessionId: string) => {
+    setSessions(prev => prev.map(session =>
+      session.id === sessionId
+        ? { ...session, favorite: !session.favorite }
+        : session
+    ));
+  };
+
   return {
     sessions,
     currentSessionId,
@@ -156,5 +164,6 @@ export const useChatSessions = () => {
     renameSession,
     sendMessage,
     setCurrentSessionId,
+    toggleFavorite,
   };
 };

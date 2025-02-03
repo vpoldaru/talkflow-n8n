@@ -12,6 +12,7 @@ const Index = () => {
     renameSession,
     sendMessage,
     setCurrentSessionId,
+    toggleFavorite,
   } = useChatSessions();
 
   return (
@@ -24,6 +25,7 @@ const Index = () => {
       onSessionSelect={setCurrentSessionId}
       onDeleteSession={deleteSession}
       onRenameSession={renameSession}
+      onToggleFavorite={toggleFavorite}
       onSendMessage={sendMessage}
     />
   );

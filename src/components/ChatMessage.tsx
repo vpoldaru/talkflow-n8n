@@ -72,10 +72,8 @@ export const ChatMessage = ({ message }: ChatMessageProps) => {
               />
             </div>
           )}
-          <div className="overflow-hidden">
-            <div className="break-words whitespace-pre-wrap overflow-wrap-anywhere">
-              <MarkdownRenderer content={message.content} />
-            </div>
+          <div className="whitespace-pre-wrap break-words">
+            <MarkdownRenderer content={message.content} />
           </div>
         </div>
         <div className="mt-2 flex justify-between items-center">

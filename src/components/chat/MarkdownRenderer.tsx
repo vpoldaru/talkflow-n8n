@@ -1,35 +1,61 @@
-import { cn } from '@/lib/utils';
-import { createMarkdownRenderer } from './KaTeXConfig';
+import React from 'react';
+import ReactMarkdown from 'react-markdown';
+import remarkMath from 'remark-math';
+import rehypeKatex from 'rehype-katex';
+import { CodeBlock } from './CodeBlock';
+import { LaTeXBlock } from './LaTeXBlock';
 import 'katex/dist/katex.min.css';
+import type { Components } from 'react-markdown';
 
 interface MarkdownRendererProps {
   content: string;
 }
 
-export const MarkdownRenderer = ({ content }: MarkdownRendererProps) => {
-  const md = createMarkdownRenderer();
+interface CodeProps {
+  node?: any;
+  inline?: boolean;
+  className?: string;
+  children: React.ReactNode;
+}
 
-  // Process the content
-  const processedContent = (typeof content === 'string' ? content : JSON.stringify(content))
-    // Ensure proper spacing around block math
-    .replace(/\$\$(.*?)\$\$/g, '\n\n$$\n$1\n$$\n\n')
-    // Clean up excessive newlines
-    .replace(/\n{3,}/g, '\n\n')
-    .trim();
-
-  // Render the markdown content
-  const renderedContent = md.render(processedContent);
+export const MarkdownRenderer: React.FC<MarkdownRendererProps> = ({ content }) => {
+  const components: Components = {
+    code({ node, inline, className, children, ...props }: CodeProps) {
+      const match = /language-(\w+)/.exec(className || '');
+      const language = match ? match[1] : '';
+      
+      if (!inline && language) {
+        return (
+          <CodeBlock language={language}>
+            {String(children).replace(/\n$/, '')}
+          </CodeBlock>
+        );
+      }
+      
+      return (
+        <code className={className} {...props}>
+          {children}
+        </code>
+      );
+    },
+    pre({ children }) {
+      return <>{children}</>;
+    },
+    // Custom components for math rendering
+    // @ts-ignore - math components are added by remark-math but not typed
+    math: ({ value }) => <LaTeXBlock content={value} />,
+    // @ts-ignore - math components are added by remark-math but not typed
+    inlineMath: ({ value }) => <LaTeXBlock content={value} inline />,
+  };
 
   return (
-    <div 
-      className={cn(
-        "prose prose-slate dark:prose-invert max-w-none break-words text-left",
-        "prose-pre:bg-slate-950 prose-pre:text-slate-50 dark:prose-pre:bg-slate-900",
-        "prose-code:text-slate-900 dark:prose-code:text-slate-100",
-        "prose-headings:text-slate-900 dark:prose-headings:text-slate-100",
-        "prose-p:text-slate-700 dark:prose-p:text-slate-300"
-      )}
-      dangerouslySetInnerHTML={{ __html: renderedContent }}
-    />
+    <ReactMarkdown
+      remarkPlugins={[remarkMath]}
+      rehypePlugins={[rehypeKatex]}
+      components={components}
+      className="prose dark:prose-invert max-w-none"
+    >
+      {content}
+    </ReactMarkdown>
   );
 };

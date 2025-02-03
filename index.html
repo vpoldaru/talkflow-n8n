@@ -3,12 +3,18 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta http-equiv="Content-Security-Policy" content="script-src 'self' 'unsafe-inline' 'unsafe-eval' https://cdn.gpteng.co; object-src 'none';" />
-    <title>talkflow-n8n</title>
+    <meta http-equiv="Content-Security-Policy" content="script-src 'self' 'unsafe-inline' 'unsafe-eval' https://cdn.gpteng.co https://cdn.jsdelivr.net; worker-src blob:; object-src 'none';" />
+    <title id="page-title">Loading...</title>
     <meta name="description" content="Chat Agent" />
     <meta name="author" content="Jim Martin" />
     <meta property="og:image" content="/og-image.png" />
     <script src="/env-config.js"></script>
+    <script>
+      // Set the page title from environment variable
+      window.addEventListener('load', function() {
+        document.getElementById('page-title').textContent = window.env.VITE_SITE_TITLE || 'talkflow-n8n';
+      });
+    </script>
   </head>
   <body>
     <div id="root"></div>

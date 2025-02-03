@@ -99,12 +99,12 @@ export const ChatSidebar = ({
       <ScrollArea className="flex-1">
         <div className="p-2 space-y-2">
           {sessions.map((session) => (
-            <button
+            <div
               key={session.id}
               onClick={() => onSessionSelect(session.id)}
               className={cn(
                 "w-full text-left px-3 py-2 rounded-lg hover:bg-sidebar-accent transition-colors group",
-                "flex items-center gap-2 text-sm relative",
+                "flex items-center gap-2 text-sm relative cursor-pointer",
                 session.id === currentSessionId && "bg-sidebar-accent"
               )}
             >
@@ -167,7 +167,7 @@ export const ChatSidebar = ({
                   </Button>
                 </div>
               )}
-            </button>
+            </div>
           ))}
         </div>
       </ScrollArea>

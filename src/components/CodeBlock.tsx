@@ -1,9 +1,10 @@
-import { Button } from '@/components/ui/button';
+import React from 'react';
+import { Button } from './ui/button';
 import { Copy, PlayCircle } from 'lucide-react';
-import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
-import { vscDarkPlus } from 'react-syntax-highlighter/dist/esm/styles/prism';
 import { useToast } from '@/hooks/use-toast';
 import { useNavigate } from 'react-router-dom';
+import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
+import { vscDarkPlus } from 'react-syntax-highlighter/dist/esm/styles/prism';
 
 interface CodeBlockProps {
   language: string;
@@ -49,7 +50,7 @@ export const CodeBlock = ({ language, children }: CodeBlockProps) => {
   return (
     <div className="relative my-6 group rounded-xl overflow-hidden shadow-lg transition-all duration-200 hover:shadow-xl border border-slate-200 dark:border-slate-800">
       <div className="absolute top-0 right-0 flex items-center gap-2 m-2 z-10">
-        <span className="text-xs text-slate-600 dark:text-slate-400 font-mono px-2 py-1 rounded-md bg-slate-100/80 dark:bg-slate-800/80 backdrop-blur-sm border border-slate-200/50 dark:border-slate-700/50">
+        <span className="text-xs text-slate-600 dark:text-slate-400 font-mono px-2 py-1 rounded-md bg-slate-100/80 dark:bg-slate-800/80 backdrop-blur-sm border border-slate-200/50 dark:border-slate-700/50 opacity-100 group-hover:opacity-0 transition-opacity">
           {language.toUpperCase()}
         </span>
         <Button

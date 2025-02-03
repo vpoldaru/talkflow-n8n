@@ -46,7 +46,8 @@ npm install
 
 # Start the development server
 npm run dev
-Deployment Options
+
+# Deployment Options
 1. Docker (Recommended)
 You can run the app using Docker from Docker Hub:
 
@@ -56,6 +57,7 @@ docker run -d -p 3000:3000 \
   -e VITE_WELCOME_MESSAGE="Your welcome message" \
   -e VITE_SITE_TITLE="Your Site Title" \
   jimmartinquis/n8n-chatui:latest
+  
 2. Docker Compose
 Use the provided docker-compose.yml:
 

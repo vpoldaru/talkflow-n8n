@@ -2,6 +2,12 @@ import { useChatSessions } from "@/hooks/useChatSessions";
 import { ChatLayout } from "@/components/chat/ChatLayout";
 
 const Index = () => {
+  // Ensure window.env exists before rendering
+  if (!window.env) {
+    console.error('Docker environment variables not loaded');
+    return <div>Loading configuration...</div>;
+  }
+
   const {
     sessions,
     currentSessionId,

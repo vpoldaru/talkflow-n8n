@@ -20,12 +20,13 @@ export const useMessageSender = (
     currentMessages: Message[],
     file?: File
   ) => {
-    const effectiveWebhookUrl = window.env?.VITE_N8N_WEBHOOK_URL || webhook_url;
+    // Only use window.env for webhook URL
+    const effectiveWebhookUrl = window.env?.VITE_N8N_WEBHOOK_URL;
 
     if (!effectiveWebhookUrl) {
-      console.error('No webhook URL provided');
+      console.error('No webhook URL provided in Docker environment');
       toast({
-        description: "Configuration error: No webhook URL available",
+        description: "Configuration error: No webhook URL available in Docker environment",
         variant: "destructive",
       });
       return;

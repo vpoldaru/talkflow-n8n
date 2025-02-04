@@ -1,10 +1,9 @@
 import { useState } from 'react';
 import { useToast } from './use-toast';
 import { Message } from '@/types/chat';
-import { v4 as uuidv4 } from 'uuid';
+import { fetchWithTimeout, FETCH_TIMEOUT } from '@/utils/fetchWithTimeout';
+import { extractResponseContent } from '@/utils/responseHandler';
 import { QueryClient } from '@tanstack/react-query';
-
-const FETCH_TIMEOUT = 600000; // 10 minutes timeout
 
 export const useMessageSender = (
   webhook_url: string,
@@ -14,38 +13,6 @@ export const useMessageSender = (
   const [isLoading, setIsLoading] = useState(false);
   const [isTyping, setIsTyping] = useState(false);
   const { toast } = useToast();
-
-  const fetchWithTimeout = async (
-    url: string, 
-    options: RequestInit,
-    timeout: number
-  ) => {
-    const controller = new AbortController();
-    const id = setTimeout(() => controller.abort(), timeout);
-
-    try {
-      const response = await fetch(url, {
-        ...options,
-        signal: controller.signal
-      });
-      clearTimeout(id);
-      
-      if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
-      }
-      
-      return response;
-    } catch (error) {
-      clearTimeout(id);
-      if (error instanceof Error) {
-        if (error.name === 'AbortError') {
-          throw new Error('Request timed out');
-        }
-        throw error;
-      }
-      throw new Error('Network error occurred');
-    }
-  };
 
   const sendMessage = async (
     input: string,
@@ -100,7 +67,7 @@ export const useMessageSender = (
     }
 
     const userMessage: Message = {
-      id: uuidv4(),
+      id: crypto.randomUUID(),
       content: input,
       role: "user",
       timestamp: Date.now(),
@@ -136,7 +103,7 @@ export const useMessageSender = (
       const responseContent = extractResponseContent(data);
 
       const assistantMessage: Message = {
-        id: uuidv4(),
+        id: crypto.randomUUID(),
         content: responseContent,
         role: "assistant",
         timestamp: Date.now(),
@@ -187,59 +154,4 @@ const fileToBase64 = (file: File): Promise<string> => {
     };
     reader.onerror = (error) => reject(error);
   });
-};
-
-const extractResponseContent = (data: any): string => {
-  if (typeof data === 'string') return data;
-  
-  if (Array.isArray(data)) {
-    const firstItem = data[0];
-    if (!firstItem) return "No response content available";
-    
-    if (typeof firstItem === 'string') return firstItem;
-    
-    if (typeof firstItem === 'object') {
-      if (firstItem.message?.content && firstItem.message?.role === 'assistant') {
-        return firstItem.message.content;
-      }
-      
-      const possibleContent = firstItem.message?.content || 
-                            firstItem.content ||
-                            firstItem.output ||
-                            firstItem.text ||
-                            firstItem.response;
-                            
-      if (possibleContent) return possibleContent;
-      
-      try {
-        return JSON.stringify(firstItem);
-      } catch (e) {
-        console.warn('Failed to stringify response:', e);
-        return "Unable to process response format";
-      }
-    }
-  }
-  
-  if (typeof data === 'object') {
-    if (data.message?.content && data.message?.role === 'assistant') {
-      return data.message.content;
-    }
-    
-    const possibleContent = data.message?.content || 
-                          data.content ||
-                          data.output ||
-                          data.text ||
-                          data.response;
-                          
-    if (possibleContent) return possibleContent;
-    
-    try {
-      return JSON.stringify(data);
-    } catch (e) {
-      console.warn('Failed to stringify response:', e);
-      return "Unable to process response format";
-    }
-  }
-  
-  return "Unexpected response format";
 };

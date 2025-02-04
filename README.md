@@ -61,11 +61,10 @@ docker run -d -p 3000:3000 \
 2. Docker Compose
 Use the provided docker-compose.yml:
 
-
 docker-compose up -d
+
 3. Compile from Source
 Manually build and run the project:
-
 
 git clone https://github.com/jimmartinquisitive/talkflow-n8n.git
 cd talkflow-n8n

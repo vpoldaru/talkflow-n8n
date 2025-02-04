@@ -8,21 +8,21 @@ const Playground = () => {
   const navigate = useNavigate();
 
   return (
-    <div className="h-screen w-screen flex flex-col bg-background">
-      <div className="flex items-center justify-between p-4 border-b border-border/20">
-        <div>
-          <h1 className="text-4xl font-bold text-foreground tracking-tight">Code Playground</h1>
+    <div className="min-h-screen bg-background p-6 md:p-8 lg:p-10">
+      <div className="max-w-5xl mx-auto space-y-6">
+        <div className="flex items-center justify-between">
+          <div>
+            <h1 className="text-4xl font-bold text-foreground tracking-tight">Code Playground</h1>
+          </div>
+          <Button
+            variant="outline"
+            onClick={() => navigate('/')}
+            className="gap-2"
+          >
+            <ArrowLeft className="h-4 w-4" />
+            Back to Chat
+          </Button>
         </div>
-        <Button
-          variant="outline"
-          onClick={() => navigate('/')}
-          className="gap-2"
-        >
-          <ArrowLeft className="h-4 w-4" />
-          Back to Chat
-        </Button>
-      </div>
-      <div className="flex-1 overflow-hidden">
         <CodePlayground />
       </div>
     </div>

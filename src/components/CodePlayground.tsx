@@ -2,10 +2,10 @@ import React, { useState, useEffect } from 'react';
 import Editor from '@monaco-editor/react';
 import { Card, CardContent, CardHeader, CardTitle } from './ui/card';
 import { Button } from './ui/button';
-import { Copy, Download, GripHorizontal } from 'lucide-react';
+import { Copy, Download } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from './ui/select';
-import { ResizablePanel, ResizablePanelGroup, ResizableHandle } from './ui/resizable';
+import { ResizablePanel, ResizablePanelGroup } from './ui/resizable';
 
 interface CodePlaygroundProps {
   defaultLanguage?: string;
@@ -102,8 +102,8 @@ const CodePlayground: React.FC<CodePlaygroundProps> = ({
   };
 
   return (
-    <Card className="h-full border-none shadow-none rounded-none">
-      <CardHeader className="border-b border-border/20 py-3">
+    <Card className="w-full max-w-5xl mx-auto bg-card shadow-lg">
+      <CardHeader className="border-b border-border/20">
         <CardTitle className="flex justify-between items-center">
           <div className="flex items-center gap-4">
             <span className="text-xl font-semibold text-card-foreground">Code Playground</span>
@@ -142,9 +142,9 @@ const CodePlayground: React.FC<CodePlaygroundProps> = ({
           </div>
         </CardTitle>
       </CardHeader>
-      <CardContent className="p-0">
-        <ResizablePanelGroup direction="vertical" className="h-[calc(100vh-8rem)]">
-          <ResizablePanel defaultSize={75} minSize={30}>
+      <CardContent className="p-4">
+        <ResizablePanelGroup direction="vertical" className="min-h-[500px] rounded-md border">
+          <ResizablePanel defaultSize={100}>
             <div className="h-full">
               <Editor
                 height="100%"
@@ -163,12 +163,6 @@ const CodePlayground: React.FC<CodePlaygroundProps> = ({
                   fontFamily: 'ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace',
                 }}
               />
-            </div>
-          </ResizablePanel>
-          <ResizableHandle withHandle className="bg-border/20 hover:bg-accent transition-colors" />
-          <ResizablePanel defaultSize={25} minSize={10}>
-            <div className="h-full bg-muted/30 p-4">
-              {/* Future output panel */}
             </div>
           </ResizablePanel>
         </ResizablePanelGroup>

@@ -26,9 +26,9 @@ COPY nginx.conf /etc/nginx/conf.d/default.conf
 
 # Create env-config.js template
 RUN echo "window.env = {" > /usr/share/nginx/html/env-config.template.js && \
-    echo "  VITE_N8N_WEBHOOK_URL: '\$VITE_N8N_WEBHOOK_URL'," >> /usr/share/nginx/html/env-config.template.js && \
-    echo "  VITE_WELCOME_MESSAGE: '\$VITE_WELCOME_MESSAGE'," >> /usr/share/nginx/html/env-config.template.js && \
-    echo "  VITE_SITE_TITLE: '\$VITE_SITE_TITLE'" >> /usr/share/nginx/html/env-config.template.js && \
+    echo "  VITE_N8N_WEBHOOK_URL: \"`echo \$VITE_N8N_WEBHOOK_URL`\"," >> /usr/share/nginx/html/env-config.template.js && \
+    echo "  VITE_WELCOME_MESSAGE: \"`echo \$VITE_WELCOME_MESSAGE`\"," >> /usr/share/nginx/html/env-config.template.js && \
+    echo "  VITE_SITE_TITLE: \"`echo \$VITE_SITE_TITLE`\"" >> /usr/share/nginx/html/env-config.template.js && \
     echo "};" >> /usr/share/nginx/html/env-config.template.js
 
 # Create entrypoint script

@@ -5,6 +5,7 @@ import { Button } from './ui/button';
 import { Copy, Download } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from './ui/select';
+import { ResizablePanel, ResizablePanelGroup } from './ui/resizable';
 
 interface CodePlaygroundProps {
   defaultLanguage?: string;
@@ -142,25 +143,29 @@ const CodePlayground: React.FC<CodePlaygroundProps> = ({
         </CardTitle>
       </CardHeader>
       <CardContent className="p-4">
-        <div className="rounded-md overflow-hidden border border-border/20">
-          <Editor
-            height="500px"
-            language={language}
-            value={code}
-            onChange={(value) => setCode(value || '')}
-            theme="vs-dark"
-            options={{
-              minimap: { enabled: false },
-              fontSize: 14,
-              lineNumbers: 'on',
-              roundedSelection: false,
-              scrollBeyondLastLine: false,
-              automaticLayout: true,
-              padding: { top: 16, bottom: 16 },
-              fontFamily: 'ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace',
-            }}
-          />
-        </div>
+        <ResizablePanelGroup direction="vertical" className="min-h-[500px] rounded-md border">
+          <ResizablePanel defaultSize={100}>
+            <div className="h-full">
+              <Editor
+                height="100%"
+                language={language}
+                value={code}
+                onChange={(value) => setCode(value || '')}
+                theme="vs-dark"
+                options={{
+                  minimap: { enabled: false },
+                  fontSize: 14,
+                  lineNumbers: 'on',
+                  roundedSelection: false,
+                  scrollBeyondLastLine: false,
+                  automaticLayout: true,
+                  padding: { top: 16, bottom: 16 },
+                  fontFamily: 'ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace',
+                }}
+              />
+            </div>
+          </ResizablePanel>
+        </ResizablePanelGroup>
       </CardContent>
     </Card>
   );

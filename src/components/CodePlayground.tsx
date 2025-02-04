@@ -2,10 +2,10 @@ import React, { useState, useEffect } from 'react';
 import Editor from '@monaco-editor/react';
 import { Card, CardContent, CardHeader, CardTitle } from './ui/card';
 import { Button } from './ui/button';
-import { Copy, Download } from 'lucide-react';
+import { Copy, Download, GripHorizontal } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from './ui/select';
-import { ResizablePanel, ResizablePanelGroup } from './ui/resizable';
+import { ResizablePanel, ResizablePanelGroup, ResizableHandle } from './ui/resizable';
 
 interface CodePlaygroundProps {
   defaultLanguage?: string;
@@ -165,6 +165,8 @@ const CodePlayground: React.FC<CodePlaygroundProps> = ({
               />
             </div>
           </ResizablePanel>
+          <ResizableHandle withHandle className="bg-border/20 hover:bg-accent transition-colors" />
+          <ResizablePanel defaultSize={0} minSize={0} />
         </ResizablePanelGroup>
       </CardContent>
     </Card>

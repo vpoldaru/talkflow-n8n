@@ -7,7 +7,18 @@ import { useQueryClient } from "@tanstack/react-query";
 const STORAGE_KEY = "chat_sessions";
 
 // Fallback to import.meta.env if window.env is not available
+console.log('Configuration Sources:');
+console.log('window.env:', window.env);
+console.log('import.meta.env:', import.meta.env);
+console.log('DEFAULT_WELCOME_MESSAGE:', "Welcome to the chat!.");
+
 const WELCOME_MESSAGE = window.env?.VITE_WELCOME_MESSAGE || import.meta.env.VITE_WELCOME_MESSAGE || "Welcome to the chat!";
+
+console.log('WELCOME_MESSAGE sources:');
+console.log('- window.env.VITE_WELCOME_MESSAGE:', window.env?.VITE_WELCOME_MESSAGE);
+console.log('- import.meta.env.VITE_WELCOME_MESSAGE:', import.meta.env.VITE_WELCOME_MESSAGE);
+console.log('- DEFAULT_WELCOME_MESSAGE:', "Welcome to the chat!.");
+console.log('Selected WELCOME_MESSAGE:', WELCOME_MESSAGE);
 
 export const useChatSessions = () => {
   const [sessions, setSessions] = useState<ChatSession[]>([]);

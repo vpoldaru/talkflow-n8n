@@ -20,7 +20,12 @@ export const useMessageSender = (
     file?: File
   ) => {
     // Fallback to import.meta.env if window.env is not available
+    console.log('WEBHOOK_URL sources:');
+    console.log('- window.env.VITE_N8N_WEBHOOK_URL:', window.env?.VITE_N8N_WEBHOOK_URL);
+    console.log('- import.meta.env.VITE_N8N_WEBHOOK_URL:', import.meta.env.VITE_N8N_WEBHOOK_URL);
+
     const effectiveWebhookUrl = window.env?.VITE_N8N_WEBHOOK_URL || import.meta.env.VITE_N8N_WEBHOOK_URL;
+    console.log('Selected WEBHOOK_URL:', effectiveWebhookUrl);
 
     if (!effectiveWebhookUrl) {
       console.error('No webhook URL provided in environment');

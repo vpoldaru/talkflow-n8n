@@ -1,11 +1,13 @@
 import { useState, useEffect } from "react";
 import { Message, ChatSession } from "@/types/chat";
 import { v4 as uuidv4 } from 'uuid';
+import { useMessageSender } from "./useMessageSender";
+import { useQueryClient } from "@tanstack/react-query";
 
 const STORAGE_KEY = "chat_sessions";
 
-// Only use window.env for configuration
-const WELCOME_MESSAGE = window.env?.VITE_WELCOME_MESSAGE || "Welcome to the chat!";
+// Fallback to import.meta.env if window.env is not available
+const WELCOME_MESSAGE = window.env?.VITE_WELCOME_MESSAGE || import.meta.env.VITE_WELCOME_MESSAGE || "Welcome to the chat!";
 
 export const useChatSessions = () => {
   const [sessions, setSessions] = useState<ChatSession[]>([]);
@@ -18,14 +20,12 @@ export const useChatSessions = () => {
         ? { ...session, messages, lastUpdated: Date.now() }
         : session
     ));
-    // Update React Query cache
     queryClient.setQueryData(['chatSessions', sessionId], messages);
   };
 
   const { sendMessage: sendMessageToWebhook, isLoading, isTyping } = useMessageSender(
-    WEBHOOK_URL,
     updateSession,
-    queryClient // Pass queryClient to useMessageSender
+    queryClient
   );
 
   useEffect(() => {

@@ -6,7 +6,6 @@ import { extractResponseContent } from '@/utils/responseHandler';
 import { QueryClient } from '@tanstack/react-query';
 
 export const useMessageSender = (
-  webhook_url: string,
   updateSession: (sessionId: string, messages: Message[]) => void,
   queryClient: QueryClient
 ) => {
@@ -20,13 +19,13 @@ export const useMessageSender = (
     currentMessages: Message[],
     file?: File
   ) => {
-    // Only use window.env for webhook URL
-    const effectiveWebhookUrl = window.env?.VITE_N8N_WEBHOOK_URL;
+    // Fallback to import.meta.env if window.env is not available
+    const effectiveWebhookUrl = window.env?.VITE_N8N_WEBHOOK_URL || import.meta.env.VITE_N8N_WEBHOOK_URL;
 
     if (!effectiveWebhookUrl) {
-      console.error('No webhook URL provided in Docker environment');
+      console.error('No webhook URL provided in environment');
       toast({
-        description: "Configuration error: No webhook URL available in Docker environment",
+        description: "Configuration error: No webhook URL available",
         variant: "destructive",
       });
       return;

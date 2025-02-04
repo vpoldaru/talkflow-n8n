@@ -1,60 +1,29 @@
 import { useState, useEffect } from "react";
 import { Message, ChatSession } from "@/types/chat";
 import { v4 as uuidv4 } from 'uuid';
-import { DEFAULT_WELCOME_MESSAGE } from "@/config/messages";
 import { useMessageSender } from "./useMessageSender";
+import { useQueryClient } from "@tanstack/react-query";
 
 const STORAGE_KEY = "chat_sessions";
 
-// Add detailed logging for configuration sources
+// Fallback to import.meta.env if window.env is not available
 console.log('Configuration Sources:');
 console.log('window.env:', window.env);
 console.log('import.meta.env:', import.meta.env);
-console.log('DEFAULT_WELCOME_MESSAGE:', DEFAULT_WELCOME_MESSAGE);
+console.log('DEFAULT_WELCOME_MESSAGE:', "Welcome to the chat!.");
 
-const WEBHOOK_URL = (() => {
-  // For Lovable development environment
-  if (import.meta.env.DEV) {
-    return import.meta.env.VITE_N8N_WEBHOOK_URL;
-  }
-  
-  // For Docker production environment
-  const windowEnvUrl = window.env?.VITE_N8N_WEBHOOK_URL;
-  const viteEnvUrl = import.meta.env.VITE_N8N_WEBHOOK_URL;
-  
-  console.log('WEBHOOK_URL sources:');
-  console.log('- window.env.VITE_N8N_WEBHOOK_URL:', windowEnvUrl);
-  console.log('- import.meta.env.VITE_N8N_WEBHOOK_URL:', viteEnvUrl);
-  
-  const selectedUrl = windowEnvUrl || viteEnvUrl 
-  
-  console.log('Selected WEBHOOK_URL:', selectedUrl);
-  return selectedUrl;
-})();
+const WELCOME_MESSAGE = window.env?.VITE_WELCOME_MESSAGE || import.meta.env.VITE_WELCOME_MESSAGE || "Welcome to the chat!";
 
-const WELCOME_MESSAGE = (() => {
-  // For Lovable development environment
-  if (import.meta.env.DEV) {
-    return import.meta.env.VITE_WELCOME_MESSAGE || DEFAULT_WELCOME_MESSAGE;
-  }
-  
-  // For Docker production environment
-  const windowEnvMsg = window.env?.VITE_WELCOME_MESSAGE;
-  const viteEnvMsg = import.meta.env.VITE_WELCOME_MESSAGE;
-  
-  console.log('WELCOME_MESSAGE sources:');
-  console.log('- window.env.VITE_WELCOME_MESSAGE:', windowEnvMsg);
-  console.log('- import.meta.env.VITE_WELCOME_MESSAGE:', viteEnvMsg);
-  console.log('- DEFAULT_WELCOME_MESSAGE:', DEFAULT_WELCOME_MESSAGE);
-  
-  const finalMsg = windowEnvMsg || viteEnvMsg || DEFAULT_WELCOME_MESSAGE;
-  console.log('Selected WELCOME_MESSAGE:', finalMsg);
-  return finalMsg;
-})();
+console.log('WELCOME_MESSAGE sources:');
+console.log('- window.env.VITE_WELCOME_MESSAGE:', window.env?.VITE_WELCOME_MESSAGE);
+console.log('- import.meta.env.VITE_WELCOME_MESSAGE:', import.meta.env.VITE_WELCOME_MESSAGE);
+console.log('- DEFAULT_WELCOME_MESSAGE:', "Welcome to the chat!.");
+console.log('Selected WELCOME_MESSAGE:', WELCOME_MESSAGE);
 
 export const useChatSessions = () => {
   const [sessions, setSessions] = useState<ChatSession[]>([]);
   const [currentSessionId, setCurrentSessionId] = useState<string>("");
+  const queryClient = useQueryClient();
 
   const updateSession = (sessionId: string, messages: Message[]) => {
     setSessions(prev => prev.map(session => 
@@ -62,11 +31,12 @@ export const useChatSessions = () => {
         ? { ...session, messages, lastUpdated: Date.now() }
         : session
     ));
+    queryClient.setQueryData(['chatSessions', sessionId], messages);
   };
 
   const { sendMessage: sendMessageToWebhook, isLoading, isTyping } = useMessageSender(
-    WEBHOOK_URL,
-    updateSession
+    updateSession,
+    queryClient
   );
 
   useEffect(() => {
@@ -134,6 +104,9 @@ export const useChatSessions = () => {
   const sendMessage = async (input: string, file?: File) => {
     const currentSession = getCurrentSession();
     if (!currentSession) return;
+    
+    // Set initial state in React Query cache
+    queryClient.setQueryData(['chatSessions', currentSession.id], currentSession.messages);
     
     await sendMessageToWebhook(
       input,

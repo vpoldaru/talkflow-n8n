@@ -1,11 +1,13 @@
 import { useState } from 'react';
 import { useToast } from './use-toast';
 import { Message } from '@/types/chat';
-import { v4 as uuidv4 } from 'uuid';
+import { fetchWithTimeout, FETCH_TIMEOUT } from '@/utils/fetchWithTimeout';
+import { extractResponseContent } from '@/utils/responseHandler';
+import { QueryClient } from '@tanstack/react-query';
 
 export const useMessageSender = (
-  webhook_url: string,
-  updateSession: (sessionId: string, messages: Message[]) => void
+  updateSession: (sessionId: string, messages: Message[]) => void,
+  queryClient: QueryClient
 ) => {
   const [isLoading, setIsLoading] = useState(false);
   const [isTyping, setIsTyping] = useState(false);
@@ -17,11 +19,16 @@ export const useMessageSender = (
     currentMessages: Message[],
     file?: File
   ) => {
-    // Get webhook URL from window.env if available, fallback to passed webhook_url
-    const effectiveWebhookUrl = window.env?.VITE_N8N_WEBHOOK_URL || webhook_url;
+    // Fallback to import.meta.env if window.env is not available
+    console.log('WEBHOOK_URL sources:');
+    console.log('- window.env.VITE_N8N_WEBHOOK_URL:', window.env?.VITE_N8N_WEBHOOK_URL);
+    console.log('- import.meta.env.VITE_N8N_WEBHOOK_URL:', import.meta.env.VITE_N8N_WEBHOOK_URL);
+
+    const effectiveWebhookUrl = window.env?.VITE_N8N_WEBHOOK_URL || import.meta.env.VITE_N8N_WEBHOOK_URL;
+    console.log('Selected WEBHOOK_URL:', effectiveWebhookUrl);
 
     if (!effectiveWebhookUrl) {
-      console.error('No webhook URL provided');
+      console.error('No webhook URL provided in environment');
       toast({
         description: "Configuration error: No webhook URL available",
         variant: "destructive",
@@ -64,9 +71,8 @@ export const useMessageSender = (
       }
     }
 
-    // Create and add the user message first
     const userMessage: Message = {
-      id: uuidv4(),
+      id: crypto.randomUUID(),
       content: input,
       role: "user",
       timestamp: Date.now(),
@@ -75,44 +81,58 @@ export const useMessageSender = (
 
     const newMessages = [...currentMessages, userMessage];
     updateSession(sessionId, newMessages);
+    queryClient.setQueryData(['chatSessions', sessionId], newMessages);
 
     try {
-      const response = await fetch(effectiveWebhookUrl, {
-        method: "POST",
-        headers: {
-          'Content-Type': 'application/json',
+      const response = await fetchWithTimeout(
+        effectiveWebhookUrl,
+        {
+          method: "POST",
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            chatInput: input,
+            sessionId: sessionId,
+            ...(file && {
+              data: await fileToBase64(file),
+              mimeType: file.type,
+              fileName: file.name
+            })
+          }),
         },
-        body: JSON.stringify({
-          chatInput: input,
-          sessionId: sessionId,
-          ...(file && {
-            data: await fileToBase64(file),
-            mimeType: file.type,
-            fileName: file.name
-          })
-        })
-      });
-
-      if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
-      }
+        FETCH_TIMEOUT
+      );
 
       const data = await response.json();
       const responseContent = extractResponseContent(data);
 
       const assistantMessage: Message = {
-        id: uuidv4(),
+        id: crypto.randomUUID(),
         content: responseContent,
         role: "assistant",
         timestamp: Date.now(),
       };
 
-      updateSession(sessionId, [...newMessages, assistantMessage]);
+      const finalMessages = [...newMessages, assistantMessage];
+      updateSession(sessionId, finalMessages);
+      queryClient.setQueryData(['chatSessions', sessionId], finalMessages);
+      
       console.log('Message sent successfully');
     } catch (error) {
       console.error('Error in webhook request:', error);
+      let errorMessage = "Error sending message";
+      
+      if (error instanceof Error) {
+        if (error.message === 'Request timed out') {
+          errorMessage = "Request timed out. Please try again.";
+        } else if (error.message.includes('Failed to fetch')) {
+          errorMessage = "Network error. Please check your connection.";
+        }
+      }
+      
       toast({
-        description: "Error sending message",
+        description: errorMessage,
         variant: "destructive",
       });
     } finally {
@@ -139,59 +159,4 @@ const fileToBase64 = (file: File): Promise<string> => {
     };
     reader.onerror = (error) => reject(error);
   });
-};
-
-const extractResponseContent = (data: any): string => {
-  if (typeof data === 'string') return data;
-  
-  if (Array.isArray(data)) {
-    const firstItem = data[0];
-    if (!firstItem) return "No response content available";
-    
-    if (typeof firstItem === 'string') return firstItem;
-    
-    if (typeof firstItem === 'object') {
-      if (firstItem.message?.content && firstItem.message?.role === 'assistant') {
-        return firstItem.message.content;
-      }
-      
-      const possibleContent = firstItem.message?.content || 
-                            firstItem.content ||
-                            firstItem.output ||
-                            firstItem.text ||
-                            firstItem.response;
-                            
-      if (possibleContent) return possibleContent;
-      
-      try {
-        return JSON.stringify(firstItem);
-      } catch (e) {
-        console.warn('Failed to stringify response:', e);
-        return "Unable to process response format";
-      }
-    }
-  }
-  
-  if (typeof data === 'object') {
-    if (data.message?.content && data.message?.role === 'assistant') {
-      return data.message.content;
-    }
-    
-    const possibleContent = data.message?.content || 
-                          data.content ||
-                          data.output ||
-                          data.text ||
-                          data.response;
-                          
-    if (possibleContent) return possibleContent;
-    
-    try {
-      return JSON.stringify(data);
-    } catch (e) {
-      console.warn('Failed to stringify response:', e);
-      return "Unable to process response format";
-    }
-  }
-  
-  return "Unexpected response format";
 };

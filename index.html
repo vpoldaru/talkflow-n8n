@@ -10,9 +10,10 @@
     <meta property="og:image" content="/og-image.png" />
     <script src="/env-config.js"></script>
     <script>
-      // Set the page title from environment variable
+      // Set the page title from environment variable with fallback
       window.addEventListener('load', function() {
-        document.getElementById('page-title').textContent = window.env.VITE_SITE_TITLE || 'talkflow-n8n';
+        const title = window.env && window.env.VITE_SITE_TITLE ? window.env.VITE_SITE_TITLE : 'Chat Application';
+        document.getElementById('page-title').textContent = title;
       });
     </script>
   </head>

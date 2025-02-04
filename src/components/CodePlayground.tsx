@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import Editor from '@monaco-editor/react';
 import { Card, CardContent, CardHeader, CardTitle } from './ui/card';
 import { Button } from './ui/button';
-import { Copy } from 'lucide-react';
+import { Copy, Download } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from './ui/select';
 
@@ -12,25 +12,25 @@ interface CodePlaygroundProps {
 }
 
 const SUPPORTED_LANGUAGES = [
-  { value: 'javascript', label: 'JavaScript' },
-  { value: 'typescript', label: 'TypeScript' },
-  { value: 'python', label: 'Python' },
-  { value: 'java', label: 'Java' },
-  { value: 'csharp', label: 'C#' },
-  { value: 'cpp', label: 'C++' },
-  { value: 'go', label: 'Go' },
-  { value: 'rust', label: 'Rust' },
-  { value: 'ruby', label: 'Ruby' },
-  { value: 'php', label: 'PHP' },
-  { value: 'sql', label: 'SQL' },
-  { value: 'html', label: 'HTML' },
-  { value: 'css', label: 'CSS' },
-  { value: 'json', label: 'JSON' },
-  { value: 'markdown', label: 'Markdown' },
-  { value: 'hcl', label: 'Terraform' },
-  { value: 'bicep', label: 'Bicep' },
-  { value: 'powershell', label: 'PowerShell' },
-  { value: 'shell', label: 'Bash/Shell' },
+  { value: 'javascript', label: 'JavaScript', extension: '.js' },
+  { value: 'typescript', label: 'TypeScript', extension: '.ts' },
+  { value: 'python', label: 'Python', extension: '.py' },
+  { value: 'java', label: 'Java', extension: '.java' },
+  { value: 'csharp', label: 'C#', extension: '.cs' },
+  { value: 'cpp', label: 'C++', extension: '.cpp' },
+  { value: 'go', label: 'Go', extension: '.go' },
+  { value: 'rust', label: 'Rust', extension: '.rs' },
+  { value: 'ruby', label: 'Ruby', extension: '.rb' },
+  { value: 'php', label: 'PHP', extension: '.php' },
+  { value: 'sql', label: 'SQL', extension: '.sql' },
+  { value: 'html', label: 'HTML', extension: '.html' },
+  { value: 'css', label: 'CSS', extension: '.css' },
+  { value: 'json', label: 'JSON', extension: '.json' },
+  { value: 'markdown', label: 'Markdown', extension: '.md' },
+  { value: 'hcl', label: 'Terraform', extension: '.tf' },
+  { value: 'bicep', label: 'Bicep', extension: '.bicep' },
+  { value: 'powershell', label: 'PowerShell', extension: '.ps1' },
+  { value: 'shell', label: 'Bash/Shell', extension: '.sh' },
 ];
 
 const CodePlayground: React.FC<CodePlaygroundProps> = ({
@@ -72,6 +72,34 @@ const CodePlayground: React.FC<CodePlaygroundProps> = ({
     }
   };
 
+  const handleSaveToFile = () => {
+    try {
+      const currentLang = SUPPORTED_LANGUAGES.find(lang => lang.value === language);
+      const extension = currentLang?.extension || '.txt';
+      const filename = `code${extension}`;
+      
+      const blob = new Blob([code], { type: 'text/plain' });
+      const url = window.URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      
+      link.href = url;
+      link.download = filename;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      window.URL.revokeObjectURL(url);
+
+      toast({
+        description: `File saved as ${filename}`,
+      });
+    } catch (err) {
+      toast({
+        description: "Failed to save file",
+        variant: "destructive",
+      });
+    }
+  };
+
   return (
     <Card className="w-full max-w-5xl mx-auto bg-card shadow-lg">
       <CardHeader className="border-b border-border/20">
@@ -91,15 +119,26 @@ const CodePlayground: React.FC<CodePlaygroundProps> = ({
               </SelectContent>
             </Select>
           </div>
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={handleCopy}
-            className="hover:bg-accent"
-          >
-            <Copy className="w-4 h-4 mr-2" />
-            Copy
-          </Button>
+          <div className="flex gap-2">
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={handleSaveToFile}
+              className="hover:bg-accent"
+            >
+              <Download className="w-4 h-4 mr-2" />
+              Save
+            </Button>
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={handleCopy}
+              className="hover:bg-accent"
+            >
+              <Copy className="w-4 h-4 mr-2" />
+              Copy
+            </Button>
+          </div>
         </CardTitle>
       </CardHeader>
       <CardContent className="p-4">

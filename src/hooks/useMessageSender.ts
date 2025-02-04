@@ -4,7 +4,7 @@ import { Message } from '@/types/chat';
 import { v4 as uuidv4 } from 'uuid';
 import { QueryClient } from '@tanstack/react-query';
 
-const FETCH_TIMEOUT = 30000; // 30 seconds timeout
+const FETCH_TIMEOUT = 600000; // 10 minutes timeout
 
 export const useMessageSender = (
   webhook_url: string,

@@ -24,22 +24,16 @@ COPY --from=builder /app/dist /usr/share/nginx/html
 # Copy nginx configuration
 COPY nginx.conf /etc/nginx/conf.d/default.conf
 
-# Create env-config.js template only if it doesn't exist
-RUN if [ ! -f /usr/share/nginx/html/env-config.js ]; then \
-    echo "window.env = {" > /usr/share/nginx/html/env-config.template.js && \
-    echo "  VITE_N8N_WEBHOOK_URL: \"\$VITE_N8N_WEBHOOK_URL\"," >> /usr/share/nginx/html/env-config.template.js && \
-    echo "  VITE_WELCOME_MESSAGE: \"\$VITE_WELCOME_MESSAGE\"," >> /usr/share/nginx/html/env-config.template.js && \
-    echo "  VITE_SITE_TITLE: \"\$VITE_SITE_TITLE\"" >> /usr/share/nginx/html/env-config.template.js && \
-    echo "};" >> /usr/share/nginx/html/env-config.template.js; \
-    fi
+# Create env-config.js template
+RUN echo "window.env = {" > /usr/share/nginx/html/env-config.template.js && \
+    echo "  VITE_N8N_WEBHOOK_URL: '\$VITE_N8N_WEBHOOK_URL'," >> /usr/share/nginx/html/env-config.template.js && \
+    echo "  VITE_WELCOME_MESSAGE: '\$VITE_WELCOME_MESSAGE'," >> /usr/share/nginx/html/env-config.template.js && \
+    echo "  VITE_SITE_TITLE: '\$VITE_SITE_TITLE'" >> /usr/share/nginx/html/env-config.template.js && \
+    echo "};" >> /usr/share/nginx/html/env-config.template.js
 
-# Create a script to replace environment variables only if env-config.js doesn't exist
+# Create entrypoint script
 RUN echo '#!/bin/sh\n\
-    if [ ! -f /usr/share/nginx/html/env-config.js ]; then\n\
-        envsubst < /usr/share/nginx/html/env-config.template.js > /usr/share/nginx/html/env-config.js\n\
-    fi\n\
-    \n\
-    # Start nginx\n\
+    envsubst < /usr/share/nginx/html/env-config.template.js > /usr/share/nginx/html/env-config.js\n\
     nginx -g "daemon off;"' > /docker-entrypoint.sh \
     && chmod +x /docker-entrypoint.sh
 

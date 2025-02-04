@@ -76,11 +76,13 @@ export const useMessageSender = (
     const newMessages = [...currentMessages, userMessage];
     updateSession(sessionId, newMessages);
     
-    // Update React Query cache
     queryClient.setQueryData(['chatSessions', sessionId], newMessages);
 
     const controller = new AbortController();
     const signal = controller.signal;
+
+    // Set timeout to 10 minutes
+    const timeoutId = setTimeout(() => controller.abort(), 600000);
 
     try {
       const response = await fetch(effectiveWebhookUrl, {
@@ -117,7 +119,6 @@ export const useMessageSender = (
       const finalMessages = [...newMessages, assistantMessage];
       updateSession(sessionId, finalMessages);
       
-      // Update React Query cache with final messages
       queryClient.setQueryData(['chatSessions', sessionId], finalMessages);
       
       console.log('Message sent successfully');
@@ -130,11 +131,13 @@ export const useMessageSender = (
         });
       }
     } finally {
+      clearTimeout(timeoutId);
       setIsLoading(false);
       setIsTyping(false);
     }
 
     return () => {
+      clearTimeout(timeoutId);
       controller.abort();
     };
   };

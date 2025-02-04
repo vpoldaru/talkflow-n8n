@@ -2,10 +2,12 @@ import { useState } from 'react';
 import { useToast } from './use-toast';
 import { Message } from '@/types/chat';
 import { v4 as uuidv4 } from 'uuid';
+import { QueryClient } from '@tanstack/react-query';
 
 export const useMessageSender = (
   webhook_url: string,
-  updateSession: (sessionId: string, messages: Message[]) => void
+  updateSession: (sessionId: string, messages: Message[]) => void,
+  queryClient: QueryClient
 ) => {
   const [isLoading, setIsLoading] = useState(false);
   const [isTyping, setIsTyping] = useState(false);
@@ -17,7 +19,6 @@ export const useMessageSender = (
     currentMessages: Message[],
     file?: File
   ) => {
-    // Get webhook URL from window.env if available, fallback to passed webhook_url
     const effectiveWebhookUrl = window.env?.VITE_N8N_WEBHOOK_URL || webhook_url;
 
     if (!effectiveWebhookUrl) {
@@ -64,7 +65,6 @@ export const useMessageSender = (
       }
     }
 
-    // Create and add the user message first
     const userMessage: Message = {
       id: uuidv4(),
       content: input,
@@ -75,6 +75,12 @@ export const useMessageSender = (
 
     const newMessages = [...currentMessages, userMessage];
     updateSession(sessionId, newMessages);
+    
+    // Update React Query cache
+    queryClient.setQueryData(['chatSessions', sessionId], newMessages);
+
+    const controller = new AbortController();
+    const signal = controller.signal;
 
     try {
       const response = await fetch(effectiveWebhookUrl, {
@@ -90,7 +96,8 @@ export const useMessageSender = (
             mimeType: file.type,
             fileName: file.name
           })
-        })
+        }),
+        signal
       });
 
       if (!response.ok) {
@@ -107,18 +114,29 @@ export const useMessageSender = (
         timestamp: Date.now(),
       };
 
-      updateSession(sessionId, [...newMessages, assistantMessage]);
+      const finalMessages = [...newMessages, assistantMessage];
+      updateSession(sessionId, finalMessages);
+      
+      // Update React Query cache with final messages
+      queryClient.setQueryData(['chatSessions', sessionId], finalMessages);
+      
       console.log('Message sent successfully');
     } catch (error) {
-      console.error('Error in webhook request:', error);
-      toast({
-        description: "Error sending message",
-        variant: "destructive",
-      });
+      if (error instanceof Error) {
+        console.error('Error in webhook request:', error);
+        toast({
+          description: "Error sending message",
+          variant: "destructive",
+        });
+      }
     } finally {
       setIsLoading(false);
       setIsTyping(false);
     }
+
+    return () => {
+      controller.abort();
+    };
   };
 
   return {

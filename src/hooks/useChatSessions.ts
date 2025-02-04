@@ -3,6 +3,7 @@ import { Message, ChatSession } from "@/types/chat";
 import { v4 as uuidv4 } from 'uuid';
 import { DEFAULT_WELCOME_MESSAGE } from "@/config/messages";
 import { useMessageSender } from "./useMessageSender";
+import { useQueryClient } from "@tanstack/react-query";
 
 const STORAGE_KEY = "chat_sessions";
 
@@ -55,6 +56,7 @@ const WELCOME_MESSAGE = (() => {
 export const useChatSessions = () => {
   const [sessions, setSessions] = useState<ChatSession[]>([]);
   const [currentSessionId, setCurrentSessionId] = useState<string>("");
+  const queryClient = useQueryClient();
 
   const updateSession = (sessionId: string, messages: Message[]) => {
     setSessions(prev => prev.map(session => 
@@ -62,11 +64,14 @@ export const useChatSessions = () => {
         ? { ...session, messages, lastUpdated: Date.now() }
         : session
     ));
+    // Update React Query cache
+    queryClient.setQueryData(['chatSessions', sessionId], messages);
   };
 
   const { sendMessage: sendMessageToWebhook, isLoading, isTyping } = useMessageSender(
     WEBHOOK_URL,
-    updateSession
+    updateSession,
+    queryClient // Pass queryClient to useMessageSender
   );
 
   useEffect(() => {
@@ -134,6 +139,9 @@ export const useChatSessions = () => {
   const sendMessage = async (input: string, file?: File) => {
     const currentSession = getCurrentSession();
     if (!currentSession) return;
+    
+    // Set initial state in React Query cache
+    queryClient.setQueryData(['chatSessions', currentSession.id], currentSession.messages);
     
     await sendMessageToWebhook(
       input,

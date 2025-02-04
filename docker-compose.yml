@@ -9,4 +9,6 @@ services:
       - VITE_N8N_WEBHOOK_URL=${VITE_N8N_WEBHOOK_URL}
       - VITE_WELCOME_MESSAGE=${VITE_WELCOME_MESSAGE}
       - VITE_SITE_TITLE=${VITE_SITE_TITLE}
+    volumes:
+      - ./public/env-config.js:/usr/share/nginx/html/env-config.js:ro
     restart: unless-stopped

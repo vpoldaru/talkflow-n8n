@@ -4,6 +4,8 @@ import { Message } from '@/types/chat';
 import { v4 as uuidv4 } from 'uuid';
 import { QueryClient } from '@tanstack/react-query';
 
+const FETCH_TIMEOUT = 30000; // 30 seconds timeout
+
 export const useMessageSender = (
   webhook_url: string,
   updateSession: (sessionId: string, messages: Message[]) => void,
@@ -12,6 +14,38 @@ export const useMessageSender = (
   const [isLoading, setIsLoading] = useState(false);
   const [isTyping, setIsTyping] = useState(false);
   const { toast } = useToast();
+
+  const fetchWithTimeout = async (
+    url: string, 
+    options: RequestInit,
+    timeout: number
+  ) => {
+    const controller = new AbortController();
+    const id = setTimeout(() => controller.abort(), timeout);
+
+    try {
+      const response = await fetch(url, {
+        ...options,
+        signal: controller.signal
+      });
+      clearTimeout(id);
+      
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+      
+      return response;
+    } catch (error) {
+      clearTimeout(id);
+      if (error instanceof Error) {
+        if (error.name === 'AbortError') {
+          throw new Error('Request timed out');
+        }
+        throw error;
+      }
+      throw new Error('Network error occurred');
+    }
+  };
 
   const sendMessage = async (
     input: string,
@@ -75,34 +109,28 @@ export const useMessageSender = (
 
     const newMessages = [...currentMessages, userMessage];
     updateSession(sessionId, newMessages);
-    
-    // Update React Query cache
     queryClient.setQueryData(['chatSessions', sessionId], newMessages);
 
-    const controller = new AbortController();
-    const signal = controller.signal;
-
     try {
-      const response = await fetch(effectiveWebhookUrl, {
-        method: "POST",
-        headers: {
-          'Content-Type': 'application/json',
+      const response = await fetchWithTimeout(
+        effectiveWebhookUrl,
+        {
+          method: "POST",
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            chatInput: input,
+            sessionId: sessionId,
+            ...(file && {
+              data: await fileToBase64(file),
+              mimeType: file.type,
+              fileName: file.name
+            })
+          }),
         },
-        body: JSON.stringify({
-          chatInput: input,
-          sessionId: sessionId,
-          ...(file && {
-            data: await fileToBase64(file),
-            mimeType: file.type,
-            fileName: file.name
-          })
-        }),
-        signal
-      });
-
-      if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
-      }
+        FETCH_TIMEOUT
+      );
 
       const data = await response.json();
       const responseContent = extractResponseContent(data);
@@ -116,27 +144,29 @@ export const useMessageSender = (
 
       const finalMessages = [...newMessages, assistantMessage];
       updateSession(sessionId, finalMessages);
-      
-      // Update React Query cache with final messages
       queryClient.setQueryData(['chatSessions', sessionId], finalMessages);
       
       console.log('Message sent successfully');
     } catch (error) {
+      console.error('Error in webhook request:', error);
+      let errorMessage = "Error sending message";
+      
       if (error instanceof Error) {
-        console.error('Error in webhook request:', error);
-        toast({
-          description: "Error sending message",
-          variant: "destructive",
-        });
+        if (error.message === 'Request timed out') {
+          errorMessage = "Request timed out. Please try again.";
+        } else if (error.message.includes('Failed to fetch')) {
+          errorMessage = "Network error. Please check your connection.";
+        }
       }
+      
+      toast({
+        description: errorMessage,
+        variant: "destructive",
+      });
     } finally {
       setIsLoading(false);
       setIsTyping(false);
     }
-
-    return () => {
-      controller.abort();
-    };
   };
 
   return {

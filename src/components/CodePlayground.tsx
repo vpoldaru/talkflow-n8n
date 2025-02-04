@@ -143,8 +143,11 @@ const CodePlayground: React.FC<CodePlaygroundProps> = ({
         </CardTitle>
       </CardHeader>
       <CardContent className="p-4">
-        <ResizablePanelGroup direction="vertical" className="min-h-[500px] rounded-md border">
-          <ResizablePanel defaultSize={100}>
+        <ResizablePanelGroup
+          direction="vertical"
+          className="h-[calc(100vh-16rem)] rounded-md border"
+        >
+          <ResizablePanel defaultSize={75} minSize={30}>
             <div className="h-full">
               <Editor
                 height="100%"
@@ -166,7 +169,11 @@ const CodePlayground: React.FC<CodePlaygroundProps> = ({
             </div>
           </ResizablePanel>
           <ResizableHandle withHandle className="bg-border/20 hover:bg-accent transition-colors" />
-          <ResizablePanel defaultSize={0} minSize={0} />
+          <ResizablePanel defaultSize={25} minSize={10}>
+            <div className="h-full bg-muted/30 p-4">
+              {/* Future output panel */}
+            </div>
+          </ResizablePanel>
         </ResizablePanelGroup>
       </CardContent>
     </Card>

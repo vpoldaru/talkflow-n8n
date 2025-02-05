@@ -14,12 +14,18 @@ export function ThemeSelector() {
 
   return (
     <Select value={currentTheme.id} onValueChange={setTheme}>
-      <SelectTrigger className="w-[180px]">
+      <SelectTrigger 
+        className="w-[180px] bg-[var(--clr-surface-a10)] text-[var(--clr-surface-a50)] border-[var(--clr-surface-a20)]"
+      >
         <SelectValue placeholder="Select theme" />
       </SelectTrigger>
-      <SelectContent>
+      <SelectContent className="bg-[var(--clr-surface-a0)] border-[var(--clr-surface-a20)]">
         {themes.map((theme) => (
-          <SelectItem key={theme.id} value={theme.id}>
+          <SelectItem 
+            key={theme.id} 
+            value={theme.id}
+            className="text-[var(--clr-surface-a50)] hover:bg-[var(--clr-surface-tonal-a10)]"
+          >
             {theme.name}
           </SelectItem>
         ))}

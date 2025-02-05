@@ -10,13 +10,14 @@ export function ThemeToggle() {
   return (
     <div className="flex items-center gap-4">
       <div className="flex items-center gap-2">
-        <Sun className="h-4 w-4" />
+        <Sun className="h-4 w-4 text-[var(--clr-surface-a50)]" />
         <Switch
           checked={mode === 'dark'}
           onCheckedChange={toggleMode}
           aria-label="Toggle dark mode"
+          className="bg-[var(--clr-surface-a20)]"
         />
-        <Moon className="h-4 w-4" />
+        <Moon className="h-4 w-4 text-[var(--clr-surface-a50)]" />
       </div>
       <ThemeSelector />
     </div>

@@ -51,22 +51,24 @@ export const ChatMessage = ({ message }: ChatMessageProps) => {
 
   const getMessageStyles = () => {
     const colors = mode === 'light' ? currentTheme.light : currentTheme.dark;
-    const primaryColor = `hsl(${colors.primary})`;
-    const primaryAlpha = (opacity: number) => `hsla(${colors.primary}, ${opacity})`;
     
     if (isAssistant) {
       return {
         background: `linear-gradient(to bottom right, hsl(${colors.background}), hsl(${colors.muted}))`,
         border: `1px solid hsla(${colors.border}, 0.2)`,
         color: `hsl(${colors.foreground})`,
-        boxShadow: `0 4px 6px -1px rgba(148, 163, 184, 0.2), 0 2px 4px -1px rgba(148, 163, 184, 0.1), 0 8px 24px -4px rgba(148, 163, 184, 0.15)`
+        boxShadow: `0 4px 6px -1px rgba(148, 163, 184, 0.1), 0 2px 4px -1px rgba(148, 163, 184, 0.06)`
       };
     } else {
+      // User message styles
+      const primaryHsl = colors.primary;
       return {
-        background: `linear-gradient(to bottom right, ${primaryColor}, ${primaryAlpha(0.8)})`,
-        border: `1px solid ${primaryAlpha(0.2)}`,
+        background: mode === 'dark' 
+          ? `linear-gradient(to bottom right, hsl(${colors.primary}), hsl(${colors.primary}))`
+          : `linear-gradient(to bottom right, hsl(${colors.primary}), hsl(${colors.primary}))`,
         color: `hsl(${colors.primaryForeground})`,
-        boxShadow: `0 4px 6px -1px ${primaryAlpha(0.15)}, 0 2px 4px -1px ${primaryAlpha(0.1)}, 0 8px 24px -4px ${primaryAlpha(0.15)}`
+        boxShadow: 'none',
+        border: 'none'
       };
     }
   };
@@ -76,24 +78,24 @@ export const ChatMessage = ({ message }: ChatMessageProps) => {
   return (
     <div
       className={cn(
-        "flex w-full animate-fade-in transform transition-all duration-300 group",
+        "flex w-full items-end animate-fade-in transform transition-all duration-300 group",
         isAssistant ? "justify-start" : "justify-end"
       )}
     >
       <div
-        className="max-w-[85%] rounded-2xl px-4 py-3 transition-all duration-200 backdrop-blur-sm hover:-translate-y-1 relative"
-        style={{
-          ...messageStyles,
-          transformStyle: 'preserve-3d',
-          perspective: '1000px'
-        }}
+        className={cn(
+          "max-w-[85%] rounded-2xl px-4 py-3 transition-all duration-200",
+          !isAssistant && "text-sm font-medium"
+        )}
+        style={messageStyles}
       >
         {isAssistant && (
           <div className="flex items-center gap-2 mb-2">
             <div 
               className="flex items-center justify-center w-6 h-6 rounded-full"
               style={{
-                background: `linear-gradient(to bottom right, ${messageStyles.background.split(',')[1]}, ${messageStyles.background.split(',')[2].replace(')','')})`,
+                background: messageStyles.background,
+                border: messageStyles.border
               }}
             >
               <Bot className="w-4 h-4" style={{ color: messageStyles.color }} />
@@ -103,7 +105,10 @@ export const ChatMessage = ({ message }: ChatMessageProps) => {
             </span>
           </div>
         )}
-        <div className="prose prose-slate dark:prose-invert max-w-none">
+        <div className={cn(
+          "prose prose-slate dark:prose-invert max-w-none",
+          !isAssistant && "text-primary-foreground"
+        )}>
           {message.imageData && (
             <div className="mb-2">
               <Dialog>
@@ -130,14 +135,14 @@ export const ChatMessage = ({ message }: ChatMessageProps) => {
             </div>
           </div>
         </div>
-        <div className="mt-2 flex justify-between items-center">
-          <span 
-            className="text-xs opacity-0 group-hover:opacity-100 transition-opacity duration-200"
-            style={{ color: `${messageStyles.color.replace(')', ', 0.6)')}` }}
-          >
-            {formattedTime}
-          </span>
-          {isAssistant && (
+        {isAssistant && (
+          <div className="mt-2 flex justify-between items-center">
+            <span 
+              className="text-xs opacity-0 group-hover:opacity-100 transition-opacity duration-200"
+              style={{ color: `${messageStyles.color.replace(')', ', 0.6)')}` }}
+            >
+              {formattedTime}
+            </span>
             <Button
               variant="ghost"
               size="sm"
@@ -148,8 +153,8 @@ export const ChatMessage = ({ message }: ChatMessageProps) => {
               <Copy className="mr-2 h-4 w-4" />
               Copy response
             </Button>
-          )}
-        </div>
+          </div>
+        )}
       </div>
     </div>
   );

@@ -1,6 +1,7 @@
 export const SUPPORTED_LANGUAGES = [
   { value: 'javascript', label: 'JavaScript', extension: '.js', canRunInBrowser: true },
   { value: 'typescript', label: 'TypeScript', extension: '.ts', canRunInBrowser: true },
+  { value: 'html', label: 'HTML', extension: '.html', canRunInBrowser: true },
   { value: 'python', label: 'Python', extension: '.py', canRunInBrowser: false },
   { value: 'java', label: 'Java', extension: '.java', canRunInBrowser: false },
   { value: 'csharp', label: 'C#', extension: '.cs', canRunInBrowser: false },
@@ -10,7 +11,6 @@ export const SUPPORTED_LANGUAGES = [
   { value: 'ruby', label: 'Ruby', extension: '.rb', canRunInBrowser: false },
   { value: 'php', label: 'PHP', extension: '.php', canRunInBrowser: false },
   { value: 'sql', label: 'SQL', extension: '.sql', canRunInBrowser: false },
-  { value: 'html', label: 'HTML', extension: '.html', canRunInBrowser: true },
   { value: 'css', label: 'CSS', extension: '.css', canRunInBrowser: false },
   { value: 'json', label: 'JSON', extension: '.json', canRunInBrowser: false },
   { value: 'markdown', label: 'Markdown', extension: '.md', canRunInBrowser: false },

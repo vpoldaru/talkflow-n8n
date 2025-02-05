@@ -18,7 +18,7 @@ export const usePopoutWindow = (code: string, language: string, output: string) 
     if (popoutWindow) {
       popoutWindow.document.write(`
         <!DOCTYPE html>
-        <html>
+        <html class="${isDark ? 'dark' : ''}">
           <head>
             <title>Code Output</title>
             <style>
@@ -26,41 +26,45 @@ export const usePopoutWindow = (code: string, language: string, output: string) 
                 margin: 0;
                 padding: 0;
                 font-family: monospace;
-                height: 100vh;
-                background-color: ${language === 'html' ? (isDark ? '#1a1a1a' : '#ffffff') : '#000000'};
-                color: ${language === 'html' ? (isDark ? '#ffffff' : '#000000') : '#ffffff'};
               }
-              
+              body.dark {
+                background: #1e1e1e;
+                color: #fff;
+              }
+              body:not(.dark) {
+                background: #ffffff;
+                color: #000;
+              }
               #output {
                 height: 100vh;
                 width: 100%;
               }
-              
               #output iframe {
                 width: 100%;
                 height: 100%;
                 border: none;
-                background-color: inherit;
-                color: inherit;
               }
-              
+              #output iframe.dark-iframe {
+                background: #1e1e1e;
+                color: #fff;
+              }
+              #output iframe:not(.dark-iframe) {
+                background: #ffffff;
+                color: #000;
+              }
               pre {
                 margin: 0;
                 padding: 1rem;
                 white-space: pre-wrap;
                 word-wrap: break-word;
-                height: 100%;
-                box-sizing: border-box;
-                background-color: inherit;
-                color: inherit;
               }
             </style>
           </head>
-          <body>
+          <body class="${isDark ? 'dark' : ''}">
             <div id="output">
               ${language === 'html' 
                 ? ''  // Will be populated later
-                : `<pre>${output}</pre>`}
+                : `<pre class="whitespace-pre-wrap font-mono p-4 ${isDark ? 'text-white' : 'text-black'}">${output}</pre>`}
             </div>
           </body>
         </html>
@@ -72,9 +76,8 @@ export const usePopoutWindow = (code: string, language: string, output: string) 
 
       if (language === 'html') {
         const iframe = executeHTML(code);
-        iframe.style.backgroundColor = 'inherit';
-        iframe.style.color = 'inherit';
         const outputElement = popoutWindow.document.getElementById('output');
+        iframe.classList.toggle('dark-iframe', isDark);
         if (outputElement) {
           outputElement.innerHTML = '';
           outputElement.appendChild(iframe);

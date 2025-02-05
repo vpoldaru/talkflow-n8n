@@ -19,18 +19,20 @@ const Index = () => {
   } = useChatSessions();
 
   return (
-    <ChatLayout
-      sessions={sessions}
-      currentSessionId={currentSessionId}
-      isLoading={isLoading}
-      isTyping={isTyping}
-      onNewChat={createNewSession}
-      onSessionSelect={setCurrentSessionId}
-      onDeleteSession={deleteSession}
-      onRenameSession={renameSession}
-      onToggleFavorite={toggleFavorite}
-      onSendMessage={sendMessage}
-    />
+    <div className="relative">
+      <ChatLayout
+        sessions={sessions}
+        currentSessionId={currentSessionId}
+        isLoading={isLoading}
+        isTyping={isTyping}
+        onNewChat={createNewSession}
+        onSessionSelect={setCurrentSessionId}
+        onDeleteSession={deleteSession}
+        onRenameSession={renameSession}
+        onToggleFavorite={toggleFavorite}
+        onSendMessage={sendMessage}
+      />
+    </div>
   );
 };
 

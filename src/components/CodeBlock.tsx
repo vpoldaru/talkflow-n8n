@@ -11,6 +11,41 @@ interface CodeBlockProps {
   children: string;
 }
 
+// Map common language names to Monaco editor language IDs
+const languageMap: { [key: string]: string } = {
+  js: 'javascript',
+  javascript: 'javascript',
+  typescript: 'typescript',
+  ts: 'typescript',
+  python: 'python',
+  py: 'python',
+  java: 'java',
+  cpp: 'cpp',
+  'c++': 'cpp',
+  csharp: 'csharp',
+  cs: 'csharp',
+  go: 'go',
+  rust: 'rust',
+  rs: 'rust',
+  ruby: 'ruby',
+  rb: 'ruby',
+  php: 'php',
+  sql: 'sql',
+  html: 'html',
+  css: 'css',
+  json: 'json',
+  markdown: 'markdown',
+  md: 'markdown',
+  terraform: 'hcl',
+  tf: 'hcl',
+  bicep: 'bicep',
+  powershell: 'powershell',
+  ps1: 'powershell',
+  shell: 'shell',
+  bash: 'shell',
+  sh: 'shell',
+};
+
 export const CodeBlock = ({ language, children }: CodeBlockProps) => {
   const { toast } = useToast();
   const navigate = useNavigate();
@@ -35,11 +70,14 @@ export const CodeBlock = ({ language, children }: CodeBlockProps) => {
 
   const handleCopyToPlayground = () => {
     localStorage.setItem('playground-code', codeText);
-    // Map 'terraform' to 'hcl' for Monaco editor compatibility
-    const mappedLanguage = language.toLowerCase() === 'terraform' ? 'hcl' : language;
-    if (mappedLanguage) {
-      localStorage.setItem('playground-language', mappedLanguage);
+    // Map the language to Monaco editor format
+    const normalizedLang = language.toLowerCase();
+    const monacoLang = languageMap[normalizedLang] || normalizedLang;
+    
+    if (monacoLang) {
+      localStorage.setItem('playground-language', monacoLang);
     }
+    
     navigate('/playground');
     toast({
       description: "Code copied to playground",

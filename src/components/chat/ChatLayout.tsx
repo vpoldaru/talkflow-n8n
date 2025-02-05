@@ -32,12 +32,14 @@ export const ChatLayout = ({
   onToggleFavorite,
   onSendMessage,
 }: ChatLayoutProps) => {
+  // Move all hooks to the top level
   const [input, setInput] = useState("");
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+  const [pendingImage, setPendingImage] = useState<File | null>(null);
   const isMobile = useIsMobile();
   const { toast } = useToast();
-  const [pendingImage, setPendingImage] = useState<File | null>(null);
-
+  
+  // Find current session
   const currentSession = sessions.find(s => s.id === currentSessionId);
 
   const handleSend = useCallback(async (e: React.FormEvent, file?: File) => {
@@ -71,12 +73,12 @@ export const ChatLayout = ({
     setPendingImage(file);
   }, []);
 
-  const handleSessionClick = (sessionId: string) => {
+  const handleSessionClick = useCallback((sessionId: string) => {
     onSessionSelect(sessionId);
     if (isMobile) {
       setIsSidebarOpen(false);
     }
-  };
+  }, [isMobile, onSessionSelect]);
 
   return (
     <div className="flex h-screen relative">

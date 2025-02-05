@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import Editor from '@monaco-editor/react';
+import Editor, { loader } from '@monaco-editor/react';
 import { Card, CardContent, CardHeader } from './ui/card';
 import { ResizablePanel, ResizablePanelGroup } from './ui/resizable';
 import { executeJavaScript, executeHTML, executePython } from '@/utils/codeExecutor';
@@ -7,6 +7,18 @@ import { useToast } from '@/hooks/use-toast';
 import { EditorHeader } from './playground/EditorHeader';
 import { PlaygroundOutput } from './playground/PlaygroundOutput';
 import { usePopoutWindow } from '@/hooks/usePopoutWindow';
+
+// Configure Monaco Editor loader
+loader.config({
+  paths: {
+    vs: 'https://cdn.jsdelivr.net/npm/monaco-editor@0.43.0/min/vs'
+  },
+  'vs/nls': {
+    availableLanguages: {
+      '*': 'en'
+    }
+  }
+});
 
 interface CodePlaygroundProps {
   defaultLanguage?: string;

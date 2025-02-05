@@ -19,12 +19,14 @@ export function ThemeSelector() {
       >
         <SelectValue placeholder="Select theme" />
       </SelectTrigger>
-      <SelectContent className="bg-[var(--clr-surface-a0)] border-[var(--clr-surface-a20)]">
+      <SelectContent 
+        className="z-50 min-w-[180px] overflow-hidden rounded-md border bg-[var(--clr-surface-a10)] border-[var(--clr-surface-a20)]"
+      >
         {themes.map((theme) => (
           <SelectItem 
             key={theme.id} 
             value={theme.id}
-            className="text-[var(--clr-surface-a50)] hover:bg-[var(--clr-surface-tonal-a10)]"
+            className="relative flex w-full cursor-default select-none items-center rounded-sm py-1.5 pl-8 pr-2 text-[var(--clr-surface-a50)] hover:bg-[var(--clr-surface-tonal-a10)] focus:bg-[var(--clr-surface-tonal-a10)] data-[disabled]:pointer-events-none data-[disabled]:opacity-50"
           >
             {theme.name}
           </SelectItem>

@@ -24,11 +24,10 @@ export const ThemeProvider = ({ children }: { children: React.ReactNode }) => {
     if (typeof window !== 'undefined') {
       const savedMode = localStorage.getItem('themeMode') as ThemeMode;
       if (savedMode) return savedMode;
-      
-      const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-      return prefersDark ? 'dark' : 'light';
+      // Default to dark mode instead of checking system preferences
+      return 'dark';
     }
-    return 'light';
+    return 'dark'; // Default to dark even before window is available
   });
 
   const setTheme = (themeId: string) => {
@@ -58,30 +57,16 @@ export const ThemeProvider = ({ children }: { children: React.ReactNode }) => {
     
     Object.entries(colors).forEach(([key, value]) => {
       root.style.setProperty(`--${key}`, value);
-      // Also set HSL values for Tailwind
       if (typeof value === 'string' && value.includes(' ')) {
         root.style.setProperty(`--${key}-hsl`, value);
       }
     });
   };
 
-  // Apply theme on initial load and when system preference changes
   useEffect(() => {
-    const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
-    
-    const handleChange = (e: MediaQueryListEvent) => {
-      if (!localStorage.getItem('themeMode')) {
-        const newMode = e.matches ? 'dark' : 'light';
-        setMode(newMode);
-        document.documentElement.classList.toggle('dark', e.matches);
-        applyTheme(currentTheme, newMode);
-      }
-    };
-
-    mediaQuery.addEventListener('change', handleChange);
+    // Set dark mode class on initial load
+    document.documentElement.classList.toggle('dark', mode === 'dark');
     applyTheme(currentTheme, mode);
-
-    return () => mediaQuery.removeEventListener('change', handleChange);
   }, [currentTheme, mode]);
 
   return (

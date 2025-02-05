@@ -8,31 +8,15 @@ import { EditorHeader } from './playground/EditorHeader';
 import { PlaygroundOutput } from './playground/PlaygroundOutput';
 import { usePopoutWindow } from '@/hooks/usePopoutWindow';
 
-// Configure Monaco Editor loader with proper typing
-type LoaderConfig = {
+// Configure Monaco Editor loader
+loader.config({
   paths: {
-    vs: string;
-  };
-  'vs/nls'?: {
-    availableLanguages: Record<string, string>;
-  };
-};
-
-const config: LoaderConfig = {
-  paths: {
-    vs: 'https://cdn.jsdelivr.net/npm/monaco-editor@0.43.0/min/vs'
+    vs: 'https://cdn.jsdelivr.net/npm/monaco-editor@0.43.0/min/vs',
   },
-  'vs/nls': {
-    availableLanguages: {}
-  }
-};
-
-loader.config(config);
+});
 
 // Initialize Monaco Editor
-loader.init().then(() => {
-  console.log('Monaco Editor initialized successfully');
-}).catch(error => {
+loader.init().catch(error => {
   console.error('Failed to initialize Monaco Editor:', error);
 });
 

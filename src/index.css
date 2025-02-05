@@ -4,6 +4,34 @@
 
 @layer base {
   :root {
+    /** Base colors */
+    --clr-dark-a0: #000000;
+    --clr-light-a0: #ffffff;
+
+    /** Light theme primary colors */
+    --clr-primary-a0: #71f253;
+    --clr-primary-a10: #86f469;
+    --clr-primary-a20: #98f67d;
+    --clr-primary-a30: #a9f890;
+    --clr-primary-a40: #b9f9a3;
+    --clr-primary-a50: #c8fbb6;
+
+    /** Light theme surface colors */
+    --clr-surface-a0: #ffffff;
+    --clr-surface-a10: #f8f9fa;
+    --clr-surface-a20: #e9ecef;
+    --clr-surface-a30: #dee2e6;
+    --clr-surface-a40: #ced4da;
+    --clr-surface-a50: #adb5bd;
+
+    /** Light theme tonal surface colors */
+    --clr-surface-tonal-a0: #f8faf7;
+    --clr-surface-tonal-a10: #edf0ec;
+    --clr-surface-tonal-a20: #e2e5e1;
+    --clr-surface-tonal-a30: #d7dad6;
+    --clr-surface-tonal-a40: #cccfcb;
+    --clr-surface-tonal-a50: #c1c4c0;
+
     --background: 220 14% 96%;
     --foreground: 222.2 84% 4.9%;
     --card: 0 0% 100%;
@@ -35,6 +63,30 @@
   }
  
   .dark {
+    /** Dark theme primary colors - from the provided palette */
+    --clr-primary-a0: #71f253;
+    --clr-primary-a10: #86f469;
+    --clr-primary-a20: #98f67d;
+    --clr-primary-a30: #a9f890;
+    --clr-primary-a40: #b9f9a3;
+    --clr-primary-a50: #c8fbb6;
+
+    /** Dark theme surface colors - from the provided palette */
+    --clr-surface-a0: #121212;
+    --clr-surface-a10: #282828;
+    --clr-surface-a20: #3f3f3f;
+    --clr-surface-a30: #575757;
+    --clr-surface-a40: #717171;
+    --clr-surface-a50: #8b8b8b;
+
+    /** Dark theme tonal surface colors - from the provided palette */
+    --clr-surface-tonal-a0: #1d251a;
+    --clr-surface-tonal-a10: #32392f;
+    --clr-surface-tonal-a20: #484f45;
+    --clr-surface-tonal-a30: #60665d;
+    --clr-surface-tonal-a40: #787e76;
+    --clr-surface-tonal-a50: #929690;
+
     --background: 222.2 84% 4.9%;
     --foreground: 210 40% 98%;
     --card: 222.2 84% 4.9%;

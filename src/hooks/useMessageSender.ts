@@ -19,7 +19,12 @@ export const useMessageSender = (
     currentMessages: Message[],
     file?: File
   ) => {
-    // Fallback to import.meta.env if window.env is not available
+    // Detailed logging of webhook URL sources
+    console.log('WEBHOOK_URL sources:');
+    console.log('- window.env.VITE_N8N_WEBHOOK_URL:', window.env?.VITE_N8N_WEBHOOK_URL);
+    console.log('- import.meta.env.VITE_N8N_WEBHOOK_URL:', import.meta.env.VITE_N8N_WEBHOOK_URL);
+
+    // Configuration logging for debugging
     console.log('Configuration Sources:');
     console.log('window.env:', window.env);
     console.log('import.meta.env:', import.meta.env);

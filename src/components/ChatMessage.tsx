@@ -1,6 +1,7 @@
+
 import { Message } from '@/types/chat';
 import { cn } from '@/lib/utils';
-import { Copy } from 'lucide-react';
+import { Copy, Heart } from 'lucide-react';
 import { Button } from './ui/button';
 import { useToast } from '@/hooks/use-toast';
 import { format } from 'date-fns';
@@ -19,6 +20,7 @@ export const ChatMessage = ({ message }: ChatMessageProps) => {
   const isAssistant = message.role === 'assistant';
   const { toast } = useToast();
   const formattedTime = format(new Date(message.timestamp), 'MMM d, yyyy h:mm a');
+  const assistantName = window.env?.VITE_ASSISTANT_NAME || import.meta.env.VITE_ASSISTANT_NAME || "Lovable";
 
   const handleCopy = async () => {
     try {
@@ -67,6 +69,16 @@ export const ChatMessage = ({ message }: ChatMessageProps) => {
             : '0 4px 6px -1px rgba(139, 92, 246, 0.3), 0 2px 4px -1px rgba(139, 92, 246, 0.15), 0 8px 24px -4px rgba(139, 92, 246, 0.25)'
         }}
       >
+        {isAssistant && (
+          <div className="flex items-center gap-2 mb-2">
+            <div className="flex items-center justify-center w-6 h-6 rounded-full bg-gradient-to-br from-pink-500 to-red-500">
+              <Heart className="w-4 h-4 text-white" />
+            </div>
+            <span className="text-sm font-medium text-slate-700 dark:text-slate-200">
+              {assistantName}
+            </span>
+          </div>
+        )}
         <div className="prose prose-slate dark:prose-invert max-w-none">
           {message.imageData && (
             <div className="mb-2">
@@ -114,3 +126,4 @@ export const ChatMessage = ({ message }: ChatMessageProps) => {
     </div>
   );
 };
+

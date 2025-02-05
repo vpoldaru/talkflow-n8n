@@ -11,13 +11,22 @@ import { usePopoutWindow } from '@/hooks/usePopoutWindow';
 // Configure Monaco Editor loader
 loader.config({
   paths: {
-    vs: 'https://cdn.jsdelivr.net/npm/monaco-editor@0.43.0/min/vs'
+    vs: 'https://cdn.jsdelivr.net/npm/monaco-editor@0.43.0/min/vs',
+    // Add paths for required dependencies
+    'stackframe': 'https://cdn.jsdelivr.net/npm/stackframe@1.3.1/dist/stackframe.min.js',
+    'error-stack-parser': 'https://cdn.jsdelivr.net/npm/error-stack-parser@2.1.4/dist/error-stack-parser.min.js'
   },
   'vs/nls': {
-    availableLanguages: {
-      '*': 'en'
-    }
+    availableLanguages: {},
+    fallbackLanguage: 'en'
   }
+});
+
+// Preload required Monaco Editor dependencies
+loader.init().then(() => {
+  console.log('Monaco Editor initialized successfully');
+}).catch(error => {
+  console.error('Failed to initialize Monaco Editor:', error);
 });
 
 interface CodePlaygroundProps {

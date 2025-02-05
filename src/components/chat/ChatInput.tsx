@@ -1,3 +1,4 @@
+
 import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
 import { useRef, useState } from "react";
@@ -108,7 +109,7 @@ export const ChatInput = ({
   const isInputEmpty = !input.trim() && !previewImage;
 
   return (
-    <form onSubmit={handleSubmit} className="fixed bottom-0 left-0 right-0 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
+    <form onSubmit={handleSubmit} className="fixed bottom-0 left-0 right-0 bg-[var(--clr-surface-a0)] backdrop-blur supports-[backdrop-filter]:bg-[var(--clr-surface-a0)]/60">
       <div className="w-full max-w-[900px] mx-auto px-4">
         {previewImage && (
           <div className="relative inline-block mb-2">
@@ -121,9 +122,9 @@ export const ChatInput = ({
               <button
                 type="button"
                 onClick={clearPreviewImage}
-                className="absolute top-0 right-0 p-1 bg-black/50 rounded-bl hover:bg-black/70"
+                className="absolute top-0 right-0 p-1 bg-[var(--clr-surface-a50)]/50 rounded-bl hover:bg-[var(--clr-surface-a50)]/70"
               >
-                <X className="h-4 w-4 text-white" />
+                <X className="h-4 w-4 text-[var(--clr-surface-a0)]" />
               </button>
             </div>
           </div>
@@ -137,7 +138,7 @@ export const ChatInput = ({
             onPaste={handlePaste}
             ref={textareaRef}
             rows={3}
-            className="min-h-[24px] w-full resize-none bg-[#1A1F2C] text-white rounded-xl pr-24 pl-12 py-3 focus-visible:ring-1 border-none"
+            className="min-h-[24px] w-full resize-none bg-[var(--clr-surface-a10)] text-[var(--clr-surface-a50)] rounded-xl pr-24 pl-12 py-3 focus-visible:ring-1 border-none"
             disabled={isLoading}
             style={{
               height: 'auto',
@@ -158,7 +159,7 @@ export const ChatInput = ({
               type="button" 
               size="icon" 
               variant="ghost"
-              className="h-8 w-8 text-white hover:bg-[#2A2F3C]"
+              className="h-8 w-8 text-[var(--clr-surface-a50)] hover:bg-[var(--clr-surface-tonal-a10)]"
               onClick={startListening}
               disabled={isLoading}
             >

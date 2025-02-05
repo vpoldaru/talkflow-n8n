@@ -1,6 +1,6 @@
 export const SUPPORTED_LANGUAGES = [
   { value: 'javascript', label: 'JavaScript', extension: '.js', canRunInBrowser: true },
-  { value: 'typescript', label: 'TypeScript', extension: '.ts', canRunInBrowser: false },
+  { value: 'typescript', label: 'TypeScript', extension: '.ts', canRunInBrowser: true },
   { value: 'python', label: 'Python', extension: '.py', canRunInBrowser: false },
   { value: 'java', label: 'Java', extension: '.java', canRunInBrowser: false },
   { value: 'csharp', label: 'C#', extension: '.cs', canRunInBrowser: false },

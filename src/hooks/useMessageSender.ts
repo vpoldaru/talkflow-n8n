@@ -82,12 +82,10 @@ export const useMessageSender = (
     queryClient.setQueryData(['chatSessions', sessionId], newMessages);
 
     try {
-      // Prepare headers with authentication
       const headers: HeadersInit = {
         'Content-Type': 'application/json',
       };
 
-      // Only add authentication if both username and secret are present
       if (username && secret) {
         const authString = `${username}:${secret}`;
         const base64Auth = btoa(authString);
@@ -112,14 +110,27 @@ export const useMessageSender = (
         FETCH_TIMEOUT
       );
 
+      let responseData;
+      const responseText = await response.text();
+
+      try {
+        // Try to parse as JSON if possible
+        responseData = responseText ? JSON.parse(responseText) : null;
+      } catch (e) {
+        console.log('Response is not JSON:', responseText);
+        responseData = responseText;
+      }
+
       if (!response.ok) {
-        const errorData = await response.text();
-        console.error('Server response:', errorData);
+        console.error('Server error response:', responseData);
         throw new Error(`HTTP error! status: ${response.status}`);
       }
 
-      const data = await response.json();
-      const responseContent = extractResponseContent(data);
+      if (!responseData) {
+        throw new Error('Empty response from server');
+      }
+
+      const responseContent = extractResponseContent(responseData);
 
       const assistantMessage: Message = {
         id: crypto.randomUUID(),
@@ -144,6 +155,8 @@ export const useMessageSender = (
           errorMessage = "Network error. Please check your connection.";
         } else if (error.message.includes('401')) {
           errorMessage = "Authentication failed. Please check your credentials.";
+        } else if (error.message === 'Empty response from server') {
+          errorMessage = "Server returned an empty response. Please try again.";
         }
       }
       

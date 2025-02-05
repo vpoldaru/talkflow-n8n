@@ -19,30 +19,9 @@ export const useMessageSender = (
     currentMessages: Message[],
     file?: File
   ) => {
-    // Detailed logging of webhook URL sources
-    console.log('WEBHOOK_URL sources:');
-    console.log('- window.env.VITE_N8N_WEBHOOK_URL:', window.env?.VITE_N8N_WEBHOOK_URL);
-    console.log('- import.meta.env.VITE_N8N_WEBHOOK_URL:', import.meta.env.VITE_N8N_WEBHOOK_URL);
-
-    // Configuration logging for debugging
-    console.log('Configuration Sources:');
-    console.log('window.env:', window.env);
-    console.log('import.meta.env:', import.meta.env);
-
     const effectiveWebhookUrl = window.env?.VITE_N8N_WEBHOOK_URL || import.meta.env.VITE_N8N_WEBHOOK_URL;
     const username = window.env?.VITE_N8N_WEBHOOK_USERNAME || import.meta.env.VITE_N8N_WEBHOOK_USERNAME;
     const secret = window.env?.VITE_N8N_WEBHOOK_SECRET || import.meta.env.VITE_N8N_WEBHOOK_SECRET;
-
-    console.log('Selected WEBHOOK_URL:', effectiveWebhookUrl);
-
-    if (!effectiveWebhookUrl) {
-      console.error('No webhook URL provided in environment');
-      toast({
-        description: "Configuration error: No webhook URL available",
-        variant: "destructive",
-      });
-      return;
-    }
 
     console.log('useMessageSender sendMessage called with:', {
       input,
@@ -54,6 +33,17 @@ export const useMessageSender = (
         type: file.type
       } : null
     });
+
+    if (!effectiveWebhookUrl) {
+      console.error('No webhook URL provided in environment');
+      toast({
+        description: "Configuration error: No webhook URL available",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    console.log('Selected WEBHOOK_URL:', effectiveWebhookUrl);
 
     setIsLoading(true);
     setIsTyping(true);
@@ -92,11 +82,12 @@ export const useMessageSender = (
     queryClient.setQueryData(['chatSessions', sessionId], newMessages);
 
     try {
-      // Prepare headers with authentication if credentials are present
+      // Prepare headers with authentication
       const headers: HeadersInit = {
         'Content-Type': 'application/json',
       };
 
+      // Only add authentication if both username and secret are present
       if (username && secret) {
         const authString = `${username}:${secret}`;
         const base64Auth = btoa(authString);
@@ -120,6 +111,12 @@ export const useMessageSender = (
         },
         FETCH_TIMEOUT
       );
+
+      if (!response.ok) {
+        const errorData = await response.text();
+        console.error('Server response:', errorData);
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
 
       const data = await response.json();
       const responseContent = extractResponseContent(data);

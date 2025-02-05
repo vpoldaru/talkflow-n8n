@@ -56,14 +56,14 @@ export const ChatMessage = ({ message }: ChatMessageProps) => {
         className={cn(
           "max-w-[85%] rounded-2xl px-4 py-3 transition-all duration-200 backdrop-blur-sm hover:-translate-y-1 relative",
           isAssistant
-            ? "bg-[#1e2330] dark:bg-[#1e2330] border border-slate-700/30"
+            ? "bg-gradient-to-br from-slate-50 to-blue-50 dark:from-slate-900 dark:to-blue-900 border border-blue-100/50 dark:border-blue-800/30"
             : "bg-[#2a2e3b] dark:bg-[#2a2e3b] border border-slate-700/30 text-slate-100"
         )}
         style={{
           transformStyle: 'preserve-3d',
           perspective: '1000px',
           boxShadow: isAssistant 
-            ? '0 4px 6px -1px rgba(0, 0, 0, 0.3), 0 2px 4px -1px rgba(0, 0, 0, 0.2)'
+            ? '0 4px 6px -1px rgba(148, 163, 184, 0.2), 0 2px 4px -1px rgba(148, 163, 184, 0.1), 0 8px 24px -4px rgba(148, 163, 184, 0.15)'
             : '0 4px 6px -1px rgba(0, 0, 0, 0.3), 0 2px 4px -1px rgba(0, 0, 0, 0.2)'
         }}
       >

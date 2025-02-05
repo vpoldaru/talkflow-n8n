@@ -54,15 +54,9 @@ export const ThemeProvider = ({ children }: { children: React.ReactNode }) => {
     const colors = currentMode === 'light' ? theme.light : theme.dark;
     const root = document.documentElement;
     
-    // Set CSS custom properties for all theme colors
     Object.entries(colors).forEach(([key, value]) => {
-      const cssKey = key.replace(/([A-Z])/g, '-$1').toLowerCase(); // Convert camelCase to kebab-case
-      root.style.setProperty(`--clr-${cssKey}`, value);
-      
-      // Also set the HSL values if the value is in HSL format
-      if (typeof value === 'string' && value.includes(' ')) {
-        root.style.setProperty(`--clr-${cssKey}-hsl`, value);
-      }
+      const cssKey = key.replace(/([A-Z])/g, '-$1').toLowerCase();
+      root.style.setProperty(`--${cssKey}`, `hsl(${value})`);
     });
   };
 
@@ -85,4 +79,3 @@ export const useTheme = () => {
   }
   return context;
 };
-

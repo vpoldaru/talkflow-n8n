@@ -24,33 +24,27 @@ const Index = () => {
   } = useChatSessions();
 
   return (
-    <div className="relative flex flex-col min-h-screen">
-      <div className="fixed top-0 left-0 right-0 z-50 border-b bg-background shadow-sm">
-        <div className="flex justify-end p-4 container max-w-[1400px] mx-auto">
-          <Button
-            variant="outline"
-            onClick={() => navigate('/playground')}
-            className="gap-2 hover:bg-accent"
-          >
-            <Code className="h-4 w-4" />
-            Code Playground
-          </Button>
-        </div>
-      </div>
-      <div className="flex-1 pt-16">
-        <ChatLayout
-          sessions={sessions}
-          currentSessionId={currentSessionId}
-          isLoading={isLoading}
-          isTyping={isTyping}
-          onNewChat={createNewSession}
-          onSessionSelect={setCurrentSessionId}
-          onDeleteSession={deleteSession}
-          onRenameSession={renameSession}
-          onToggleFavorite={toggleFavorite}
-          onSendMessage={sendMessage}
-        />
-      </div>
+    <div className="relative">
+      <Button
+        variant="outline"
+        onClick={() => navigate('/playground')}
+        className="fixed top-4 right-4 z-50 gap-2"
+      >
+        <Code className="h-4 w-4" />
+        Code Playground
+      </Button>
+      <ChatLayout
+        sessions={sessions}
+        currentSessionId={currentSessionId}
+        isLoading={isLoading}
+        isTyping={isTyping}
+        onNewChat={createNewSession}
+        onSessionSelect={setCurrentSessionId}
+        onDeleteSession={deleteSession}
+        onRenameSession={renameSession}
+        onToggleFavorite={toggleFavorite}
+        onSendMessage={sendMessage}
+      />
     </div>
   );
 };

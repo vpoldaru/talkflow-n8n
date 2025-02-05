@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import Editor from '@monaco-editor/react';
 import { Card, CardContent, CardHeader } from './ui/card';
-import { ResizablePanel, ResizablePanelGroup } from './ui/resizable';
+import { ResizablePanel, ResizablePanelGroup, ResizableHandle } from './ui/resizable';
 import { executeJavaScript, executeHTML } from '@/utils/codeExecutor';
 import { useToast } from '@/hooks/use-toast';
 import { EditorHeader } from './playground/EditorHeader';
@@ -117,8 +117,13 @@ const CodePlayground: React.FC<CodePlaygroundProps> = ({
           direction="vertical" 
           className="h-full rounded-md border"
           onLayout={handleResize}
+          id="playground-panels"
         >
-          <ResizablePanel defaultSize={canRunInBrowser && !isOutputPopped ? 60 : 100}>
+          <ResizablePanel 
+            defaultSize={canRunInBrowser && !isOutputPopped ? 60 : 100}
+            id="editor-panel"
+            order={1}
+          >
             <div className="h-full">
               <Editor
                 height="100%"
@@ -140,17 +145,24 @@ const CodePlayground: React.FC<CodePlaygroundProps> = ({
             </div>
           </ResizablePanel>
           {canRunInBrowser && !isOutputPopped && (
-            <ResizablePanel defaultSize={40}>
-              <div className="h-full flex flex-col">
-                <PlaygroundOutput
-                  language={language}
-                  output={output}
-                  code={code}
-                  iframeRef={iframeRef}
-                  outputRef={outputRef}
-                />
-              </div>
-            </ResizablePanel>
+            <>
+              <ResizableHandle withHandle />
+              <ResizablePanel 
+                defaultSize={40}
+                id="output-panel"
+                order={2}
+              >
+                <div className="h-full flex flex-col">
+                  <PlaygroundOutput
+                    language={language}
+                    output={output}
+                    code={code}
+                    iframeRef={iframeRef}
+                    outputRef={outputRef}
+                  />
+                </div>
+              </ResizablePanel>
+            </>
           )}
         </ResizablePanelGroup>
       </CardContent>

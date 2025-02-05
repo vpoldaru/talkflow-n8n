@@ -25,6 +25,7 @@ const CodePlayground: React.FC<CodePlaygroundProps> = ({
   const { toast } = useToast();
   const outputRef = useRef<HTMLDivElement>(null);
   const iframeRef = useRef<HTMLDivElement>(null);
+  const resizeTimeoutRef = useRef<NodeJS.Timeout>();
 
   const currentLanguage = SUPPORTED_LANGUAGES.find(lang => lang.value === language);
   const canRunInBrowser = currentLanguage?.canRunInBrowser ?? false;
@@ -50,6 +51,12 @@ const CodePlayground: React.FC<CodePlaygroundProps> = ({
       setLanguage(savedLanguage);
       localStorage.removeItem('playground-language');
     }
+
+    return () => {
+      if (resizeTimeoutRef.current) {
+        clearTimeout(resizeTimeoutRef.current);
+      }
+    };
   }, []);
 
   const handleRun = async () => {
@@ -84,6 +91,15 @@ const CodePlayground: React.FC<CodePlaygroundProps> = ({
     }
   };
 
+  const handleResize = () => {
+    if (resizeTimeoutRef.current) {
+      clearTimeout(resizeTimeoutRef.current);
+    }
+    resizeTimeoutRef.current = setTimeout(() => {
+      window.dispatchEvent(new Event('resize'));
+    }, 100);
+  };
+
   return (
     <Card className="w-full h-[90vh] mx-auto bg-card shadow-lg">
       <CardHeader className="border-b border-border/20">
@@ -97,7 +113,11 @@ const CodePlayground: React.FC<CodePlaygroundProps> = ({
         />
       </CardHeader>
       <CardContent className="p-4 pb-8 h-[calc(90vh-5rem)]">
-        <ResizablePanelGroup direction="vertical" className="h-full rounded-md border">
+        <ResizablePanelGroup 
+          direction="vertical" 
+          className="h-full rounded-md border"
+          onLayout={handleResize}
+        >
           <ResizablePanel defaultSize={canRunInBrowser && !isOutputPopped ? 60 : 100}>
             <div className="h-full">
               <Editor

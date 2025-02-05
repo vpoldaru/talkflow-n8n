@@ -28,7 +28,7 @@ export const usePopoutWindow = (code: string, language: string, output: string) 
                 font-family: monospace;
                 height: 100vh;
                 background-color: ${language === 'html' ? (isDark ? '#1a1a1a' : '#ffffff') : '#000000'};
-                color: #ffffff;
+                color: ${language === 'html' ? (isDark ? '#ffffff' : '#000000') : '#ffffff'};
               }
               
               #output {
@@ -41,7 +41,7 @@ export const usePopoutWindow = (code: string, language: string, output: string) 
                 height: 100%;
                 border: none;
                 background-color: inherit;
-                color: #ffffff;
+                color: inherit;
               }
               
               pre {
@@ -52,7 +52,7 @@ export const usePopoutWindow = (code: string, language: string, output: string) 
                 height: 100%;
                 box-sizing: border-box;
                 background-color: inherit;
-                color: #ffffff;
+                color: inherit;
               }
             </style>
           </head>
@@ -73,7 +73,7 @@ export const usePopoutWindow = (code: string, language: string, output: string) 
       if (language === 'html') {
         const iframe = executeHTML(code);
         iframe.style.backgroundColor = 'inherit';
-        iframe.style.color = '#ffffff';
+        iframe.style.color = 'inherit';
         const outputElement = popoutWindow.document.getElementById('output');
         if (outputElement) {
           outputElement.innerHTML = '';

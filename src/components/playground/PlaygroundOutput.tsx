@@ -20,7 +20,7 @@ export const PlaygroundOutput: React.FC<PlaygroundOutputProps> = ({
       {language === 'html' ? (
         <div 
           ref={iframeRef} 
-          className="w-full h-full text-white"
+          className={`w-full h-full ${isDark ? 'bg-background' : 'bg-white'}`}
         />
       ) : (
         <div 

@@ -22,18 +22,13 @@ export const usePopoutWindow = (code: string, language: string, output: string) 
           <head>
             <title>Code Output</title>
             <style>
-              :root {
-                --background: 222.2 84% 4.9%;
-                --foreground: 210 40% 98%;
-              }
-              
               body { 
                 margin: 0;
                 padding: 0;
                 font-family: monospace;
                 height: 100vh;
-                background-color: ${isDark ? 'hsl(var(--background))' : '#ffffff'};
-                color: ${isDark ? 'hsl(var(--foreground))' : '#000000'};
+                background-color: ${isDark ? '#1a1a1a' : '#ffffff'};
+                color: #ffffff;
               }
               
               #output {
@@ -46,7 +41,7 @@ export const usePopoutWindow = (code: string, language: string, output: string) 
                 height: 100%;
                 border: none;
                 background-color: inherit;
-                color: inherit;
+                color: #ffffff;
               }
               
               pre {
@@ -57,11 +52,11 @@ export const usePopoutWindow = (code: string, language: string, output: string) 
                 height: 100%;
                 box-sizing: border-box;
                 background-color: inherit;
-                color: inherit;
+                color: #ffffff;
               }
             </style>
           </head>
-          <body class="${isDark ? 'dark' : ''}">
+          <body>
             <div id="output">
               ${language === 'html' 
                 ? ''  // Will be populated later
@@ -78,7 +73,7 @@ export const usePopoutWindow = (code: string, language: string, output: string) 
       if (language === 'html') {
         const iframe = executeHTML(code);
         iframe.style.backgroundColor = 'inherit';
-        iframe.style.color = 'inherit';
+        iframe.style.color = '#ffffff';
         const outputElement = popoutWindow.document.getElementById('output');
         if (outputElement) {
           outputElement.innerHTML = '';

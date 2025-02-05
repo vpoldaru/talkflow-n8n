@@ -25,7 +25,7 @@ export const PlaygroundOutput: React.FC<PlaygroundOutputProps> = ({
       ) : (
         <div 
           ref={outputRef} 
-          className="w-full h-full p-4 font-mono text-sm overflow-auto bg-black text-foreground"
+          className="w-full h-full p-4 font-mono text-sm overflow-auto bg-black text-white"
         >
           {output}
         </div>

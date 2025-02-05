@@ -20,11 +20,14 @@ export const useMessageSender = (
     file?: File
   ) => {
     // Fallback to import.meta.env if window.env is not available
-    console.log('WEBHOOK_URL sources:');
-    console.log('- window.env.VITE_N8N_WEBHOOK_URL:', window.env?.VITE_N8N_WEBHOOK_URL);
-    console.log('- import.meta.env.VITE_N8N_WEBHOOK_URL:', import.meta.env.VITE_N8N_WEBHOOK_URL);
+    console.log('Configuration Sources:');
+    console.log('window.env:', window.env);
+    console.log('import.meta.env:', import.meta.env);
 
     const effectiveWebhookUrl = window.env?.VITE_N8N_WEBHOOK_URL || import.meta.env.VITE_N8N_WEBHOOK_URL;
+    const username = window.env?.VITE_N8N_WEBHOOK_USERNAME || import.meta.env.VITE_N8N_WEBHOOK_USERNAME;
+    const secret = window.env?.VITE_N8N_WEBHOOK_SECRET || import.meta.env.VITE_N8N_WEBHOOK_SECRET;
+
     console.log('Selected WEBHOOK_URL:', effectiveWebhookUrl);
 
     if (!effectiveWebhookUrl) {
@@ -84,13 +87,22 @@ export const useMessageSender = (
     queryClient.setQueryData(['chatSessions', sessionId], newMessages);
 
     try {
+      // Prepare headers with authentication if credentials are present
+      const headers: HeadersInit = {
+        'Content-Type': 'application/json',
+      };
+
+      if (username && secret) {
+        const authString = `${username}:${secret}`;
+        const base64Auth = btoa(authString);
+        headers['Authorization'] = `Basic ${base64Auth}`;
+      }
+
       const response = await fetchWithTimeout(
         effectiveWebhookUrl,
         {
           method: "POST",
-          headers: {
-            'Content-Type': 'application/json',
-          },
+          headers,
           body: JSON.stringify({
             chatInput: input,
             sessionId: sessionId,
@@ -128,6 +140,8 @@ export const useMessageSender = (
           errorMessage = "Request timed out. Please try again.";
         } else if (error.message.includes('Failed to fetch')) {
           errorMessage = "Network error. Please check your connection.";
+        } else if (error.message.includes('401')) {
+          errorMessage = "Authentication failed. Please check your credentials.";
         }
       }
       

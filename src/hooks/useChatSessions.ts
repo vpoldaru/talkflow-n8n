@@ -8,8 +8,20 @@ const STORAGE_KEY = "chat_sessions";
 
 // Fallback to import.meta.env if window.env is not available
 console.log('Configuration Sources:');
-console.log('window.env:', window.env);
-console.log('import.meta.env:', import.meta.env);
+console.log('window.env:', {
+  VITE_N8N_WEBHOOK_URL: window.env?.VITE_N8N_WEBHOOK_URL ? '[CONFIGURED]' : '[NOT SET]',
+  VITE_WELCOME_MESSAGE: window.env?.VITE_WELCOME_MESSAGE,
+  VITE_SITE_TITLE: window.env?.VITE_SITE_TITLE,
+  VITE_N8N_WEBHOOK_USERNAME: window.env?.VITE_N8N_WEBHOOK_USERNAME ? '[CONFIGURED]' : '[NOT SET]',
+  VITE_N8N_WEBHOOK_SECRET: window.env?.VITE_N8N_WEBHOOK_SECRET ? '[CONFIGURED]' : '[NOT SET]'
+});
+console.log('import.meta.env:', {
+  VITE_N8N_WEBHOOK_URL: import.meta.env.VITE_N8N_WEBHOOK_URL ? '[CONFIGURED]' : '[NOT SET]',
+  VITE_WELCOME_MESSAGE: import.meta.env.VITE_WELCOME_MESSAGE,
+  VITE_SITE_TITLE: import.meta.env.VITE_SITE_TITLE,
+  VITE_N8N_WEBHOOK_USERNAME: import.meta.env.VITE_N8N_WEBHOOK_USERNAME ? '[CONFIGURED]' : '[NOT SET]',
+  VITE_N8N_WEBHOOK_SECRET: import.meta.env.VITE_N8N_WEBHOOK_SECRET ? '[CONFIGURED]' : '[NOT SET]'
+});
 console.log('DEFAULT_WELCOME_MESSAGE:', "Welcome to the chat!.");
 
 const WELCOME_MESSAGE = window.env?.VITE_WELCOME_MESSAGE || import.meta.env.VITE_WELCOME_MESSAGE || "Welcome to the chat!";

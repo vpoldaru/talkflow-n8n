@@ -58,7 +58,7 @@ export const useMessageSender = (
       }
 
       console.log('Sending message to webhook:', {
-        url: effectiveWebhookUrl,
+        url: effectiveWebhookUrl.split('/webhook/')[0] + '/webhook/[WEBHOOK_ID]',
         hasAuth: !!username && !!secret,
         hasFile: !!file
       });

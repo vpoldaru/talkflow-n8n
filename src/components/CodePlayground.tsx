@@ -102,7 +102,7 @@ const CodePlayground: React.FC<CodePlaygroundProps> = ({
   };
 
   return (
-    <Card className="w-full max-w-5xl mx-auto bg-card shadow-lg">
+    <Card className="w-full h-[90vh] mx-auto bg-card shadow-lg">
       <CardHeader className="border-b border-border/20">
         <CardTitle className="flex justify-between items-center">
           <div className="flex items-center gap-4">
@@ -142,8 +142,8 @@ const CodePlayground: React.FC<CodePlaygroundProps> = ({
           </div>
         </CardTitle>
       </CardHeader>
-      <CardContent className="p-4">
-        <ResizablePanelGroup direction="vertical" className="min-h-[500px] rounded-md border">
+      <CardContent className="p-4 h-[calc(90vh-5rem)]">
+        <ResizablePanelGroup direction="vertical" className="h-full rounded-md border">
           <ResizablePanel defaultSize={100}>
             <div className="h-full">
               <Editor

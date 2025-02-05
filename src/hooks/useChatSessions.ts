@@ -4,7 +4,8 @@ import { v4 as uuidv4 } from 'uuid';
 import { useMessageSender } from "./useMessageSender";
 import { useQueryClient } from "@tanstack/react-query";
 
-const STORAGE_KEY = "chat_sessions";
+const STORAGE_VERSION = "v1";
+const STORAGE_KEY = `chat_sessions_${STORAGE_VERSION}`;
 
 // Fallback to import.meta.env if window.env is not available
 console.log('Configuration Sources:');

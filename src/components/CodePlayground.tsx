@@ -49,34 +49,19 @@ const CodePlayground: React.FC<CodePlaygroundProps> = ({
   const popoutWindowRef = useRef<Window | null>(null);
 
   useEffect(() => {
-    const savedCode = localStorage.getItem('playground-code');
-    const savedLanguage = localStorage.getItem('playground-language');
-    
-    if (savedCode) {
-      setCode(savedCode);
-      localStorage.removeItem('playground-code');
-    }
-    
-    if (savedLanguage && SUPPORTED_LANGUAGES.some(lang => lang.value === savedLanguage)) {
-      setLanguage(savedLanguage);
-      localStorage.removeItem('playground-language');
-    }
-  }, []);
-
-  useEffect(() => {
-    // Update popped out window content when output changes
     if (popoutWindowRef.current && !popoutWindowRef.current.closed) {
       const doc = popoutWindowRef.current.document;
       const outputElement = doc.getElementById('output');
+      const isDark = document.documentElement.classList.contains('dark');
+      
       if (outputElement) {
         if (language === 'html') {
-          // For HTML, create and append an iframe
           const iframe = executeHTML(code);
+          iframe.classList.toggle('dark-iframe', isDark);
           outputElement.innerHTML = '';
           outputElement.appendChild(iframe);
         } else {
-          // For other languages, display the output text
-          outputElement.innerHTML = `<pre class="whitespace-pre-wrap font-mono p-4">${output}</pre>`;
+          outputElement.innerHTML = `<pre class="whitespace-pre-wrap font-mono p-4 ${isDark ? 'text-white' : 'text-black'}">${output}</pre>`;
         }
       }
     }
@@ -89,20 +74,27 @@ const CodePlayground: React.FC<CodePlaygroundProps> = ({
       return;
     }
 
+    const isDark = document.documentElement.classList.contains('dark');
     const popoutWindow = window.open('', 'CodeOutput', 'width=600,height=400,resizable=yes');
     if (popoutWindow) {
       popoutWindow.document.write(`
         <!DOCTYPE html>
-        <html>
+        <html class="${isDark ? 'dark' : ''}">
           <head>
             <title>Code Output</title>
             <style>
               body { 
                 margin: 0;
                 padding: 0;
+                font-family: monospace;
+              }
+              body.dark {
                 background: #1e1e1e;
                 color: #fff;
-                font-family: monospace;
+              }
+              body:not(.dark) {
+                background: #ffffff;
+                color: #000;
               }
               #output {
                 height: 100vh;
@@ -112,7 +104,14 @@ const CodePlayground: React.FC<CodePlaygroundProps> = ({
                 width: 100%;
                 height: 100%;
                 border: none;
-                background: white;
+              }
+              #output iframe.dark-iframe {
+                background: #1e1e1e;
+                color: #fff;
+              }
+              #output iframe:not(.dark-iframe) {
+                background: #ffffff;
+                color: #000;
               }
               pre {
                 margin: 0;
@@ -122,11 +121,11 @@ const CodePlayground: React.FC<CodePlaygroundProps> = ({
               }
             </style>
           </head>
-          <body>
+          <body class="${isDark ? 'dark' : ''}">
             <div id="output">
               ${language === 'html' 
                 ? ''  // Will be populated by the useEffect
-                : `<pre class="whitespace-pre-wrap font-mono p-4">${output}</pre>`}
+                : `<pre class="whitespace-pre-wrap font-mono p-4 ${isDark ? 'text-white' : 'text-black'}">${output}</pre>`}
             </div>
           </body>
         </html>
@@ -135,10 +134,10 @@ const CodePlayground: React.FC<CodePlaygroundProps> = ({
       popoutWindowRef.current = popoutWindow;
       setIsOutputPopped(true);
 
-      // If it's HTML, immediately execute and display it
       if (language === 'html') {
         const iframe = executeHTML(code);
         const outputElement = popoutWindow.document.getElementById('output');
+        iframe.classList.toggle('dark-iframe', isDark);
         if (outputElement) {
           outputElement.innerHTML = '';
           outputElement.appendChild(iframe);
@@ -314,7 +313,7 @@ const CodePlayground: React.FC<CodePlaygroundProps> = ({
             <ResizablePanel defaultSize={40}>
               <div className="h-full flex flex-col">
                 {language === 'html' ? (
-                  <div ref={iframeRef} className="w-full h-full bg-white" />
+                  <div ref={iframeRef} className={`w-full h-full ${document.documentElement.classList.contains('dark') ? 'bg-[#1e1e1e]' : 'bg-white'}`} />
                 ) : (
                   <div ref={outputRef} className="w-full h-full p-4 font-mono text-sm overflow-auto bg-black text-white">
                     {output}

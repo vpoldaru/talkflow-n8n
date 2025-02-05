@@ -1,15 +1,49 @@
 // Web Worker for executing JavaScript/TypeScript code
-export const executeJavaScript = (code: string): Promise<{ result?: any; error?: string }> => {
+export const executeJavaScript = (code: string): Promise<{ result?: any; error?: string; logs?: string[] }> => {
   return new Promise((resolve) => {
     const worker = new Worker(
       URL.createObjectURL(
         new Blob([`
+          const logs = [];
+          const originalConsole = {
+            log: console.log,
+            error: console.error,
+            warn: console.warn,
+            info: console.info
+          };
+
+          // Override console methods to capture logs
+          console.log = (...args) => {
+            logs.push(args.map(arg => 
+              typeof arg === 'object' ? JSON.stringify(arg, null, 2) : String(arg)
+            ).join(' '));
+          };
+          console.error = (...args) => {
+            logs.push('Error: ' + args.map(arg => 
+              typeof arg === 'object' ? JSON.stringify(arg, null, 2) : String(arg)
+            ).join(' '));
+          };
+          console.warn = (...args) => {
+            logs.push('Warning: ' + args.map(arg => 
+              typeof arg === 'object' ? JSON.stringify(arg, null, 2) : String(arg)
+            ).join(' '));
+          };
+          console.info = (...args) => {
+            logs.push('Info: ' + args.map(arg => 
+              typeof arg === 'object' ? JSON.stringify(arg, null, 2) : String(arg)
+            ).join(' '));
+          };
+
           self.onmessage = function(e) {
             try {
               const result = eval(e.data);
-              self.postMessage({ result });
+              self.postMessage({ 
+                result: result === undefined ? undefined : 
+                  typeof result === 'object' ? JSON.stringify(result, null, 2) : String(result),
+                logs 
+              });
             } catch (error) {
-              self.postMessage({ error: error.message });
+              self.postMessage({ error: error.message, logs });
             }
           }
         `], { type: 'application/javascript' })

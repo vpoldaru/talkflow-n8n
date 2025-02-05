@@ -116,8 +116,14 @@ const CodePlayground: React.FC<CodePlaygroundProps> = ({
         return;
       }
 
-      const { result, error } = await executeJavaScript(code);
-      setOutput(error ? `Error: ${error}` : JSON.stringify(result, null, 2));
+      const { result, error, logs = [] } = await executeJavaScript(code);
+      const outputText = [
+        ...(logs.length > 0 ? logs : []),
+        ...(result !== undefined ? [result] : []),
+        ...(error ? [`Error: ${error}`] : [])
+      ].join('\n');
+      
+      setOutput(outputText);
       
       toast({
         description: error ? "Execution failed" : "Code executed successfully",

@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import Editor from '@monaco-editor/react';
 import { Card, CardContent, CardHeader, CardTitle } from './ui/card';
 import { Button } from './ui/button';
-import { Copy, Download, Play } from 'lucide-react';
+import { Copy, Download, Play, Maximize2 } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from './ui/select';
 import { ResizablePanel, ResizablePanelGroup } from './ui/resizable';
@@ -42,9 +42,11 @@ const CodePlayground: React.FC<CodePlaygroundProps> = ({
   const [code, setCode] = useState(defaultValue);
   const [language, setLanguage] = useState(defaultLanguage);
   const [output, setOutput] = useState<string>('');
+  const [isOutputPopped, setIsOutputPopped] = useState(false);
   const { toast } = useToast();
   const outputRef = useRef<HTMLDivElement>(null);
   const iframeRef = useRef<HTMLDivElement>(null);
+  const popoutWindowRef = useRef<Window | null>(null);
 
   useEffect(() => {
     const savedCode = localStorage.getItem('playground-code');
@@ -60,6 +62,62 @@ const CodePlayground: React.FC<CodePlaygroundProps> = ({
       localStorage.removeItem('playground-language');
     }
   }, []);
+
+  useEffect(() => {
+    // Update popped out window content when output changes
+    if (popoutWindowRef.current && !popoutWindowRef.current.closed) {
+      const doc = popoutWindowRef.current.document;
+      const outputElement = doc.getElementById('output');
+      if (outputElement) {
+        outputElement.innerHTML = `<pre class="whitespace-pre-wrap font-mono p-4">${output}</pre>`;
+      }
+    }
+  }, [output]);
+
+  const handlePopOutput = () => {
+    if (isOutputPopped && popoutWindowRef.current && !popoutWindowRef.current.closed) {
+      popoutWindowRef.current.close();
+      setIsOutputPopped(false);
+      return;
+    }
+
+    const popoutWindow = window.open('', 'CodeOutput', 'width=600,height=400,resizable=yes');
+    if (popoutWindow) {
+      popoutWindow.document.write(`
+        <!DOCTYPE html>
+        <html>
+          <head>
+            <title>Code Output</title>
+            <style>
+              body { 
+                margin: 0;
+                padding: 0;
+                background: #1e1e1e;
+                color: #fff;
+                font-family: monospace;
+              }
+              #output {
+                padding: 1rem;
+                white-space: pre-wrap;
+                word-wrap: break-word;
+              }
+            </style>
+          </head>
+          <body>
+            <div id="output"><pre class="whitespace-pre-wrap font-mono p-4">${output}</pre></div>
+          </body>
+        </html>
+      `);
+      popoutWindow.document.close();
+      popoutWindowRef.current = popoutWindow;
+      setIsOutputPopped(true);
+
+      popoutWindow.onbeforeunload = () => {
+        setIsOutputPopped(false);
+        return null;
+      };
+    }
+  };
 
   const handleCopy = async () => {
     try {
@@ -169,6 +227,15 @@ const CodePlayground: React.FC<CodePlaygroundProps> = ({
             <Button
               variant="outline"
               size="sm"
+              onClick={handlePopOutput}
+              className="hover:bg-accent"
+            >
+              <Maximize2 className="w-4 h-4 mr-2" />
+              {isOutputPopped ? 'Close Output' : 'Pop Output'}
+            </Button>
+            <Button
+              variant="outline"
+              size="sm"
               onClick={handleSaveToFile}
               className="hover:bg-accent"
             >
@@ -189,7 +256,7 @@ const CodePlayground: React.FC<CodePlaygroundProps> = ({
       </CardHeader>
       <CardContent className="p-4 pb-8 h-[calc(90vh-5rem)]">
         <ResizablePanelGroup direction="vertical" className="h-full rounded-md border">
-          <ResizablePanel defaultSize={60}>
+          <ResizablePanel defaultSize={isOutputPopped ? 100 : 60}>
             <div className="h-full">
               <Editor
                 height="100%"
@@ -210,17 +277,19 @@ const CodePlayground: React.FC<CodePlaygroundProps> = ({
               />
             </div>
           </ResizablePanel>
-          <ResizablePanel defaultSize={40}>
-            <div className="h-full flex flex-col">
-              {language === 'html' ? (
-                <div ref={iframeRef} className="w-full h-full bg-white" />
-              ) : (
-                <div ref={outputRef} className="w-full h-full p-4 font-mono text-sm overflow-auto bg-black text-white">
-                  {output}
-                </div>
-              )}
-            </div>
-          </ResizablePanel>
+          {!isOutputPopped && (
+            <ResizablePanel defaultSize={40}>
+              <div className="h-full flex flex-col">
+                {language === 'html' ? (
+                  <div ref={iframeRef} className="w-full h-full bg-white" />
+                ) : (
+                  <div ref={outputRef} className="w-full h-full p-4 font-mono text-sm overflow-auto bg-black text-white">
+                    {output}
+                  </div>
+                )}
+              </div>
+            </ResizablePanel>
+          )}
         </ResizablePanelGroup>
       </CardContent>
     </Card>

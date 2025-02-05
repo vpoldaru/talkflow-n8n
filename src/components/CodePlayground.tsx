@@ -1,11 +1,12 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import Editor from '@monaco-editor/react';
 import { Card, CardContent, CardHeader, CardTitle } from './ui/card';
 import { Button } from './ui/button';
-import { Copy, Download } from 'lucide-react';
+import { Copy, Download, Play } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from './ui/select';
 import { ResizablePanel, ResizablePanelGroup } from './ui/resizable';
+import { executeJavaScript, executeHTML } from '@/utils/codeExecutor';
 
 interface CodePlaygroundProps {
   defaultLanguage?: string;
@@ -40,7 +41,10 @@ const CodePlayground: React.FC<CodePlaygroundProps> = ({
 }) => {
   const [code, setCode] = useState(defaultValue);
   const [language, setLanguage] = useState(defaultLanguage);
+  const [output, setOutput] = useState<string>('');
   const { toast } = useToast();
+  const outputRef = useRef<HTMLDivElement>(null);
+  const iframeRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     const savedCode = localStorage.getItem('playground-code');
@@ -101,6 +105,32 @@ const CodePlayground: React.FC<CodePlaygroundProps> = ({
     }
   };
 
+  const handleRun = async () => {
+    try {
+      if (language === 'html') {
+        if (iframeRef.current) {
+          const iframe = executeHTML(code);
+          iframeRef.current.innerHTML = '';
+          iframeRef.current.appendChild(iframe);
+        }
+        return;
+      }
+
+      const { result, error } = await executeJavaScript(code);
+      setOutput(error ? `Error: ${error}` : JSON.stringify(result, null, 2));
+      
+      toast({
+        description: error ? "Execution failed" : "Code executed successfully",
+        variant: error ? "destructive" : "default",
+      });
+    } catch (err) {
+      toast({
+        description: "Failed to execute code",
+        variant: "destructive",
+      });
+    }
+  };
+
   return (
     <Card className="w-full h-[90vh] mx-auto bg-card shadow-lg">
       <CardHeader className="border-b border-border/20">
@@ -124,6 +154,15 @@ const CodePlayground: React.FC<CodePlaygroundProps> = ({
             <Button
               variant="outline"
               size="sm"
+              onClick={handleRun}
+              className="hover:bg-accent"
+            >
+              <Play className="w-4 h-4 mr-2" />
+              Run
+            </Button>
+            <Button
+              variant="outline"
+              size="sm"
               onClick={handleSaveToFile}
               className="hover:bg-accent"
             >
@@ -144,7 +183,7 @@ const CodePlayground: React.FC<CodePlaygroundProps> = ({
       </CardHeader>
       <CardContent className="p-4 pb-8 h-[calc(90vh-5rem)]">
         <ResizablePanelGroup direction="vertical" className="h-full rounded-md border">
-          <ResizablePanel defaultSize={100}>
+          <ResizablePanel defaultSize={60}>
             <div className="h-full">
               <Editor
                 height="100%"
@@ -163,6 +202,17 @@ const CodePlayground: React.FC<CodePlaygroundProps> = ({
                   fontFamily: 'ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace',
                 }}
               />
+            </div>
+          </ResizablePanel>
+          <ResizablePanel defaultSize={40}>
+            <div className="h-full flex flex-col">
+              {language === 'html' ? (
+                <div ref={iframeRef} className="w-full h-full bg-white" />
+              ) : (
+                <div ref={outputRef} className="w-full h-full p-4 font-mono text-sm overflow-auto bg-black text-white">
+                  {output}
+                </div>
+              )}
             </div>
           </ResizablePanel>
         </ResizablePanelGroup>

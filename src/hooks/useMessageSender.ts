@@ -114,7 +114,6 @@ export const useMessageSender = (
       const responseText = await response.text();
 
       try {
-        // Try to parse as JSON if possible
         responseData = responseText ? JSON.parse(responseText) : null;
       } catch (e) {
         console.log('Response is not JSON:', responseText);

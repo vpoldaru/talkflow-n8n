@@ -1,6 +1,13 @@
 // Web Worker for executing JavaScript/TypeScript code
 export const executeJavaScript = (code: string): Promise<{ result?: any; error?: string; logs?: string[] }> => {
   return new Promise((resolve) => {
+    // Strip TypeScript types before execution
+    const strippedCode = code
+      .replace(/interface\s+\w+\s*{[^}]*}/g, '') // Remove interfaces
+      .replace(/:\s*([A-Za-z<>[\](),\s]+)(?=[,);=])/g, '') // Remove type annotations
+      .replace(/[<>]([A-Za-z,\s[\]]+)[>]/g, '') // Remove generic type parameters
+      .trim();
+
     const worker = new Worker(
       URL.createObjectURL(
         new Blob([`
@@ -60,7 +67,7 @@ export const executeJavaScript = (code: string): Promise<{ result?: any; error?:
       resolve({ error: error.message });
     };
 
-    worker.postMessage(code);
+    worker.postMessage(strippedCode);
   });
 };
 

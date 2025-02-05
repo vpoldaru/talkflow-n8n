@@ -43,6 +43,7 @@ export const usePopoutWindow = (code: string, language: string, output: string) 
                 width: 100%;
                 height: 100%;
                 border: none;
+                color: inherit;
               }
               #output iframe.dark-iframe {
                 background: hsl(var(--background));
@@ -57,6 +58,7 @@ export const usePopoutWindow = (code: string, language: string, output: string) 
                 padding: 1rem;
                 white-space: pre-wrap;
                 word-wrap: break-word;
+                color: inherit;
               }
             </style>
             <style>
@@ -70,7 +72,7 @@ export const usePopoutWindow = (code: string, language: string, output: string) 
             <div id="output">
               ${language === 'html' 
                 ? ''  // Will be populated later
-                : `<pre class="whitespace-pre-wrap font-mono p-4 ${isDark ? 'text-white' : 'text-black'}">${output}</pre>`}
+                : `<pre class="whitespace-pre-wrap font-mono p-4 ${isDark ? 'text-foreground' : 'text-black'}">${output}</pre>`}
             </div>
           </body>
         </html>

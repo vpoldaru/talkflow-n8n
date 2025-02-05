@@ -1,9 +1,10 @@
 import { useState } from 'react';
-import { useToast } from './use-toast';
 import { Message } from '@/types/chat';
 import { fetchWithTimeout, FETCH_TIMEOUT } from '@/utils/fetchWithTimeout';
 import { extractResponseContent } from '@/utils/responseHandler';
 import { QueryClient } from '@tanstack/react-query';
+import { handleApiResponse, handleApiError } from '@/utils/apiResponseHandler';
+import { prepareFileData } from '@/utils/fileOperations';
 
 export const useMessageSender = (
   updateSession: (sessionId: string, messages: Message[]) => void,
@@ -11,7 +12,6 @@ export const useMessageSender = (
 ) => {
   const [isLoading, setIsLoading] = useState(false);
   const [isTyping, setIsTyping] = useState(false);
-  const { toast } = useToast();
 
   const sendMessage = async (
     input: string,
@@ -23,58 +23,22 @@ export const useMessageSender = (
     const username = window.env?.VITE_N8N_WEBHOOK_USERNAME || import.meta.env.VITE_N8N_WEBHOOK_USERNAME;
     const secret = window.env?.VITE_N8N_WEBHOOK_SECRET || import.meta.env.VITE_N8N_WEBHOOK_SECRET;
 
-    console.log('useMessageSender sendMessage called with:', {
-      input,
-      sessionId,
-      hasFile: !!file,
-      fileDetails: file ? {
-        name: file.name,
-        size: file.size,
-        type: file.type
-      } : null
-    });
-
     if (!effectiveWebhookUrl) {
       console.error('No webhook URL provided in environment');
-      toast({
-        description: "Configuration error: No webhook URL available",
-        variant: "destructive",
-      });
-      return;
+      throw new Error("Configuration error: No webhook URL available");
     }
-
-    console.log('Selected WEBHOOK_URL:', effectiveWebhookUrl);
 
     setIsLoading(true);
     setIsTyping(true);
 
-    let imageData;
-    if (file) {
-      try {
-        const base64Data = await fileToBase64(file);
-        imageData = {
-          data: base64Data,
-          mimeType: file.type,
-          fileName: file.name
-        };
-      } catch (error) {
-        console.error('Error processing file:', error);
-        toast({
-          description: "Error processing image file",
-          variant: "destructive",
-        });
-        setIsLoading(false);
-        setIsTyping(false);
-        return;
-      }
-    }
+    const fileData = file ? await prepareFileData(file) : null;
 
     const userMessage: Message = {
       id: crypto.randomUUID(),
       content: input,
       role: "user",
       timestamp: Date.now(),
-      ...(imageData && { imageData })
+      ...(fileData && { imageData: fileData })
     };
 
     const newMessages = [...currentMessages, userMessage];
@@ -100,28 +64,19 @@ export const useMessageSender = (
           body: JSON.stringify({
             chatInput: input,
             sessionId: sessionId,
-            ...(file && {
-              data: await fileToBase64(file),
-              mimeType: file.type,
-              fileName: file.name
+            ...(fileData && {
+              data: fileData.data,
+              mimeType: fileData.mimeType,
+              fileName: fileData.fileName
             })
           }),
         },
         FETCH_TIMEOUT
       );
 
-      let responseData;
-      const responseText = await response.text();
-
-      try {
-        responseData = responseText ? JSON.parse(responseText) : null;
-      } catch (e) {
-        console.log('Response is not JSON:', responseText);
-        responseData = responseText;
-      }
+      const responseData = await handleApiResponse(response);
 
       if (!response.ok) {
-        console.error('Server error response:', responseData);
         throw new Error(`HTTP error! status: ${response.status}`);
       }
 
@@ -144,25 +99,7 @@ export const useMessageSender = (
       
       console.log('Message sent successfully');
     } catch (error) {
-      console.error('Error in webhook request:', error);
-      let errorMessage = "Error sending message";
-      
-      if (error instanceof Error) {
-        if (error.message === 'Request timed out') {
-          errorMessage = "Request timed out. Please try again.";
-        } else if (error.message.includes('Failed to fetch')) {
-          errorMessage = "Network error. Please check your connection.";
-        } else if (error.message.includes('401')) {
-          errorMessage = "Authentication failed. Please check your credentials.";
-        } else if (error.message === 'Empty response from server') {
-          errorMessage = "Server returned an empty response. Please try again.";
-        }
-      }
-      
-      toast({
-        description: errorMessage,
-        variant: "destructive",
-      });
+      handleApiError(error);
     } finally {
       setIsLoading(false);
       setIsTyping(false);
@@ -174,17 +111,4 @@ export const useMessageSender = (
     isLoading,
     isTyping
   };
-};
-
-const fileToBase64 = (file: File): Promise<string> => {
-  return new Promise((resolve, reject) => {
-    const reader = new FileReader();
-    reader.readAsDataURL(file);
-    reader.onload = () => {
-      const base64String = reader.result as string;
-      const base64Data = base64String.split(',')[1];
-      resolve(base64Data);
-    };
-    reader.onerror = (error) => reject(error);
-  });
 };

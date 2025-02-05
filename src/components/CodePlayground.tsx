@@ -69,10 +69,18 @@ const CodePlayground: React.FC<CodePlaygroundProps> = ({
       const doc = popoutWindowRef.current.document;
       const outputElement = doc.getElementById('output');
       if (outputElement) {
-        outputElement.innerHTML = `<pre class="whitespace-pre-wrap font-mono p-4">${output}</pre>`;
+        if (language === 'html') {
+          // For HTML, create and append an iframe
+          const iframe = executeHTML(code);
+          outputElement.innerHTML = '';
+          outputElement.appendChild(iframe);
+        } else {
+          // For other languages, display the output text
+          outputElement.innerHTML = `<pre class="whitespace-pre-wrap font-mono p-4">${output}</pre>`;
+        }
       }
     }
-  }, [output]);
+  }, [output, language, code]);
 
   const handlePopOutput = () => {
     if (isOutputPopped && popoutWindowRef.current && !popoutWindowRef.current.closed) {
@@ -97,6 +105,17 @@ const CodePlayground: React.FC<CodePlaygroundProps> = ({
                 font-family: monospace;
               }
               #output {
+                height: 100vh;
+                width: 100%;
+              }
+              #output iframe {
+                width: 100%;
+                height: 100%;
+                border: none;
+                background: white;
+              }
+              pre {
+                margin: 0;
                 padding: 1rem;
                 white-space: pre-wrap;
                 word-wrap: break-word;
@@ -104,13 +123,27 @@ const CodePlayground: React.FC<CodePlaygroundProps> = ({
             </style>
           </head>
           <body>
-            <div id="output"><pre class="whitespace-pre-wrap font-mono p-4">${output}</pre></div>
+            <div id="output">
+              ${language === 'html' 
+                ? ''  // Will be populated by the useEffect
+                : `<pre class="whitespace-pre-wrap font-mono p-4">${output}</pre>`}
+            </div>
           </body>
         </html>
       `);
       popoutWindow.document.close();
       popoutWindowRef.current = popoutWindow;
       setIsOutputPopped(true);
+
+      // If it's HTML, immediately execute and display it
+      if (language === 'html') {
+        const iframe = executeHTML(code);
+        const outputElement = popoutWindow.document.getElementById('output');
+        if (outputElement) {
+          outputElement.innerHTML = '';
+          outputElement.appendChild(iframe);
+        }
+      }
 
       popoutWindow.onbeforeunload = () => {
         setIsOutputPopped(false);

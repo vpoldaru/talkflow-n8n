@@ -1,6 +1,7 @@
+
 import { Message } from '@/types/chat';
 import { cn } from '@/lib/utils';
-import { Copy, Robot } from 'lucide-react';
+import { Copy, Bot } from 'lucide-react';
 import { Button } from './ui/button';
 import { useToast } from '@/hooks/use-toast';
 import { format } from 'date-fns';
@@ -71,7 +72,7 @@ export const ChatMessage = ({ message }: ChatMessageProps) => {
         {isAssistant && (
           <div className="flex items-center gap-2 mb-2">
             <div className="flex items-center justify-center w-6 h-6 rounded-full bg-gradient-to-br from-blue-500 to-cyan-500">
-              <Robot className="w-4 h-4 text-white" />
+              <Bot className="w-4 h-4 text-white" />
             </div>
             <span className="text-sm font-medium text-slate-700 dark:text-slate-200">
               {assistantName}

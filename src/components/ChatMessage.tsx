@@ -58,8 +58,8 @@ export const ChatMessage = ({ message }: ChatMessageProps) => {
         className={cn(
           "max-w-[85%] rounded-2xl px-4 py-3 transition-all duration-200 backdrop-blur-sm hover:-translate-y-1 relative",
           isAssistant
-            ? "bg-gradient-to-br from-slate-50 to-blue-50 dark:from-slate-900 dark:to-blue-900 border border-blue-100/50 dark:border-blue-800/30"
-            : "bg-gradient-to-br from-violet-100 to-purple-100 dark:from-violet-900 dark:to-purple-900 text-slate-900 dark:text-white border border-violet-200/50 dark:border-violet-700/30"
+            ? "bg-gradient-to-br from-background to-muted text-foreground border border-muted hover:from-muted hover:to-background dark:from-card dark:to-background dark:border-muted/20"
+            : "bg-gradient-to-br from-primary to-primary/80 text-primary-foreground border border-primary/20 hover:from-primary/90 hover:to-primary/70"
         )}
         style={{
           transformStyle: 'preserve-3d',
@@ -71,10 +71,10 @@ export const ChatMessage = ({ message }: ChatMessageProps) => {
       >
         {isAssistant && (
           <div className="flex items-center gap-2 mb-2">
-            <div className="flex items-center justify-center w-6 h-6 rounded-full bg-gradient-to-br from-blue-500 to-cyan-500">
-              <Bot className="w-4 h-4 text-white" />
+            <div className="flex items-center justify-center w-6 h-6 rounded-full bg-gradient-to-br from-primary to-primary/80">
+              <Bot className="w-4 h-4 text-primary-foreground" />
             </div>
-            <span className="text-sm font-medium text-slate-700 dark:text-slate-200">
+            <span className="text-sm font-medium text-foreground">
               {assistantName}
             </span>
           </div>
@@ -107,14 +107,14 @@ export const ChatMessage = ({ message }: ChatMessageProps) => {
           </div>
         </div>
         <div className="mt-2 flex justify-between items-center">
-          <span className="text-xs text-slate-500 dark:text-slate-400 opacity-0 group-hover:opacity-100 transition-opacity duration-200">
+          <span className="text-xs text-foreground/60 opacity-0 group-hover:opacity-100 transition-opacity duration-200">
             {formattedTime}
           </span>
           {isAssistant && (
             <Button
               variant="ghost"
               size="sm"
-              className="text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-100"
+              className="text-foreground/60 hover:text-foreground"
               onClick={handleCopy}
             >
               <Copy className="mr-2 h-4 w-4" />
@@ -126,3 +126,4 @@ export const ChatMessage = ({ message }: ChatMessageProps) => {
     </div>
   );
 };
+

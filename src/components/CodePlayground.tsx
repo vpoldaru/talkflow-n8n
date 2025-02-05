@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import Editor from '@monaco-editor/react';
 import { Card, CardContent, CardHeader } from './ui/card';
 import { ResizablePanel, ResizablePanelGroup } from './ui/resizable';
-import { executeJavaScript, executeHTML } from '@/utils/codeExecutor';
+import { executeJavaScript, executeHTML, executePython } from '@/utils/codeExecutor';
 import { useToast } from '@/hooks/use-toast';
 import { EditorHeader } from './playground/EditorHeader';
 import { PlaygroundOutput } from './playground/PlaygroundOutput';
@@ -59,10 +59,17 @@ const CodePlayground: React.FC<CodePlaygroundProps> = ({
         return;
       }
 
-      const { result, error, logs = [] } = await executeJavaScript(code);
+      let result;
+      if (language === 'python') {
+        result = await executePython(code);
+      } else {
+        result = await executeJavaScript(code);
+      }
+
+      const { error, logs = [] } = result;
       const outputText = [
         ...(logs.length > 0 ? logs : []),
-        ...(result !== undefined ? [result] : []),
+        ...(result.result !== undefined ? [result.result] : []),
         ...(error ? [`Error: ${error}`] : [])
       ].join('\n');
       

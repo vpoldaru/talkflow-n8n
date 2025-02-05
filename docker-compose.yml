@@ -1,3 +1,4 @@
+
 services:
   app:
     build:
@@ -11,4 +12,5 @@ services:
       - VITE_SITE_TITLE=${VITE_SITE_TITLE}
       - VITE_N8N_WEBHOOK_USERNAME=${VITE_N8N_WEBHOOK_USERNAME}
       - VITE_N8N_WEBHOOK_SECRET=${VITE_N8N_WEBHOOK_SECRET}
+      - VITE_ASSISTANT_NAME=${VITE_ASSISTANT_NAME}
     restart: unless-stopped

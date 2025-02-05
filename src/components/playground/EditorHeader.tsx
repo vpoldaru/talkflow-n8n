@@ -24,6 +24,8 @@ export const EditorHeader: React.FC<EditorHeaderProps> = ({
   isOutputPopped
 }) => {
   const { toast } = useToast();
+  const currentLanguage = SUPPORTED_LANGUAGES.find(lang => lang.value === language);
+  const canRunInBrowser = currentLanguage?.canRunInBrowser ?? false;
 
   const handleCopy = async () => {
     try {
@@ -87,24 +89,28 @@ export const EditorHeader: React.FC<EditorHeaderProps> = ({
         </Select>
       </div>
       <div className="flex gap-2">
-        <Button
-          variant="outline"
-          size="sm"
-          onClick={onRun}
-          className="hover:bg-accent"
-        >
-          <Play className="w-4 h-4 mr-2" />
-          Run
-        </Button>
-        <Button
-          variant="outline"
-          size="sm"
-          onClick={onPopOutput}
-          className="hover:bg-accent"
-        >
-          <Maximize2 className="w-4 h-4 mr-2" />
-          {isOutputPopped ? 'Close Output' : 'Pop Output'}
-        </Button>
+        {canRunInBrowser && (
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={onRun}
+            className="hover:bg-accent"
+          >
+            <Play className="w-4 h-4 mr-2" />
+            Run
+          </Button>
+        )}
+        {canRunInBrowser && (
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={onPopOutput}
+            className="hover:bg-accent"
+          >
+            <Maximize2 className="w-4 h-4 mr-2" />
+            {isOutputPopped ? 'Close Output' : 'Pop Output'}
+          </Button>
+        )}
         <Button
           variant="outline"
           size="sm"

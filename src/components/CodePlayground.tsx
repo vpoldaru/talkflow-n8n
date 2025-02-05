@@ -7,6 +7,7 @@ import { useToast } from '@/hooks/use-toast';
 import { EditorHeader } from './playground/EditorHeader';
 import { PlaygroundOutput } from './playground/PlaygroundOutput';
 import { usePopoutWindow } from '@/hooks/usePopoutWindow';
+import { SUPPORTED_LANGUAGES } from './playground/constants';
 
 interface CodePlaygroundProps {
   defaultLanguage?: string;
@@ -24,6 +25,9 @@ const CodePlayground: React.FC<CodePlaygroundProps> = ({
   const { toast } = useToast();
   const outputRef = useRef<HTMLDivElement>(null);
   const iframeRef = useRef<HTMLDivElement>(null);
+
+  const currentLanguage = SUPPORTED_LANGUAGES.find(lang => lang.value === language);
+  const canRunInBrowser = currentLanguage?.canRunInBrowser ?? false;
 
   const { handlePopOutput } = usePopoutWindow(
     isOutputPopped,
@@ -94,7 +98,7 @@ const CodePlayground: React.FC<CodePlaygroundProps> = ({
       </CardHeader>
       <CardContent className="p-4 pb-8 h-[calc(90vh-5rem)]">
         <ResizablePanelGroup direction="vertical" className="h-full rounded-md border">
-          <ResizablePanel defaultSize={isOutputPopped ? 100 : 60}>
+          <ResizablePanel defaultSize={canRunInBrowser && !isOutputPopped ? 60 : 100}>
             <div className="h-full">
               <Editor
                 height="100%"
@@ -115,7 +119,7 @@ const CodePlayground: React.FC<CodePlaygroundProps> = ({
               />
             </div>
           </ResizablePanel>
-          {!isOutputPopped && (
+          {canRunInBrowser && !isOutputPopped && (
             <ResizablePanel defaultSize={40}>
               <div className="h-full flex flex-col">
                 <PlaygroundOutput

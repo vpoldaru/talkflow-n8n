@@ -2,12 +2,13 @@ import { Button } from "@/components/ui/button";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { ThemeToggle } from "@/components/ThemeToggle";
 import { ChatSession } from "@/types/chat";
-import { MessageSquare, PlusCircle, Trash2, Pencil, Check, X, Star } from "lucide-react";
+import { MessageSquare, PlusCircle, Trash2, Pencil, Check, X, Star, Code } from "lucide-react";
 import { format } from "date-fns";
 import { cn } from "@/lib/utils";
 import { toast } from "sonner";
 import { useState } from "react";
 import { Input } from "@/components/ui/input";
+import { useNavigate } from "react-router-dom";
 
 interface ChatSidebarProps {
   sessions: ChatSession[];
@@ -32,6 +33,7 @@ export const ChatSidebar = ({
 }: ChatSidebarProps) => {
   const [editingSessionId, setEditingSessionId] = useState<string | null>(null);
   const [editingName, setEditingName] = useState("");
+  const navigate = useNavigate();
 
   const getFirstMessage = (messages: ChatSession["messages"]) => {
     const userMessage = messages.find(m => m.role === "user");
@@ -90,6 +92,14 @@ export const ChatSidebar = ({
       )}
     >
       <div className="p-4 border-b flex flex-col gap-4">
+        <Button 
+          onClick={() => navigate('/playground')} 
+          className="w-full flex items-center gap-2"
+          variant="outline"
+        >
+          <Code className="w-4 h-4" />
+          Code Playground
+        </Button>
         <Button onClick={onNewChat} className="w-full flex items-center gap-2">
           <PlusCircle className="w-4 h-4" />
           New Chat

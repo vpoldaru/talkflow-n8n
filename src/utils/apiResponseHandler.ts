@@ -23,6 +23,8 @@ export const handleApiError = (error: unknown) => {
       errorMessage = "Network error. Please check your connection.";
     } else if (error.message.includes('401')) {
       errorMessage = "Authentication failed. Please check your credentials.";
+    } else if (error.message.includes('500')) {
+      errorMessage = "Server error. Please try again later.";
     }
   }
   

@@ -5,6 +5,7 @@ import { extractResponseContent } from '@/utils/responseHandler';
 import { QueryClient } from '@tanstack/react-query';
 import { handleApiResponse, handleApiError } from '@/utils/apiResponseHandler';
 import { prepareFileData } from '@/utils/fileOperations';
+import { toast } from "sonner";
 
 export const useMessageSender = (
   updateSession: (sessionId: string, messages: Message[]) => void,
@@ -24,28 +25,28 @@ export const useMessageSender = (
     const secret = window.env?.VITE_N8N_WEBHOOK_SECRET || import.meta.env.VITE_N8N_WEBHOOK_SECRET;
 
     if (!effectiveWebhookUrl) {
-      console.error('No webhook URL provided in environment');
-      throw new Error("Configuration error: No webhook URL available");
+      toast.error("Configuration error: No webhook URL available");
+      return;
     }
 
-    setIsLoading(true);
-    setIsTyping(true);
-
-    const fileData = file ? await prepareFileData(file) : null;
-
-    const userMessage: Message = {
-      id: crypto.randomUUID(),
-      content: input,
-      role: "user",
-      timestamp: Date.now(),
-      ...(fileData && { imageData: fileData })
-    };
-
-    const newMessages = [...currentMessages, userMessage];
-    updateSession(sessionId, newMessages);
-    queryClient.setQueryData(['chatSessions', sessionId], newMessages);
-
     try {
+      setIsLoading(true);
+      setIsTyping(true);
+
+      const fileData = file ? await prepareFileData(file) : null;
+
+      const userMessage: Message = {
+        id: crypto.randomUUID(),
+        content: input,
+        role: "user",
+        timestamp: Date.now(),
+        ...(fileData && { imageData: fileData })
+      };
+
+      const newMessages = [...currentMessages, userMessage];
+      updateSession(sessionId, newMessages);
+      queryClient.setQueryData(['chatSessions', sessionId], newMessages);
+
       const headers: HeadersInit = {
         'Content-Type': 'application/json',
       };
@@ -55,6 +56,12 @@ export const useMessageSender = (
         const base64Auth = btoa(authString);
         headers['Authorization'] = `Basic ${base64Auth}`;
       }
+
+      console.log('Sending message to webhook:', {
+        url: effectiveWebhookUrl,
+        hasAuth: !!username && !!secret,
+        hasFile: !!file
+      });
 
       const response = await fetchWithTimeout(
         effectiveWebhookUrl,
@@ -99,7 +106,8 @@ export const useMessageSender = (
       
       console.log('Message sent successfully');
     } catch (error) {
-      handleApiError(error);
+      console.error('Error in webhook request:', error);
+      toast.error("Failed to send message. Please try again.");
     } finally {
       setIsLoading(false);
       setIsTyping(false);

@@ -53,10 +53,10 @@ export const ThemeProvider = ({ children }: { children: React.ReactNode }) => {
   const applyTheme = (theme: Theme, currentMode: ThemeMode) => {
     const colors = currentMode === 'light' ? theme.light : theme.dark;
     const root = document.documentElement;
-    
+
     Object.entries(colors).forEach(([key, value]) => {
-      const cssKey = key.replace(/([A-Z])/g, '-$1').toLowerCase();
-      root.style.setProperty(`--${cssKey}`, `hsl(${value})`);
+      // Don't convert the HSL value to hsl() since it's already in the correct format
+      root.style.setProperty(`--${key}`, value);
     });
   };
 

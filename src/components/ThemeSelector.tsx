@@ -15,12 +15,12 @@ export function ThemeSelector() {
   return (
     <Select value={currentTheme.id} onValueChange={setTheme}>
       <SelectTrigger 
-        className="w-[180px] bg-card text-card-foreground border-border"
+        className="w-[180px] bg-background text-foreground border-border"
       >
         <SelectValue placeholder="Select theme" />
       </SelectTrigger>
       <SelectContent 
-        className="z-50 min-w-[180px] overflow-hidden rounded-md border bg-popover text-popover-foreground border-border"
+        className="z-50 min-w-[180px] overflow-hidden rounded-md border bg-background text-foreground shadow-md border-border"
       >
         {themes.map((theme) => (
           <SelectItem 

@@ -55,8 +55,14 @@ export const ThemeProvider = ({ children }: { children: React.ReactNode }) => {
     const root = document.documentElement;
 
     Object.entries(colors).forEach(([key, value]) => {
-      // Don't convert the HSL value to hsl() since it's already in the correct format
       root.style.setProperty(`--${key}`, value);
+      // Also set Tailwind CSS variables
+      if (key.includes('background')) {
+        document.body.style.backgroundColor = `hsl(${value})`;
+      }
+      if (key.includes('foreground')) {
+        document.body.style.color = `hsl(${value})`;
+      }
     });
   };
 

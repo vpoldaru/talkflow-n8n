@@ -1,3 +1,4 @@
+
 import { ChatMessages } from "@/components/chat/ChatMessages";
 import { ChatInput } from "@/components/chat/ChatInput";
 import { ChatSidebar } from "@/components/chat/ChatSidebar";
@@ -6,6 +7,7 @@ import { useState, useCallback } from "react";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { Menu } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
+import { ThemeProvider } from "@/hooks/useTheme";
 
 interface ChatLayoutProps {
   sessions: ChatSession[];
@@ -81,48 +83,50 @@ export const ChatLayout = ({
   }, [isMobile, onSessionSelect]);
 
   return (
-    <div className="flex h-screen relative">
-      {isMobile && (
-        <button
-          onClick={() => setIsSidebarOpen(!isSidebarOpen)}
-          className="fixed top-4 left-4 z-50 p-2 rounded-lg bg-background border"
-        >
-          <Menu className="w-5 h-5" />
-        </button>
-      )}
+    <ThemeProvider>
+      <div className="flex h-screen relative">
+        {isMobile && (
+          <button
+            onClick={() => setIsSidebarOpen(!isSidebarOpen)}
+            className="fixed top-4 left-4 z-50 p-2 rounded-lg bg-background border"
+          >
+            <Menu className="w-5 h-5" />
+          </button>
+        )}
 
-      <ChatSidebar
-        sessions={sessions}
-        currentSessionId={currentSessionId}
-        isSidebarOpen={isSidebarOpen}
-        onNewChat={onNewChat}
-        onSessionSelect={handleSessionClick}
-        onDeleteSession={onDeleteSession}
-        onRenameSession={onRenameSession}
-        onToggleFavorite={onToggleFavorite}
-      />
+        <ChatSidebar
+          sessions={sessions}
+          currentSessionId={currentSessionId}
+          isSidebarOpen={isSidebarOpen}
+          onNewChat={onNewChat}
+          onSessionSelect={handleSessionClick}
+          onDeleteSession={onDeleteSession}
+          onRenameSession={onRenameSession}
+          onToggleFavorite={onToggleFavorite}
+        />
 
-      <div className="flex-1 flex flex-col bg-background relative pb-6">
-        {currentSession && (
-          <>
-            <ChatMessages messages={currentSession.messages} isTyping={isTyping} />
-            <ChatInput
-              input={input}
-              isLoading={isLoading}
-              onInputChange={setInput}
-              onSend={handleSend}
-              onImageSelect={handleImageSelect}
-            />
-          </>
+        <div className="flex-1 flex flex-col bg-background relative pb-6">
+          {currentSession && (
+            <>
+              <ChatMessages messages={currentSession.messages} isTyping={isTyping} />
+              <ChatInput
+                input={input}
+                isLoading={isLoading}
+                onInputChange={setInput}
+                onSend={handleSend}
+                onImageSelect={handleImageSelect}
+              />
+            </>
+          )}
+        </div>
+
+        {isMobile && isSidebarOpen && (
+          <div
+            className="fixed inset-0 bg-background/80 backdrop-blur-sm z-30"
+            onClick={() => setIsSidebarOpen(false)}
+          />
         )}
       </div>
-
-      {isMobile && isSidebarOpen && (
-        <div
-          className="fixed inset-0 bg-background/80 backdrop-blur-sm z-30"
-          onClick={() => setIsSidebarOpen(false)}
-        />
-      )}
-    </div>
+    </ThemeProvider>
   );
 };

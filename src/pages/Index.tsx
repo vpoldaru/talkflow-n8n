@@ -1,7 +1,6 @@
 
 import { useChatSessions } from "@/hooks/useChatSessions";
 import { ChatLayout } from "@/components/chat/ChatLayout";
-import { ThemeProvider } from "@/hooks/useTheme";
 
 const Index = () => {
   // Allow rendering even without window.env since we'll fall back to import.meta.env
@@ -22,20 +21,18 @@ const Index = () => {
 
   return (
     <div className="relative">
-      <ThemeProvider>
-        <ChatLayout
-          sessions={sessions}
-          currentSessionId={currentSessionId}
-          isLoading={isLoading}
-          isTyping={isTyping}
-          onNewChat={createNewSession}
-          onSessionSelect={setCurrentSessionId}
-          onDeleteSession={deleteSession}
-          onRenameSession={renameSession}
-          onToggleFavorite={toggleFavorite}
-          onSendMessage={sendMessage}
-        />
-      </ThemeProvider>
+      <ChatLayout
+        sessions={sessions}
+        currentSessionId={currentSessionId}
+        isLoading={isLoading}
+        isTyping={isTyping}
+        onNewChat={createNewSession}
+        onSessionSelect={setCurrentSessionId}
+        onDeleteSession={deleteSession}
+        onRenameSession={renameSession}
+        onToggleFavorite={toggleFavorite}
+        onSendMessage={sendMessage}
+      />
     </div>
   );
 };

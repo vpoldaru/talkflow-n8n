@@ -28,12 +28,12 @@ export const usePopoutWindow = (code: string, language: string, output: string) 
                 font-family: monospace;
               }
               body.dark {
-                background: #1e1e1e;
-                color: #fff;
+                background: hsl(var(--background));
+                color: hsl(var(--foreground));
               }
               body:not(.dark) {
                 background: #ffffff;
-                color: #000;
+                color: #000000;
               }
               #output {
                 height: 100vh;
@@ -45,18 +45,24 @@ export const usePopoutWindow = (code: string, language: string, output: string) 
                 border: none;
               }
               #output iframe.dark-iframe {
-                background: #1e1e1e;
-                color: #fff;
+                background: hsl(var(--background));
+                color: hsl(var(--foreground));
               }
               #output iframe:not(.dark-iframe) {
                 background: #ffffff;
-                color: #000;
+                color: #000000;
               }
               pre {
                 margin: 0;
                 padding: 1rem;
                 white-space: pre-wrap;
                 word-wrap: break-word;
+              }
+            </style>
+            <style>
+              :root {
+                --background: 222.2 84% 4.9%;
+                --foreground: 210 40% 98%;
               }
             </style>
           </head>

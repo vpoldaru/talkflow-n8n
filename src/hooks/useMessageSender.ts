@@ -6,6 +6,7 @@ import { QueryClient } from '@tanstack/react-query';
 import { handleApiResponse, handleApiError } from '@/utils/apiResponseHandler';
 import { prepareFileData } from '@/utils/fileOperations';
 import { toast } from "sonner";
+import { v4 as uuidv4 } from 'uuid';
 
 export const useMessageSender = (
   updateSession: (sessionId: string, messages: Message[]) => void,
@@ -36,7 +37,7 @@ export const useMessageSender = (
       const fileData = file ? await prepareFileData(file) : null;
 
       const userMessage: Message = {
-        id: crypto.randomUUID(),
+        id: uuidv4(),
         content: input,
         role: "user",
         timestamp: Date.now(),
@@ -94,7 +95,7 @@ export const useMessageSender = (
       const responseContent = extractResponseContent(responseData);
 
       const assistantMessage: Message = {
-        id: crypto.randomUUID(),
+        id: uuidv4(),
         content: responseContent,
         role: "assistant",
         timestamp: Date.now(),

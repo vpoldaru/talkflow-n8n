@@ -4,8 +4,13 @@ export const executeJavaScript = (code: string): Promise<{ result?: any; error?:
     // Strip TypeScript types before execution
     const strippedCode = code
       .replace(/interface\s+\w+\s*{[^}]*}/g, '') // Remove interfaces
-      .replace(/:\s*([A-Za-z<>[\](),\s]+)(?=[,);=])/g, '') // Remove type annotations
+      .replace(/:\s*([A-Za-z<>[\](),\s]+)(?=[,);=\{])/g, '') // Remove type annotations, including function return types
       .replace(/[<>]([A-Za-z,\s[\]]+)[>]/g, '') // Remove generic type parameters
+      .replace(/function\s+(\w+)\s*\(([\w\s,]*:[\w\s,]*)*\)/g, (match, name, params) => {
+        // Clean function parameters
+        const cleanParams = params ? params.split(',').map(param => param.split(':')[0].trim()).join(', ') : '';
+        return `function ${name}(${cleanParams})`;
+      })
       .trim();
 
     const worker = new Worker(

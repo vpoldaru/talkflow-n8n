@@ -12,29 +12,24 @@ import { usePopoutWindow } from '@/hooks/usePopoutWindow';
 type LoaderConfig = {
   paths: {
     vs: string;
-    [key: string]: string; // Allow additional path entries
   };
-  'vs/nls': {
+  'vs/nls'?: {
     availableLanguages: Record<string, string>;
-    fallbackLanguage?: string;
   };
 };
 
 const config: LoaderConfig = {
   paths: {
-    vs: 'https://cdn.jsdelivr.net/npm/monaco-editor@0.43.0/min/vs',
-    'stackframe': 'https://cdn.jsdelivr.net/npm/stackframe@1.3.1/dist/stackframe.min.js',
-    'error-stack-parser': 'https://cdn.jsdelivr.net/npm/error-stack-parser@2.1.4/dist/error-stack-parser.min.js'
+    vs: 'https://cdn.jsdelivr.net/npm/monaco-editor@0.43.0/min/vs'
   },
   'vs/nls': {
-    availableLanguages: {},
-    fallbackLanguage: 'en'
+    availableLanguages: {}
   }
 };
 
 loader.config(config);
 
-// Preload required Monaco Editor dependencies
+// Initialize Monaco Editor
 loader.init().then(() => {
   console.log('Monaco Editor initialized successfully');
 }).catch(error => {

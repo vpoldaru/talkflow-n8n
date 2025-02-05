@@ -7,5 +7,6 @@ interface Window {
     VITE_N8N_WEBHOOK_USERNAME?: string;
     VITE_N8N_WEBHOOK_SECRET?: string;
     VITE_ASSISTANT_NAME?: string;
+    VITE_DEFAULT_THEME?: string;
   }
 }

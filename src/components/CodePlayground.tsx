@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import Editor from '@monaco-editor/react';
 import { Card, CardContent, CardHeader } from './ui/card';
 import { ResizablePanel, ResizablePanelGroup } from './ui/resizable';
-import { executeJavaScript } from '@/utils/codeExecutor';
+import { executeJavaScript, executeHTML } from '@/utils/codeExecutor';
 import { useToast } from '@/hooks/use-toast';
 import { EditorHeader } from './playground/EditorHeader';
 import { PlaygroundOutput } from './playground/PlaygroundOutput';

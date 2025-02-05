@@ -142,7 +142,7 @@ const CodePlayground: React.FC<CodePlaygroundProps> = ({
           </div>
         </CardTitle>
       </CardHeader>
-      <CardContent className="p-4 h-[calc(90vh-5rem)]">
+      <CardContent className="p-4 pb-8 h-[calc(90vh-5rem)]">
         <ResizablePanelGroup direction="vertical" className="h-full rounded-md border">
           <ResizablePanel defaultSize={100}>
             <div className="h-full">

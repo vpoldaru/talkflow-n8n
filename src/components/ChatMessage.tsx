@@ -6,7 +6,6 @@ import { Button } from './ui/button';
 import { useToast } from '@/hooks/use-toast';
 import { format } from 'date-fns';
 import { MarkdownRenderer } from './chat/MarkdownRenderer';
-import { useTheme } from '@/hooks/useTheme';
 import {
   Dialog,
   DialogContent,
@@ -20,7 +19,6 @@ interface ChatMessageProps {
 export const ChatMessage = ({ message }: ChatMessageProps) => {
   const isAssistant = message.role === 'assistant';
   const { toast } = useToast();
-  const { currentTheme, mode } = useTheme();
   const formattedTime = format(new Date(message.timestamp), 'MMM d, yyyy h:mm a');
   const assistantName = window.env?.VITE_ASSISTANT_NAME || import.meta.env.VITE_ASSISTANT_NAME || "Lovable";
 
@@ -49,66 +47,39 @@ export const ChatMessage = ({ message }: ChatMessageProps) => {
     }
   };
 
-  const getMessageStyles = () => {
-    const colors = mode === 'light' ? currentTheme.light : currentTheme.dark;
-    
-    if (isAssistant) {
-      return {
-        background: `linear-gradient(to bottom right, hsl(${colors.background}), hsl(${colors.muted}))`,
-        border: `1px solid hsla(${colors.border}, 0.2)`,
-        color: `hsl(${colors.foreground})`,
-        boxShadow: `0 4px 6px -1px rgba(148, 163, 184, 0.1), 0 2px 4px -1px rgba(148, 163, 184, 0.06)`
-      };
-    } else {
-      // User message styles
-      const primaryHsl = colors.primary;
-      return {
-        background: mode === 'dark' 
-          ? `linear-gradient(to bottom right, hsl(${colors.primary}), hsl(${colors.primary}))`
-          : `linear-gradient(to bottom right, hsl(${colors.primary}), hsl(${colors.primary}))`,
-        color: `hsl(${colors.primaryForeground})`,
-        boxShadow: 'none',
-        border: 'none'
-      };
-    }
-  };
-
-  const messageStyles = getMessageStyles();
-
   return (
     <div
       className={cn(
-        "flex w-full items-end animate-fade-in transform transition-all duration-300 group",
+        "flex w-full animate-fade-in transform transition-all duration-300 group",
         isAssistant ? "justify-start" : "justify-end"
       )}
     >
       <div
         className={cn(
-          "max-w-[85%] rounded-2xl px-4 py-3 transition-all duration-200",
-          !isAssistant && "text-sm font-medium"
+          "max-w-[85%] rounded-2xl px-4 py-3 transition-all duration-200 backdrop-blur-sm hover:-translate-y-1 relative",
+          isAssistant
+            ? "bg-gradient-to-br from-slate-50 to-blue-50 dark:from-slate-900 dark:to-blue-900 border border-blue-100/50 dark:border-blue-800/30"
+            : "bg-gradient-to-br from-violet-100 to-purple-100 dark:from-violet-900 dark:to-purple-900 text-slate-900 dark:text-white border border-violet-200/50 dark:border-violet-700/30"
         )}
-        style={messageStyles}
+        style={{
+          transformStyle: 'preserve-3d',
+          perspective: '1000px',
+          boxShadow: isAssistant 
+            ? '0 4px 6px -1px rgba(148, 163, 184, 0.2), 0 2px 4px -1px rgba(148, 163, 184, 0.1), 0 8px 24px -4px rgba(148, 163, 184, 0.15)'
+            : '0 4px 6px -1px rgba(139, 92, 246, 0.15), 0 2px 4px -1px rgba(139, 92, 246, 0.1), 0 8px 24px -4px rgba(139, 92, 246, 0.15)'
+        }}
       >
         {isAssistant && (
           <div className="flex items-center gap-2 mb-2">
-            <div 
-              className="flex items-center justify-center w-6 h-6 rounded-full"
-              style={{
-                background: messageStyles.background,
-                border: messageStyles.border
-              }}
-            >
-              <Bot className="w-4 h-4" style={{ color: messageStyles.color }} />
+            <div className="flex items-center justify-center w-6 h-6 rounded-full bg-gradient-to-br from-blue-500 to-cyan-500">
+              <Bot className="w-4 h-4 text-white" />
             </div>
-            <span className="text-sm font-medium" style={{ color: messageStyles.color }}>
+            <span className="text-sm font-medium text-slate-700 dark:text-slate-200">
               {assistantName}
             </span>
           </div>
         )}
-        <div className={cn(
-          "prose prose-slate dark:prose-invert max-w-none",
-          !isAssistant && "text-primary-foreground"
-        )}>
+        <div className="prose prose-slate dark:prose-invert max-w-none">
           {message.imageData && (
             <div className="mb-2">
               <Dialog>
@@ -135,26 +106,22 @@ export const ChatMessage = ({ message }: ChatMessageProps) => {
             </div>
           </div>
         </div>
-        {isAssistant && (
-          <div className="mt-2 flex justify-between items-center">
-            <span 
-              className="text-xs opacity-0 group-hover:opacity-100 transition-opacity duration-200"
-              style={{ color: `${messageStyles.color.replace(')', ', 0.6)')}` }}
-            >
-              {formattedTime}
-            </span>
+        <div className="mt-2 flex justify-between items-center">
+          <span className="text-xs text-slate-500 dark:text-slate-400 opacity-0 group-hover:opacity-100 transition-opacity duration-200">
+            {formattedTime}
+          </span>
+          {isAssistant && (
             <Button
               variant="ghost"
               size="sm"
-              className="hover:bg-transparent"
+              className="text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-100"
               onClick={handleCopy}
-              style={{ color: `${messageStyles.color.replace(')', ', 0.6)')}` }}
             >
               <Copy className="mr-2 h-4 w-4" />
               Copy response
             </Button>
-          </div>
-        )}
+          )}
+        </div>
       </div>
     </div>
   );

@@ -44,7 +44,6 @@ export const ImageUpload = ({ onImageSelect, disabled }: ImageUploadProps) => {
         ref={fileInputRef}
         onChange={handleImageSelect}
         accept="image/*"
-        capture="environment"
         className="hidden"
         disabled={disabled}
       />

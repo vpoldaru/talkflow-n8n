@@ -1,9 +1,9 @@
 import React from 'react';
 import { Button } from '@/components/ui/button';
 import { Copy, Download, Play, Maximize2 } from 'lucide-react';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue, SelectGroup, SelectLabel } from '@/components/ui/select';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { CardTitle } from '@/components/ui/card';
-import { SUPPORTED_LANGUAGES, findLanguageInGroups } from './constants';
+import { SUPPORTED_LANGUAGES } from './constants';
 import { useToast } from '@/hooks/use-toast';
 
 interface EditorHeaderProps {
@@ -24,7 +24,7 @@ export const EditorHeader: React.FC<EditorHeaderProps> = ({
   isOutputPopped
 }) => {
   const { toast } = useToast();
-  const currentLanguage = findLanguageInGroups(language);
+  const currentLanguage = SUPPORTED_LANGUAGES.find(lang => lang.value === language);
   const canRunInBrowser = currentLanguage?.canRunInBrowser ?? false;
 
   const handleCopy = async () => {
@@ -45,7 +45,7 @@ export const EditorHeader: React.FC<EditorHeaderProps> = ({
 
   const handleSaveToFile = () => {
     try {
-      const currentLang = findLanguageInGroups(language);
+      const currentLang = SUPPORTED_LANGUAGES.find(lang => lang.value === language);
       const extension = currentLang?.extension || '.txt';
       const filename = `code${extension}`;
       
@@ -80,15 +80,10 @@ export const EditorHeader: React.FC<EditorHeaderProps> = ({
             <SelectValue placeholder="Select language" />
           </SelectTrigger>
           <SelectContent>
-            {SUPPORTED_LANGUAGES.map((group) => (
-              <SelectGroup key={group.label}>
-                <SelectLabel>{group.label}</SelectLabel>
-                {group.languages.map((lang) => (
-                  <SelectItem key={lang.value} value={lang.value}>
-                    {lang.label}
-                  </SelectItem>
-                ))}
-              </SelectGroup>
+            {SUPPORTED_LANGUAGES.map((lang) => (
+              <SelectItem key={lang.value} value={lang.value}>
+                {lang.label}
+              </SelectItem>
             ))}
           </SelectContent>
         </Select>

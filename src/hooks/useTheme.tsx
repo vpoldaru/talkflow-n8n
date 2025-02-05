@@ -24,10 +24,9 @@ export const ThemeProvider = ({ children }: { children: React.ReactNode }) => {
     if (typeof window !== 'undefined') {
       const savedMode = localStorage.getItem('themeMode') as ThemeMode;
       if (savedMode) return savedMode;
-      // Default to dark mode instead of checking system preferences
       return 'dark';
     }
-    return 'dark'; // Default to dark even before window is available
+    return 'dark';
   });
 
   const setTheme = (themeId: string) => {
@@ -55,16 +54,19 @@ export const ThemeProvider = ({ children }: { children: React.ReactNode }) => {
     const colors = currentMode === 'light' ? theme.light : theme.dark;
     const root = document.documentElement;
     
+    // Set CSS custom properties for all theme colors
     Object.entries(colors).forEach(([key, value]) => {
-      root.style.setProperty(`--${key}`, value);
+      const cssKey = key.replace(/([A-Z])/g, '-$1').toLowerCase(); // Convert camelCase to kebab-case
+      root.style.setProperty(`--clr-${cssKey}`, value);
+      
+      // Also set the HSL values if the value is in HSL format
       if (typeof value === 'string' && value.includes(' ')) {
-        root.style.setProperty(`--${key}-hsl`, value);
+        root.style.setProperty(`--clr-${cssKey}-hsl`, value);
       }
     });
   };
 
   useEffect(() => {
-    // Set dark mode class on initial load
     document.documentElement.classList.toggle('dark', mode === 'dark');
     applyTheme(currentTheme, mode);
   }, [currentTheme, mode]);
@@ -83,3 +85,4 @@ export const useTheme = () => {
   }
   return context;
 };
+

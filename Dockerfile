@@ -1,3 +1,4 @@
+
 # Build stage
 FROM node:22.13.1 as builder
 
@@ -30,7 +31,8 @@ RUN echo "window.env = {" > /usr/share/nginx/html/env-config.template.js && \
     echo "  VITE_WELCOME_MESSAGE: \"\${VITE_WELCOME_MESSAGE}\"," >> /usr/share/nginx/html/env-config.template.js && \
     echo "  VITE_SITE_TITLE: \"\${VITE_SITE_TITLE}\"," >> /usr/share/nginx/html/env-config.template.js && \
     echo "  VITE_N8N_WEBHOOK_USERNAME: \"\${VITE_N8N_WEBHOOK_USERNAME}\"," >> /usr/share/nginx/html/env-config.template.js && \
-    echo "  VITE_N8N_WEBHOOK_SECRET: \"\${VITE_N8N_WEBHOOK_SECRET}\"" >> /usr/share/nginx/html/env-config.template.js && \
+    echo "  VITE_N8N_WEBHOOK_SECRET: \"\${VITE_N8N_WEBHOOK_SECRET}\"," >> /usr/share/nginx/html/env-config.template.js && \
+    echo "  VITE_ASSISTANT_NAME: \"\${VITE_ASSISTANT_NAME}\"" >> /usr/share/nginx/html/env-config.template.js && \
     echo "};" >> /usr/share/nginx/html/env-config.template.js
 
 # Create entrypoint script

@@ -1,6 +1,7 @@
+
 import { Message } from '@/types/chat';
 import { cn } from '@/lib/utils';
-import { Copy } from 'lucide-react';
+import { Copy, Bot } from 'lucide-react';
 import { Button } from './ui/button';
 import { useToast } from '@/hooks/use-toast';
 import { format } from 'date-fns';
@@ -19,6 +20,7 @@ export const ChatMessage = ({ message }: ChatMessageProps) => {
   const isAssistant = message.role === 'assistant';
   const { toast } = useToast();
   const formattedTime = format(new Date(message.timestamp), 'MMM d, yyyy h:mm a');
+  const assistantName = window.env?.VITE_ASSISTANT_NAME || import.meta.env.VITE_ASSISTANT_NAME || "Lovable";
 
   const handleCopy = async () => {
     try {
@@ -57,16 +59,26 @@ export const ChatMessage = ({ message }: ChatMessageProps) => {
           "max-w-[85%] rounded-2xl px-4 py-3 transition-all duration-200 backdrop-blur-sm hover:-translate-y-1 relative",
           isAssistant
             ? "bg-gradient-to-br from-slate-50 to-blue-50 dark:from-slate-900 dark:to-blue-900 border border-blue-100/50 dark:border-blue-800/30"
-            : "bg-gradient-to-br from-violet-500 to-purple-500 text-white border border-violet-400/20 dark:border-violet-500/20"
+            : "bg-gradient-to-br from-violet-100 to-purple-100 dark:from-violet-900 dark:to-purple-900 text-slate-900 dark:text-white border border-violet-200/50 dark:border-violet-700/30"
         )}
         style={{
           transformStyle: 'preserve-3d',
           perspective: '1000px',
           boxShadow: isAssistant 
             ? '0 4px 6px -1px rgba(148, 163, 184, 0.2), 0 2px 4px -1px rgba(148, 163, 184, 0.1), 0 8px 24px -4px rgba(148, 163, 184, 0.15)'
-            : '0 4px 6px -1px rgba(139, 92, 246, 0.3), 0 2px 4px -1px rgba(139, 92, 246, 0.15), 0 8px 24px -4px rgba(139, 92, 246, 0.25)'
+            : '0 4px 6px -1px rgba(139, 92, 246, 0.15), 0 2px 4px -1px rgba(139, 92, 246, 0.1), 0 8px 24px -4px rgba(139, 92, 246, 0.15)'
         }}
       >
+        {isAssistant && (
+          <div className="flex items-center gap-2 mb-2">
+            <div className="flex items-center justify-center w-6 h-6 rounded-full bg-gradient-to-br from-blue-500 to-cyan-500">
+              <Bot className="w-4 h-4 text-white" />
+            </div>
+            <span className="text-sm font-medium text-slate-700 dark:text-slate-200">
+              {assistantName}
+            </span>
+          </div>
+        )}
         <div className="prose prose-slate dark:prose-invert max-w-none">
           {message.imageData && (
             <div className="mb-2">

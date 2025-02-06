@@ -1,3 +1,4 @@
+
 import { Message } from "@/types/chat";
 import { ChatMessage } from "@/components/ChatMessage";
 import { ScrollArea } from "@/components/ui/scroll-area";
@@ -46,7 +47,7 @@ export const ChatMessages = ({ messages, isTyping = false }: ChatMessagesProps) 
           {isTyping && (
             <div className="flex items-center space-x-2 text-slate-500 dark:text-slate-400">
               <Loader2 className="h-4 w-4 animate-spin" />
-              <span>AI is typing...</span>
+              <span>Responding...</span>
             </div>
           )}
           <div ref={messagesEndRef} className="h-4" />

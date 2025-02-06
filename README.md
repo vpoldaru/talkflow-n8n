@@ -1,3 +1,4 @@
+
 # **TalkFlow N8N Integration**
 
 A real-time chat application integrated with **N8N workflows** for automated responses and processing.
@@ -11,7 +12,7 @@ A real-time chat application integrated with **N8N workflows** for automated res
 - **Code syntax highlighting with copy and playground integration**
 - Markdown support
 - Image upload and preview
-- Configurable site title and welcome message
+- Configurable site title, welcome message, and assistant name
 
 ## **Getting Started**
 
@@ -31,6 +32,7 @@ VITE_N8N_WEBHOOK_SECRET=your_webhook_secret
 # Optional
 VITE_WELCOME_MESSAGE="Welcome message for your chat"
 VITE_SITE_TITLE="Your Site Title"
+VITE_ASSISTANT_NAME="Your Assistant Name"  # Defaults to "Lovable" if not set
 ```
 
 ### **Development Setup**
@@ -69,8 +71,8 @@ docker run -d -p 8009:80 \
   -e VITE_N8N_WEBHOOK_SECRET="your_secret" \
   -e VITE_WELCOME_MESSAGE="Your welcome message" \
   -e VITE_SITE_TITLE="Your Site Title" \
+  -e VITE_ASSISTANT_NAME="Your Assistant Name" \
   jimmartinquis/n8n-chatui:latest
-
 ```
 
 2. **Using Docker Compose**:

@@ -1,6 +1,7 @@
+
 export const SUPPORTED_LANGUAGES = [
-  { value: 'javascript', label: 'JavaScript', extension: '.js', canRunInBrowser: true },
-  { value: 'typescript', label: 'TypeScript', extension: '.ts', canRunInBrowser: true },
+  { value: 'javascript', label: 'JavaScript', extension: '.js', canRunInBrowser: true, additionalExtensions: ['.jsx', '.mjs'] },
+  { value: 'typescript', label: 'TypeScript', extension: '.ts', canRunInBrowser: true, additionalExtensions: ['.tsx'] },
   { value: 'html', label: 'HTML', extension: '.html', canRunInBrowser: true },
   { value: 'python', label: 'Python', extension: '.py', canRunInBrowser: false },
   { value: 'java', label: 'Java', extension: '.java', canRunInBrowser: false },
@@ -19,3 +20,4 @@ export const SUPPORTED_LANGUAGES = [
   { value: 'powershell', label: 'PowerShell', extension: '.ps1', canRunInBrowser: false },
   { value: 'shell', label: 'Bash/Shell', extension: '.sh', canRunInBrowser: false },
 ] as const;
+

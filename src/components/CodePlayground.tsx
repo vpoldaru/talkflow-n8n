@@ -105,9 +105,10 @@ const CodePlayground: React.FC<CodePlaygroundProps> = ({
 
   const handleFileSelect = (content: string, fileName: string) => {
     setCode(content);
-    const extension = fileName.split('.').pop()?.toLowerCase();
+    const extension = `.${fileName.split('.').pop()?.toLowerCase()}`;
     const matchedLanguage = SUPPORTED_LANGUAGES.find(lang => 
-      lang.extension === extension || lang.additionalExtensions?.includes(extension || '')
+      lang.extension === extension || 
+      lang.additionalExtensions?.includes(extension)
     );
     if (matchedLanguage) {
       setLanguage(matchedLanguage.value);
@@ -199,3 +200,4 @@ const CodePlayground: React.FC<CodePlaygroundProps> = ({
 };
 
 export default CodePlayground;
+

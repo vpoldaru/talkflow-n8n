@@ -1,4 +1,3 @@
-
 import { Button } from "@/components/ui/button";
 import { ImageIcon } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
@@ -17,6 +16,7 @@ export const ImageUpload = ({ onImageSelect, disabled }: ImageUploadProps) => {
     const file = event.target.files?.[0];
     if (!file) return;
 
+    // Check file type
     if (!file.type.startsWith('image/')) {
       toast({
         description: "Please select an image file",
@@ -25,6 +25,7 @@ export const ImageUpload = ({ onImageSelect, disabled }: ImageUploadProps) => {
       return;
     }
 
+    // Check file size (5MB limit)
     if (file.size > 5 * 1024 * 1024) {
       toast({
         description: "Image must be less than 5MB",
@@ -50,7 +51,7 @@ export const ImageUpload = ({ onImageSelect, disabled }: ImageUploadProps) => {
         type="button"
         size="icon"
         variant="ghost"
-        className="h-8 w-8 text-[var(--clr-surface-a50)] hover:bg-[var(--clr-surface-tonal-a10)]"
+        className="h-8 w-8 text-white hover:bg-[#2A2F3C]"
         onClick={() => fileInputRef.current?.click()}
         disabled={disabled}
       >

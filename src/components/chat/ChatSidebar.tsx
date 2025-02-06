@@ -1,4 +1,3 @@
-
 import { Button } from "@/components/ui/button";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { ThemeToggle } from "@/components/ThemeToggle";
@@ -88,23 +87,20 @@ export const ChatSidebar = ({
   return (
     <div
       className={cn(
-        "w-64 border-r border-[var(--clr-surface-a20)] bg-[var(--clr-surface-a0)] flex flex-col absolute md:relative z-40 h-full transition-transform duration-200 ease-in-out",
+        "w-64 border-r bg-sidebar flex flex-col absolute md:relative z-40 h-full transition-transform duration-200 ease-in-out",
         !isSidebarOpen && "-translate-x-full md:translate-x-0"
       )}
     >
-      <div className="p-4 border-b border-[var(--clr-surface-a20)] flex flex-col gap-4">
+      <div className="p-4 border-b flex flex-col gap-4">
         <Button 
           onClick={() => navigate('/playground')} 
-          className="w-full flex items-center gap-2 bg-[var(--clr-surface-tonal-a20)] text-[var(--clr-surface-a50)] hover:bg-[var(--clr-surface-tonal-a30)]"
+          className="w-full flex items-center gap-2"
           variant="outline"
         >
           <Code className="w-4 h-4" />
           Code Playground
         </Button>
-        <Button 
-          onClick={onNewChat} 
-          className="w-full flex items-center gap-2 bg-[var(--clr-primary-a0)] text-[var(--clr-surface-a0)] hover:bg-[var(--clr-primary-a10)]"
-        >
+        <Button onClick={onNewChat} className="w-full flex items-center gap-2">
           <PlusCircle className="w-4 h-4" />
           New Chat
         </Button>
@@ -117,11 +113,9 @@ export const ChatSidebar = ({
               key={session.id}
               onClick={() => onSessionSelect(session.id)}
               className={cn(
-                "w-full text-left px-3 py-2 rounded-lg transition-colors group cursor-pointer",
-                "flex items-center gap-2 text-sm relative",
-                session.id === currentSessionId 
-                  ? "bg-[var(--clr-surface-tonal-a20)] text-[var(--clr-surface-a50)]" 
-                  : "hover:bg-[var(--clr-surface-tonal-a10)] text-[var(--clr-surface-a40)]"
+                "w-full text-left px-3 py-2 rounded-lg hover:bg-sidebar-accent transition-colors group",
+                "flex items-center gap-2 text-sm relative cursor-pointer",
+                session.id === currentSessionId && "bg-sidebar-accent"
               )}
             >
               <MessageSquare className="w-4 h-4 shrink-0" />
@@ -131,7 +125,7 @@ export const ChatSidebar = ({
                     <Input
                       value={editingName}
                       onChange={e => setEditingName(e.target.value)}
-                      className="h-6 text-sm bg-[var(--clr-surface-a10)] border-[var(--clr-surface-a30)]"
+                      className="h-6 text-sm"
                       autoFocus
                     />
                     <Button type="submit" size="icon" variant="ghost" className="h-6 w-6">
@@ -146,7 +140,7 @@ export const ChatSidebar = ({
                     <div className="font-medium truncate">
                       {session.name || getFirstMessage(session.messages)}
                     </div>
-                    <div className="text-xs text-[var(--clr-surface-a40)]">
+                    <div className="text-xs text-muted-foreground">
                       {format(session.lastUpdated, 'MMM d, h:mm a')}
                     </div>
                   </>
@@ -159,7 +153,7 @@ export const ChatSidebar = ({
                     size="icon"
                     className={cn(
                       "h-6 w-6",
-                      session.favorite && "text-[var(--clr-primary-a0)] opacity-100"
+                      session.favorite && "text-yellow-500 opacity-100"
                     )}
                     onClick={(e) => handleToggleFavorite(e, session.id)}
                   >

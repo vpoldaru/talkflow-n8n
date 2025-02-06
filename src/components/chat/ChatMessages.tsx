@@ -27,12 +27,12 @@ export const ChatMessages = ({ messages, isTyping = false }: ChatMessagesProps) 
       style={{
         background: `
           linear-gradient(to bottom, 
-            var(--clr-surface-a0) 0%,
-            var(--clr-surface-tonal-a0) 100%
+            hsl(var(--background)) 0%,
+            hsl(var(--muted)/0.1) 100%
           ),
           radial-gradient(
             circle at 2px 2px,
-            var(--clr-surface-tonal-a10) 1px,
+            rgba(148, 163, 184, 0.05) 1px,
             transparent 0
           )
         `,
@@ -45,7 +45,7 @@ export const ChatMessages = ({ messages, isTyping = false }: ChatMessagesProps) 
             <ChatMessage key={message.id} message={message} />
           ))}
           {isTyping && (
-            <div className="flex items-center space-x-2 text-[var(--clr-surface-a40)]">
+            <div className="flex items-center space-x-2 text-slate-500 dark:text-slate-400">
               <Loader2 className="h-4 w-4 animate-spin" />
               <span>Responding...</span>
             </div>

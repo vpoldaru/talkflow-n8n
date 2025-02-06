@@ -58,33 +58,28 @@ export const ChatMessage = ({ message }: ChatMessageProps) => {
         className={cn(
           "max-w-[85%] rounded-2xl px-4 py-3 transition-all duration-200 backdrop-blur-sm hover:-translate-y-1 relative",
           isAssistant
-            ? "bg-[var(--clr-surface-tonal-a0)] text-[var(--clr-surface-a50)] border border-[var(--clr-surface-tonal-a20)]"
-            : "bg-[var(--clr-primary-a0)] text-[var(--clr-surface-a0)] border border-[var(--clr-primary-a20)]"
+            ? "bg-gradient-to-br from-slate-50 to-blue-50 dark:from-slate-900 dark:to-blue-900 border border-blue-100/50 dark:border-blue-800/30"
+            : "bg-gradient-to-br from-violet-500 to-purple-500 text-white border border-violet-400/20 dark:border-violet-500/20"
         )}
         style={{
           transformStyle: 'preserve-3d',
           perspective: '1000px',
           boxShadow: isAssistant 
-            ? '0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)'
-            : '0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)'
+            ? '0 4px 6px -1px rgba(148, 163, 184, 0.2), 0 2px 4px -1px rgba(148, 163, 184, 0.1), 0 8px 24px -4px rgba(148, 163, 184, 0.15)'
+            : '0 4px 6px -1px rgba(139, 92, 246, 0.3), 0 2px 4px -1px rgba(139, 92, 246, 0.15), 0 8px 24px -4px rgba(139, 92, 246, 0.25)'
         }}
       >
         {isAssistant && (
           <div className="flex items-center gap-2 mb-2">
-            <div className="flex items-center justify-center w-6 h-6 rounded-full bg-[var(--clr-primary-a0)]">
-              <Bot className="w-4 h-4 text-[var(--clr-surface-a0)]" />
+            <div className="flex items-center justify-center w-6 h-6 rounded-full bg-gradient-to-br from-blue-500 to-cyan-500">
+              <Bot className="w-4 h-4 text-white" />
             </div>
-            <span className="text-sm font-medium text-[var(--clr-surface-a50)]">
+            <span className="text-sm font-medium text-slate-700 dark:text-slate-200">
               {assistantName}
             </span>
           </div>
         )}
-        <div className={cn(
-          "prose max-w-none",
-          isAssistant 
-            ? "text-[var(--clr-surface-a50)]" 
-            : "text-[var(--clr-surface-a0)]"
-        )}>
+        <div className="prose prose-slate dark:prose-invert max-w-none">
           {message.imageData && (
             <div className="mb-2">
               <Dialog>
@@ -112,15 +107,14 @@ export const ChatMessage = ({ message }: ChatMessageProps) => {
           </div>
         </div>
         <div className="mt-2 flex justify-between items-center">
-          <span className="text-xs opacity-0 group-hover:opacity-100 transition-opacity duration-200" 
-                style={{ color: 'var(--clr-surface-a40)' }}>
+          <span className="text-xs text-slate-500 dark:text-slate-400 opacity-0 group-hover:opacity-100 transition-opacity duration-200">
             {formattedTime}
           </span>
           {isAssistant && (
             <Button
               variant="ghost"
               size="sm"
-              className="text-[var(--clr-surface-a40)] hover:text-[var(--clr-surface-a50)]"
+              className="text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-100"
               onClick={handleCopy}
             >
               <Copy className="mr-2 h-4 w-4" />

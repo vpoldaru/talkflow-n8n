@@ -1,15 +1,6 @@
-
-type SupportedLanguage = {
-  readonly value: string;
-  readonly label: string;
-  readonly extension: string;
-  readonly canRunInBrowser: boolean;
-  readonly additionalExtensions?: readonly string[];
-};
-
-export const SUPPORTED_LANGUAGES: readonly SupportedLanguage[] = [
-  { value: 'javascript', label: 'JavaScript', extension: '.js', canRunInBrowser: true, additionalExtensions: ['.jsx', '.mjs'] },
-  { value: 'typescript', label: 'TypeScript', extension: '.ts', canRunInBrowser: true, additionalExtensions: ['.tsx'] },
+export const SUPPORTED_LANGUAGES = [
+  { value: 'javascript', label: 'JavaScript', extension: '.js', canRunInBrowser: true },
+  { value: 'typescript', label: 'TypeScript', extension: '.ts', canRunInBrowser: true },
   { value: 'html', label: 'HTML', extension: '.html', canRunInBrowser: true },
   { value: 'python', label: 'Python', extension: '.py', canRunInBrowser: false },
   { value: 'java', label: 'Java', extension: '.java', canRunInBrowser: false },

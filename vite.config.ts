@@ -1,4 +1,3 @@
-
 import { defineConfig } from "vite";
 import react from "@vitejs/plugin-react-swc";
 import path from "path";
@@ -8,11 +7,6 @@ export default defineConfig(({ mode }) => ({
   server: {
     host: "::",
     port: 8080,
-    strictPort: true,
-    fs: {
-      strict: true,
-      allow: ['.']
-    }
   },
   plugins: [
     react(),
@@ -27,17 +21,7 @@ export default defineConfig(({ mode }) => ({
     include: ["uuid"], // Ensures uuid is properly bundled
   },
   build: {
-    target: "esnext",
-    outDir: "dist",
-    assetsDir: "assets",
-    sourcemap: true,
-    rollupOptions: {
-      output: {
-        manualChunks: {
-          vendor: ['react', 'react-dom'],
-        },
-      },
-    },
+    target: "esnext", // Ensure latest JS features are supported
+    minify: false, // Disable minification for debugging
   },
-  base: "/", // Ensure assets are loaded from the correct path
 }));

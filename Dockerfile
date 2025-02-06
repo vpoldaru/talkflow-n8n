@@ -1,6 +1,6 @@
 
 # Build stage
-FROM node:18-alpine as builder
+FROM node:22.13.1 as builder
 
 WORKDIR /app
 
@@ -17,7 +17,7 @@ COPY . .
 RUN npm run build
 
 # Production stage
-FROM nginx:alpine
+FROM nginx:latest
 
 # Copy built assets from builder stage
 COPY --from=builder /app/dist /usr/share/nginx/html
@@ -42,7 +42,7 @@ RUN echo '#!/bin/sh\n\
     && chmod +x /docker-entrypoint.sh
 
 # Install envsubst
-RUN apk add --no-cache gettext
+RUN apt-get update && apt-get install -y gettext-base && rm -rf /var/lib/apt/lists/*
 
 # Expose port 80
 EXPOSE 80

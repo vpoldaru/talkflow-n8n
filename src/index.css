@@ -152,9 +152,25 @@
 }
 
 .markdown-content :where(th) {
-  @apply border px-4 py-2 font-medium [&:where([align=center])] text-center [&:where([align=right])] text-right;
+  @apply border px-4 py-2 font-medium;
+}
+
+.markdown-content :where(th[align="center"]) {
+  @apply text-center;
+}
+
+.markdown-content :where(th[align="right"]) {
+  @apply text-right;
 }
 
 .markdown-content :where(td) {
-  @apply border px-4 py-2 [&:where([align=center])] text-center [&:where([align=right])] text-right;
+  @apply border px-4 py-2;
+}
+
+.markdown-content :where(td[align="center"]) {
+  @apply text-center;
+}
+
+.markdown-content :where(td[align="right"]) {
+  @apply text-right;
 }

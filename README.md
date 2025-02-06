@@ -32,7 +32,7 @@ VITE_N8N_WEBHOOK_SECRET=your_webhook_secret
 # Optional
 VITE_WELCOME_MESSAGE="Welcome message for your chat"
 VITE_SITE_TITLE="Your Site Title"
-VITE_ASSISTANT_NAME="Your Assistant Name"  # Defaults to "Lovable" if not set
+VITE_ASSISTANT_NAME="Your Assistant Name"  # Defaults to "Talkflow" if not set
 ```
 
 ### **Development Setup**

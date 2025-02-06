@@ -54,16 +54,23 @@ export const ThemeProvider = ({ children }: { children: React.ReactNode }) => {
     const colors = currentMode === 'light' ? theme.light : theme.dark;
     const root = document.documentElement;
 
+    // Set each CSS custom property with proper HSL formatting
     Object.entries(colors).forEach(([key, value]) => {
-      root.style.setProperty(`--${key}`, value);
-      // Also set Tailwind CSS variables
-      if (key.includes('background')) {
-        document.body.style.backgroundColor = `hsl(${value})`;
-      }
-      if (key.includes('foreground')) {
-        document.body.style.color = `hsl(${value})`;
-      }
+      // Convert camelCase to kebab-case for CSS variables
+      const cssKey = key.replace(/([A-Z])/g, '-$1').toLowerCase();
+      
+      // Set the HSL values directly (they're already in the correct format)
+      root.style.setProperty(`--${cssKey}`, value);
+
+      // Set the actual color variable that Tailwind uses
+      root.style.setProperty(
+        `--${cssKey}-hsl`, 
+        `${value}`
+      );
     });
+
+    // Apply background and text colors through CSS variables
+    document.body.className = `bg-background text-foreground`;
   };
 
   useEffect(() => {
@@ -85,3 +92,4 @@ export const useTheme = () => {
   }
   return context;
 };
+

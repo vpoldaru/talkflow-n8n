@@ -1,5 +1,13 @@
 
-export const SUPPORTED_LANGUAGES = [
+type SupportedLanguage = {
+  readonly value: string;
+  readonly label: string;
+  readonly extension: string;
+  readonly canRunInBrowser: boolean;
+  readonly additionalExtensions?: readonly string[];
+};
+
+export const SUPPORTED_LANGUAGES: readonly SupportedLanguage[] = [
   { value: 'javascript', label: 'JavaScript', extension: '.js', canRunInBrowser: true, additionalExtensions: ['.jsx', '.mjs'] },
   { value: 'typescript', label: 'TypeScript', extension: '.ts', canRunInBrowser: true, additionalExtensions: ['.tsx'] },
   { value: 'html', label: 'HTML', extension: '.html', canRunInBrowser: true },
@@ -20,4 +28,3 @@ export const SUPPORTED_LANGUAGES = [
   { value: 'powershell', label: 'PowerShell', extension: '.ps1', canRunInBrowser: false },
   { value: 'shell', label: 'Bash/Shell', extension: '.sh', canRunInBrowser: false },
 ] as const;
-

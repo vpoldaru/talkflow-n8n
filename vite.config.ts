@@ -8,6 +8,11 @@ export default defineConfig(({ mode }) => ({
   server: {
     host: "::",
     port: 8080,
+    strictPort: true,
+    fs: {
+      strict: true,
+      allow: ['.']
+    }
   },
   plugins: [
     react(),
@@ -34,4 +39,5 @@ export default defineConfig(({ mode }) => ({
       },
     },
   },
+  base: "/", // Ensure assets are loaded from the correct path
 }));

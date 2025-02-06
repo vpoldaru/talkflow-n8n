@@ -1,3 +1,4 @@
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -139,7 +140,7 @@
 }
 
 .markdown-content :where(pre > code) {
-  @apply all:bg-transparent all:text-current;
+  @apply bg-transparent text-current;
 }
 
 .markdown-content :where(hr) {

@@ -1,6 +1,7 @@
+
 import React from 'react';
 import { Button } from '@/components/ui/button';
-import { Copy, Download, Play, Maximize2 } from 'lucide-react';
+import { Copy, Download, Play, Maximize2, Github } from 'lucide-react';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { CardTitle } from '@/components/ui/card';
 import { SUPPORTED_LANGUAGES } from './constants';
@@ -13,6 +14,8 @@ interface EditorHeaderProps {
   onRun: () => void;
   onPopOutput: () => void;
   isOutputPopped: boolean;
+  showGithubBrowser: boolean;
+  onToggleGithubBrowser: () => void;
 }
 
 export const EditorHeader: React.FC<EditorHeaderProps> = ({
@@ -21,7 +24,9 @@ export const EditorHeader: React.FC<EditorHeaderProps> = ({
   code,
   onRun,
   onPopOutput,
-  isOutputPopped
+  isOutputPopped,
+  showGithubBrowser,
+  onToggleGithubBrowser,
 }) => {
   const { toast } = useToast();
   const currentLanguage = SUPPORTED_LANGUAGES.find(lang => lang.value === language);
@@ -89,6 +94,15 @@ export const EditorHeader: React.FC<EditorHeaderProps> = ({
         </Select>
       </div>
       <div className="flex gap-2">
+        <Button
+          variant="outline"
+          size="sm"
+          onClick={onToggleGithubBrowser}
+          className={showGithubBrowser ? "bg-accent" : "hover:bg-accent"}
+        >
+          <Github className="h-4 w-4 mr-2" />
+          GitHub
+        </Button>
         {canRunInBrowser && (
           <Button
             variant="outline"
@@ -96,7 +110,7 @@ export const EditorHeader: React.FC<EditorHeaderProps> = ({
             onClick={onRun}
             className="hover:bg-accent"
           >
-            <Play className="w-4 h-4 mr-2" />
+            <Play className="h-4 w-4 mr-2" />
             Run
           </Button>
         )}
@@ -107,7 +121,7 @@ export const EditorHeader: React.FC<EditorHeaderProps> = ({
             onClick={onPopOutput}
             className="hover:bg-accent"
           >
-            <Maximize2 className="w-4 h-4 mr-2" />
+            <Maximize2 className="h-4 w-4 mr-2" />
             {isOutputPopped ? 'Close Output' : 'Pop Output'}
           </Button>
         )}
@@ -117,7 +131,7 @@ export const EditorHeader: React.FC<EditorHeaderProps> = ({
           onClick={handleSaveToFile}
           className="hover:bg-accent"
         >
-          <Download className="w-4 h-4 mr-2" />
+          <Download className="h-4 w-4 mr-2" />
           Save
         </Button>
         <Button
@@ -126,7 +140,7 @@ export const EditorHeader: React.FC<EditorHeaderProps> = ({
           onClick={handleCopy}
           className="hover:bg-accent"
         >
-          <Copy className="w-4 h-4 mr-2" />
+          <Copy className="h-4 w-4 mr-2" />
           Copy
         </Button>
       </div>

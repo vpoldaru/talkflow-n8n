@@ -1,3 +1,4 @@
+
 import { defineConfig } from "vite";
 import react from "@vitejs/plugin-react-swc";
 import path from "path";
@@ -21,7 +22,16 @@ export default defineConfig(({ mode }) => ({
     include: ["uuid"], // Ensures uuid is properly bundled
   },
   build: {
-    target: "esnext", // Ensure latest JS features are supported
-    minify: false, // Disable minification for debugging
+    target: "esnext",
+    outDir: "dist",
+    assetsDir: "assets",
+    sourcemap: true,
+    rollupOptions: {
+      output: {
+        manualChunks: {
+          vendor: ['react', 'react-dom'],
+        },
+      },
+    },
   },
 }));

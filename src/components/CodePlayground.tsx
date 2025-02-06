@@ -1,15 +1,16 @@
 
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useRef, useEffect } from 'react';
 import Editor from '@monaco-editor/react';
 import { Card, CardContent, CardHeader } from './ui/card';
 import { ResizablePanel, ResizablePanelGroup, ResizableHandle } from './ui/resizable';
-import { executeJavaScript, executeHTML } from '@/utils/codeExecutor';
-import { useToast } from '@/hooks/use-toast';
+import { SUPPORTED_LANGUAGES } from './playground/constants';
 import { EditorHeader } from './playground/EditorHeader';
 import { PlaygroundOutput } from './playground/PlaygroundOutput';
 import { usePopoutWindow } from '@/hooks/usePopoutWindow';
-import { SUPPORTED_LANGUAGES } from './playground/constants';
 import { GithubBrowser } from './playground/GithubBrowser';
+import { useEditor } from '@/hooks/useEditor';
+import { useCodeExecution } from '@/hooks/useCodeExecution';
+import { useResizable } from '@/hooks/useResizable';
 
 interface CodePlaygroundProps {
   defaultLanguage?: string;
@@ -20,15 +21,13 @@ const CodePlayground: React.FC<CodePlaygroundProps> = ({
   defaultLanguage = 'javascript',
   defaultValue = '// Write your code here\nconsole.log("Hello, World!");',
 }) => {
-  const [code, setCode] = useState(defaultValue);
-  const [language, setLanguage] = useState(defaultLanguage);
-  const [output, setOutput] = useState<string>('');
-  const [isOutputPopped, setIsOutputPopped] = useState(false);
-  const [showGithubBrowser, setShowGithubBrowser] = useState(false);
-  const { toast } = useToast();
+  const [isOutputPopped, setIsOutputPopped] = React.useState(false);
+  const [showGithubBrowser, setShowGithubBrowser] = React.useState(false);
   const outputRef = useRef<HTMLDivElement>(null);
-  const iframeRef = useRef<HTMLDivElement>(null);
-  const resizeTimeoutRef = useRef<NodeJS.Timeout>();
+
+  const { code, setCode, language, setLanguage, handleFileSelect } = useEditor(defaultLanguage, defaultValue);
+  const { output, iframeRef, handleRun } = useCodeExecution();
+  const { handleResize, resizeTimeoutRef } = useResizable();
 
   const currentLanguage = SUPPORTED_LANGUAGES.find(lang => lang.value === language);
   const canRunInBrowser = currentLanguage?.canRunInBrowser ?? false;
@@ -42,78 +41,12 @@ const CodePlayground: React.FC<CodePlaygroundProps> = ({
   );
 
   useEffect(() => {
-    const savedCode = localStorage.getItem('playground-code');
-    const savedLanguage = localStorage.getItem('playground-language');
-    
-    if (savedCode) {
-      setCode(savedCode);
-      localStorage.removeItem('playground-code');
-    }
-    
-    if (savedLanguage) {
-      setLanguage(savedLanguage);
-      localStorage.removeItem('playground-language');
-    }
-
     return () => {
       if (resizeTimeoutRef.current) {
         clearTimeout(resizeTimeoutRef.current);
       }
     };
   }, []);
-
-  const handleRun = async () => {
-    try {
-      if (language === 'html') {
-        if (iframeRef.current) {
-          const iframe = executeHTML(code);
-          iframeRef.current.innerHTML = '';
-          iframeRef.current.appendChild(iframe);
-        }
-        return;
-      }
-
-      const { result, error, logs = [] } = await executeJavaScript(code);
-      const outputText = [
-        ...(logs.length > 0 ? logs : []),
-        ...(result !== undefined ? [result] : []),
-        ...(error ? [`Error: ${error}`] : [])
-      ].join('\n');
-      
-      setOutput(outputText);
-      
-      toast({
-        description: error ? "Execution failed" : "Code executed successfully",
-        variant: error ? "destructive" : "default",
-      });
-    } catch (err) {
-      toast({
-        description: "Failed to execute code",
-        variant: "destructive",
-      });
-    }
-  };
-
-  const handleResize = () => {
-    if (resizeTimeoutRef.current) {
-      clearTimeout(resizeTimeoutRef.current);
-    }
-    resizeTimeoutRef.current = setTimeout(() => {
-      window.dispatchEvent(new Event('resize'));
-    }, 100);
-  };
-
-  const handleFileSelect = (content: string, fileName: string) => {
-    setCode(content);
-    const extension = `.${fileName.split('.').pop()?.toLowerCase()}`;
-    const matchedLanguage = SUPPORTED_LANGUAGES.find(lang => 
-      lang.extension === extension || 
-      lang.additionalExtensions?.includes(extension)
-    );
-    if (matchedLanguage) {
-      setLanguage(matchedLanguage.value);
-    }
-  };
 
   return (
     <Card className="w-full h-[90vh] mx-auto bg-card shadow-lg">
@@ -122,7 +55,7 @@ const CodePlayground: React.FC<CodePlaygroundProps> = ({
           language={language}
           setLanguage={setLanguage}
           code={code}
-          onRun={handleRun}
+          onRun={() => handleRun(code, language)}
           onPopOutput={handlePopOutput}
           isOutputPopped={isOutputPopped}
           showGithubBrowser={showGithubBrowser}
@@ -200,4 +133,3 @@ const CodePlayground: React.FC<CodePlaygroundProps> = ({
 };
 
 export default CodePlayground;
-

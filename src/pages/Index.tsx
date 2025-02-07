@@ -1,10 +1,8 @@
+
 import { useChatSessions } from "@/hooks/useChatSessions";
 import { ChatLayout } from "@/components/chat/ChatLayout";
 
 const Index = () => {
-  // Allow rendering even without window.env since we'll fall back to import.meta.env
-  console.log('Index component rendering. window.env available:', !!window.env);
-  
   const {
     sessions,
     currentSessionId,
@@ -18,6 +16,7 @@ const Index = () => {
     toggleFavorite,
   } = useChatSessions();
 
+  // Always render the component, don't add any conditional returns
   return (
     <div className="relative">
       <ChatLayout

@@ -53,8 +53,11 @@
   * {
     @apply border-border;
   }
-  body {
-    @apply bg-background text-foreground transition-colors duration-300;
+  
+  html,
+  body,
+  #root {
+    @apply min-h-screen bg-background text-foreground transition-colors duration-300;
   }
 }
 

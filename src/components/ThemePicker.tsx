@@ -33,7 +33,6 @@ export const themes = {
       "--border": "214.3 31.8% 91.4%",
       "--input": "214.3 31.8% 91.4%",
       "--ring": "222.2 84% 4.9%",
-      "--radius": "0.5rem",
     },
   },
   purple: {
@@ -58,7 +57,6 @@ export const themes = {
       "--border": "264.3 31.8% 91.4%",
       "--input": "264.3 31.8% 91.4%",
       "--ring": "267 84% 4.9%",
-      "--radius": "0.5rem",
     },
   },
   ocean: {
@@ -83,7 +81,6 @@ export const themes = {
       "--border": "194.3 31.8% 91.4%",
       "--input": "194.3 31.8% 91.4%",
       "--ring": "197 84% 4.9%",
-      "--radius": "0.5rem",
     },
   },
 };
@@ -99,13 +96,8 @@ export function ThemePicker() {
   useEffect(() => {
     const root = document.documentElement;
     const themeVars = themes[currentTheme].variables;
-    const isDark = root.classList.contains("dark");
     
     Object.entries(themeVars).forEach(([key, value]) => {
-      if (isDark && key === "--background") {
-        // Preserve dark mode background
-        return;
-      }
       root.style.setProperty(key, value);
     });
     

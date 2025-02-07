@@ -50,7 +50,7 @@ export const ChatMessage = ({ message }: ChatMessageProps) => {
     <div
       className={cn(
         "flex w-full animate-fade-in transform transition-all duration-300 group",
-        isAssistant ? "justify-start" : "justify-end"
+        isAssistant ? "justify-start pl-0" : "justify-end pr-0"
       )}
     >
       <div

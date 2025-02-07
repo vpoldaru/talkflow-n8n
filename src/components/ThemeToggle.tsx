@@ -1,35 +1,42 @@
+
 import { Moon, Sun } from "lucide-react";
 import { Switch } from "@/components/ui/switch";
 import { useEffect, useState } from "react";
+import { toast } from "sonner";
 
 export function ThemeToggle() {
   const [isDark, setIsDark] = useState(() => {
-    // Initialize with system preference or existing class
     if (typeof window !== 'undefined') {
-      const hasDarkClass = document.documentElement.classList.contains("dark");
-      const prefersDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
-      return hasDarkClass || prefersDark;
+      return document.documentElement.classList.contains("dark");
     }
-    return true; // Default to dark mode
+    return false;
   });
 
   useEffect(() => {
-    // Set initial theme class
-    document.documentElement.classList.toggle("dark", isDark);
-  }, []);
-
-  useEffect(() => {
-    // Sync the UI with the actual theme state
-    const isDarkMode = document.documentElement.classList.contains("dark");
-    if (isDark !== isDarkMode) {
-      setIsDark(isDarkMode);
+    const root = document.documentElement;
+    if (isDark) {
+      root.classList.add("dark");
+      localStorage.setItem("theme-mode", "dark");
+    } else {
+      root.classList.remove("dark");
+      localStorage.setItem("theme-mode", "light");
     }
   }, [isDark]);
 
+  useEffect(() => {
+    const savedTheme = localStorage.getItem("theme-mode");
+    const prefersDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
+    
+    if (savedTheme) {
+      setIsDark(savedTheme === "dark");
+    } else if (prefersDark) {
+      setIsDark(true);
+    }
+  }, []);
+
   const toggleTheme = () => {
-    const newIsDark = !isDark;
-    setIsDark(newIsDark);
-    document.documentElement.classList.toggle("dark", newIsDark);
+    setIsDark(!isDark);
+    toast.success(`Switched to ${!isDark ? "dark" : "light"} mode`);
   };
 
   return (

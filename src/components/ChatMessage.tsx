@@ -1,4 +1,3 @@
-
 import { Message } from '@/types/chat';
 import { cn } from '@/lib/utils';
 import { Copy, Bot } from 'lucide-react';
@@ -56,7 +55,7 @@ export const ChatMessage = ({ message }: ChatMessageProps) => {
     >
       <div
         className={cn(
-          "max-w-[85%] rounded-2xl px-4 py-3 transition-all duration-200 backdrop-blur-sm hover:-translate-y-1 relative",
+          "w-full max-w-[900px] rounded-2xl px-4 py-3 transition-all duration-200 backdrop-blur-sm hover:-translate-y-1 relative",
           isAssistant
             ? "bg-gradient-to-br from-slate-50 to-blue-50 dark:from-slate-900 dark:to-blue-900 border border-blue-100/50 dark:border-blue-800/30"
             : "bg-gradient-to-br from-violet-100 to-purple-100 dark:from-violet-900 dark:to-purple-900 text-slate-900 dark:text-white border border-violet-200/50 dark:border-violet-700/30"

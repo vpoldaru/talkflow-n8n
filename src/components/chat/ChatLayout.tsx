@@ -1,3 +1,4 @@
+
 import { ChatMessages } from "@/components/chat/ChatMessages";
 import { ChatInput } from "@/components/chat/ChatInput";
 import { ChatSidebar } from "@/components/chat/ChatSidebar";
@@ -42,9 +43,17 @@ export const ChatLayout = ({
   // Find current session
   const currentSession = sessions.find(s => s.id === currentSessionId);
 
-  const handleSend = useCallback(async (e: React.FormEvent, file?: File) => {
+  const handleSend = useCallback(async (e: React.FormEvent, file?: File): Promise<boolean> => {
     e.preventDefault();
-    if (!input.trim()) return;
+    
+    // Allow sending if there's either text or a file
+    if (!input.trim() && !file) {
+      toast({
+        description: "Please enter a message or attach an image",
+        variant: "destructive",
+      });
+      return false;
+    }
 
     console.log('ChatLayout handleSend called with pending file:', file ? {
       fileName: file.name,
@@ -56,11 +65,13 @@ export const ChatLayout = ({
       await onSendMessage(input, file);
       setInput("");
       console.log('Message sent successfully');
+      return true;
     } catch (error) {
       toast({
         description: "Failed to send message",
         variant: "destructive",
       });
+      return false;
     }
   }, [input, onSendMessage, toast]);
 
@@ -126,3 +137,4 @@ export const ChatLayout = ({
     </div>
   );
 };
+

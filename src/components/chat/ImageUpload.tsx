@@ -1,3 +1,4 @@
+
 import { Button } from "@/components/ui/button";
 import { ImageIcon } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
@@ -51,7 +52,7 @@ export const ImageUpload = ({ onImageSelect, disabled }: ImageUploadProps) => {
         type="button"
         size="icon"
         variant="ghost"
-        className="h-8 w-8 text-white hover:bg-[#2A2F3C]"
+        className="h-8 w-8 text-muted-foreground hover:text-foreground hover:bg-muted/50"
         onClick={() => fileInputRef.current?.click()}
         disabled={disabled}
       >

@@ -11,7 +11,7 @@ interface ChatInputProps {
   input: string;
   isLoading: boolean;
   onInputChange: (value: string) => void;
-  onSend: (e: React.FormEvent, file?: File) => void;
+  onSend: (e: React.FormEvent, file?: File) => Promise<boolean>;  // Updated return type
   onImageSelect?: (file: File) => void;
 }
 
@@ -41,8 +41,8 @@ export const ChatInput = ({
     
     if (isLoading) return;
 
-    const trimmedInput = input.trim();
-    if (!trimmedInput && !previewImage) {
+    // Allow empty text if there's an image
+    if (!input.trim() && !previewImage?.file) {
       toast({
         description: "Please enter a message or attach an image",
         variant: "destructive",
@@ -51,11 +51,15 @@ export const ChatInput = ({
     }
 
     try {
-      await onSend(e, previewImage?.file);
+      // Pass the image file to onSend if it exists
+      const result = await onSend(e, previewImage?.file);
       
-      if (previewImage) {
-        URL.revokeObjectURL(previewImage.url);
-        setPreviewImage(null);
+      // Only clear the preview image if the send was successful
+      if (result !== false) {
+        if (previewImage) {
+          URL.revokeObjectURL(previewImage.url);
+          setPreviewImage(null);
+        }
       }
     } catch (err) {
       console.error('Failed to send message:', err);
@@ -106,7 +110,8 @@ export const ChatInput = ({
     }
   };
 
-  const isInputEmpty = !input.trim() && !previewImage;
+  // Enable the send button if there's either text or an image
+  const isInputEmpty = !input.trim() && !previewImage?.file;
 
   return (
     <form onSubmit={handleSubmit} className="fixed bottom-0 right-0 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 w-[calc(100%-240px)]">

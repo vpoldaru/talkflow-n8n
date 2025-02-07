@@ -96,8 +96,13 @@ export function ThemePicker() {
   useEffect(() => {
     const root = document.documentElement;
     const themeVars = themes[currentTheme].variables;
+    const isDark = root.classList.contains("dark");
     
     Object.entries(themeVars).forEach(([key, value]) => {
+      if (isDark && key === "--background") {
+        // Don't override background in dark mode
+        return;
+      }
       root.style.setProperty(key, value);
     });
     

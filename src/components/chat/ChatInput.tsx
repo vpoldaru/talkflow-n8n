@@ -41,8 +41,8 @@ export const ChatInput = ({
     
     if (isLoading) return;
 
-    const trimmedInput = input.trim();
-    if (!trimmedInput && !previewImage) {
+    // Allow submission if there's an image, even without text
+    if (!input.trim() && !previewImage) {
       toast({
         description: "Please enter a message or attach an image",
         variant: "destructive",
@@ -106,6 +106,7 @@ export const ChatInput = ({
     }
   };
 
+  // Only disable the send button if there's no image and no text
   const isInputEmpty = !input.trim() && !previewImage;
 
   return (

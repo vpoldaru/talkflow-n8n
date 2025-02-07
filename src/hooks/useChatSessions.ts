@@ -1,8 +1,10 @@
+
 import { useState, useEffect } from "react";
 import { Message, ChatSession } from "@/types/chat";
 import { v4 as uuidv4 } from 'uuid';
 import { useMessageSender } from "./useMessageSender";
 import { useQueryClient } from "@tanstack/react-query";
+import { toast } from "sonner";
 
 const STORAGE_VERSION = "v1";
 const STORAGE_KEY = `chat_sessions_${STORAGE_VERSION}`;
@@ -39,11 +41,16 @@ export const useChatSessions = () => {
   const queryClient = useQueryClient();
 
   const updateSession = (sessionId: string, messages: Message[]) => {
-    setSessions(prev => prev.map(session => 
-      session.id === sessionId 
-        ? { ...session, messages, lastUpdated: Date.now() }
-        : session
-    ));
+    setSessions(prev => {
+      const updatedSessions = prev.map(session => 
+        session.id === sessionId 
+          ? { ...session, messages, lastUpdated: Date.now() }
+          : session
+      );
+      // Immediately persist to localStorage
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(updatedSessions));
+      return updatedSessions;
+    });
     queryClient.setQueryData(['chatSessions', sessionId], messages);
   };
 
@@ -53,25 +60,24 @@ export const useChatSessions = () => {
   );
 
   useEffect(() => {
-    const savedSessions = localStorage.getItem(STORAGE_KEY);
-    if (savedSessions) {
-      const parsed = JSON.parse(savedSessions);
-      setSessions(parsed);
-      if (parsed.length > 0) {
-        setCurrentSessionId(parsed[0].id);
+    try {
+      const savedSessions = localStorage.getItem(STORAGE_KEY);
+      if (savedSessions) {
+        const parsed = JSON.parse(savedSessions);
+        if (Array.isArray(parsed) && parsed.length > 0) {
+          setSessions(parsed);
+          setCurrentSessionId(parsed[0].id);
+        } else {
+          createNewSession();
+        }
       } else {
         createNewSession();
       }
-    } else {
+    } catch (error) {
+      console.error('Error loading chat sessions:', error);
       createNewSession();
     }
   }, []);
-
-  useEffect(() => {
-    if (sessions.length > 0) {
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(sessions));
-    }
-  }, [sessions]);
 
   const createNewSession = () => {
     const newSession: ChatSession = {
@@ -85,7 +91,11 @@ export const useChatSessions = () => {
       createdAt: Date.now(),
       lastUpdated: Date.now(),
     };
-    setSessions(prev => [newSession, ...prev]);
+    setSessions(prev => {
+      const updatedSessions = [newSession, ...prev];
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(updatedSessions));
+      return updatedSessions;
+    });
     setCurrentSessionId(newSession.id);
     return newSession.id;
   };
@@ -95,30 +105,44 @@ export const useChatSessions = () => {
   };
 
   const deleteSession = (sessionId: string) => {
-    setSessions(prev => prev.filter(session => session.id !== sessionId));
-    if (sessionId === currentSessionId) {
-      const remainingSessions = sessions.filter(session => session.id !== sessionId);
-      if (remainingSessions.length > 0) {
-        setCurrentSessionId(remainingSessions[0].id);
-      } else {
-        createNewSession();
+    setSessions(prev => {
+      const remainingSessions = prev.filter(session => session.id !== sessionId);
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(remainingSessions));
+      
+      if (sessionId === currentSessionId) {
+        if (remainingSessions.length > 0) {
+          setCurrentSessionId(remainingSessions[0].id);
+        } else {
+          // If no sessions remain, create a new one
+          setTimeout(createNewSession, 0);
+        }
       }
-    }
+      
+      return remainingSessions;
+    });
+    toast.success("Chat deleted successfully");
   };
 
   const renameSession = (sessionId: string, newName: string) => {
-    setSessions(prev => prev.map(session =>
-      session.id === sessionId
-        ? { ...session, name: newName }
-        : session
-    ));
+    setSessions(prev => {
+      const updatedSessions = prev.map(session =>
+        session.id === sessionId
+          ? { ...session, name: newName }
+          : session
+      );
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(updatedSessions));
+      return updatedSessions;
+    });
+    toast.success("Chat renamed successfully");
   };
 
   const sendMessage = async (input: string, file?: File) => {
     const currentSession = getCurrentSession();
-    if (!currentSession) return;
+    if (!currentSession) {
+      console.error('No current session found');
+      return;
+    }
     
-    // Set initial state in React Query cache
     queryClient.setQueryData(['chatSessions', currentSession.id], currentSession.messages);
     
     await sendMessageToWebhook(
@@ -130,11 +154,17 @@ export const useChatSessions = () => {
   };
 
   const toggleFavorite = (sessionId: string) => {
-    setSessions(prev => prev.map(session =>
-      session.id === sessionId
-        ? { ...session, favorite: !session.favorite }
-        : session
-    ));
+    setSessions(prev => {
+      const updatedSessions = prev.map(session =>
+        session.id === sessionId
+          ? { ...session, favorite: !session.favorite }
+          : session
+      );
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(updatedSessions));
+      return updatedSessions;
+    });
+    const session = sessions.find(s => s.id === sessionId);
+    toast.success(session?.favorite ? "Chat removed from favorites" : "Chat added to favorites");
   };
 
   return {

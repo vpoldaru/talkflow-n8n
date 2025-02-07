@@ -32,20 +32,20 @@ export const ChatMessages = ({ messages, isTyping = false }: ChatMessagesProps) 
           ),
           radial-gradient(
             circle at 2px 2px,
-            rgba(148, 163, 184, 0.05) 1px,
+            hsl(var(--muted)/0.15) 1px,
             transparent 0
           )
         `,
         backgroundSize: '100% 100%, 24px 24px'
       }}
     >
-      <div className="container mx-auto px-4">
+      <div className="container max-w-3xl mx-auto px-4">
         <div className="max-w-[900px] mx-auto space-y-12">
           {messages.map((message) => (
             <ChatMessage key={message.id} message={message} />
           ))}
           {isTyping && (
-            <div className="flex items-center space-x-2 text-slate-500 dark:text-slate-400">
+            <div className="flex items-center space-x-2 text-muted-foreground">
               <Loader2 className="h-4 w-4 animate-spin" />
               <span>Responding...</span>
             </div>
@@ -56,3 +56,4 @@ export const ChatMessages = ({ messages, isTyping = false }: ChatMessagesProps) 
     </ScrollArea>
   );
 };
+

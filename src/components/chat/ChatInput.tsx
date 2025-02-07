@@ -11,7 +11,7 @@ interface ChatInputProps {
   input: string;
   isLoading: boolean;
   onInputChange: (value: string) => void;
-  onSend: (e: React.FormEvent, file?: File) => void;
+  onSend: (e: React.FormEvent, file?: File) => Promise<boolean>;  // Updated return type
   onImageSelect?: (file: File) => void;
 }
 

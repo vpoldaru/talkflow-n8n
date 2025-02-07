@@ -45,7 +45,15 @@ export const ChatLayout = ({
 
   const handleSend = useCallback(async (e: React.FormEvent, file?: File): Promise<boolean> => {
     e.preventDefault();
-    if (!input.trim()) return false;
+    
+    // Allow sending if there's either text or a file
+    if (!input.trim() && !file) {
+      toast({
+        description: "Please enter a message or attach an image",
+        variant: "destructive",
+      });
+      return false;
+    }
 
     console.log('ChatLayout handleSend called with pending file:', file ? {
       fileName: file.name,
@@ -129,3 +137,4 @@ export const ChatLayout = ({
     </div>
   );
 };
+

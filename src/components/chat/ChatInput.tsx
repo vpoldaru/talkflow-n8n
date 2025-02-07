@@ -52,12 +52,14 @@ export const ChatInput = ({
 
     try {
       // Pass the image file to onSend if it exists
-      await onSend(e, previewImage?.file);
+      const result = await onSend(e, previewImage?.file);
       
-      // Clean up the preview image after sending
-      if (previewImage) {
-        URL.revokeObjectURL(previewImage.url);
-        setPreviewImage(null);
+      // Only clear the preview image if the send was successful
+      if (result !== false) {
+        if (previewImage) {
+          URL.revokeObjectURL(previewImage.url);
+          setPreviewImage(null);
+        }
       }
     } catch (err) {
       console.error('Failed to send message:', err);
@@ -186,4 +188,3 @@ export const ChatInput = ({
     </form>
   );
 };
-

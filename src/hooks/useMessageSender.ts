@@ -1,3 +1,4 @@
+
 import { useState } from 'react';
 import { Message } from '@/types/chat';
 import { fetchWithTimeout, FETCH_TIMEOUT } from '@/utils/fetchWithTimeout';
@@ -27,14 +28,22 @@ export const useMessageSender = (
 
     if (!effectiveWebhookUrl) {
       toast.error("Configuration error: No webhook URL available");
-      return;
+      return false;
     }
 
     try {
       setIsLoading(true);
       setIsTyping(true);
 
+      console.log('Processing file for message:', file ? {
+        name: file.name,
+        type: file.type,
+        size: file.size
+      } : 'No file');
+
       const fileData = file ? await prepareFileData(file) : null;
+
+      console.log('File data prepared:', fileData ? 'Successfully processed' : 'No file data');
 
       const userMessage: Message = {
         id: uuidv4(),
@@ -61,7 +70,7 @@ export const useMessageSender = (
       console.log('Sending message to webhook:', {
         url: effectiveWebhookUrl.split('/webhook/')[0] + '/webhook/[WEBHOOK_ID]',
         hasAuth: !!username && !!secret,
-        hasFile: !!file
+        hasFile: !!fileData
       });
 
       const response = await fetchWithTimeout(
@@ -106,9 +115,11 @@ export const useMessageSender = (
       queryClient.setQueryData(['chatSessions', sessionId], finalMessages);
       
       console.log('Message sent successfully');
+      return true;
     } catch (error) {
       console.error('Error in webhook request:', error);
       toast.error("Failed to send message. Please try again.");
+      return false;
     } finally {
       setIsLoading(false);
       setIsTyping(false);

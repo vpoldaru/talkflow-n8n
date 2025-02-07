@@ -9,7 +9,6 @@ import { toast } from "sonner";
 import { useState } from "react";
 import { Input } from "@/components/ui/input";
 import { useNavigate } from "react-router-dom";
-import { ThemePicker } from "@/components/ThemePicker";
 
 interface ChatSidebarProps {
   sessions: ChatSession[];
@@ -105,10 +104,7 @@ export const ChatSidebar = ({
           <PlusCircle className="w-4 h-4" />
           New Chat
         </Button>
-        <div className="flex items-center justify-between gap-2">
-          <ThemeToggle />
-          <ThemePicker />
-        </div>
+        <ThemeToggle />
       </div>
       <ScrollArea className="flex-1">
         <div className="p-2 space-y-2">

@@ -41,8 +41,8 @@ export const ChatInput = ({
     
     if (isLoading) return;
 
-    // Allow submission if there's an image, even without text
-    if (!input.trim() && !previewImage) {
+    // Allow empty text if there's an image
+    if (!input.trim() && !previewImage?.file) {
       toast({
         description: "Please enter a message or attach an image",
         variant: "destructive",
@@ -51,8 +51,10 @@ export const ChatInput = ({
     }
 
     try {
+      // Pass the image file to onSend if it exists
       await onSend(e, previewImage?.file);
       
+      // Clean up the preview image after sending
       if (previewImage) {
         URL.revokeObjectURL(previewImage.url);
         setPreviewImage(null);
@@ -106,8 +108,8 @@ export const ChatInput = ({
     }
   };
 
-  // Only disable the send button if there's no image and no text
-  const isInputEmpty = !input.trim() && !previewImage;
+  // Enable the send button if there's either text or an image
+  const isInputEmpty = !input.trim() && !previewImage?.file;
 
   return (
     <form onSubmit={handleSubmit} className="fixed bottom-0 right-0 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 w-[calc(100%-240px)]">
@@ -184,3 +186,4 @@ export const ChatInput = ({
     </form>
   );
 };
+

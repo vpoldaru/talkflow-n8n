@@ -1,3 +1,4 @@
+
 import { defineConfig } from "vite";
 import react from "@vitejs/plugin-react-swc";
 import path from "path";
@@ -23,5 +24,13 @@ export default defineConfig(({ mode }) => ({
   build: {
     target: "esnext", // Ensure latest JS features are supported
     minify: false, // Disable minification for debugging
+    sourcemap: true, // Enable source maps for better debugging
+    rollupOptions: {
+      output: {
+        manualChunks: {
+          vendor: ['react', 'react-dom', 'react-router-dom'],
+        },
+      },
+    },
   },
 }));

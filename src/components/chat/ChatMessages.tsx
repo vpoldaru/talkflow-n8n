@@ -23,7 +23,7 @@ export const ChatMessages = ({ messages, isTyping = false }: ChatMessagesProps) 
 
   return (
     <ScrollArea 
-      className="flex-1 p-4 space-y-8 pt-16 md:pt-4 pb-32"
+      className="h-full"
       style={{
         background: `
           linear-gradient(to bottom, 
@@ -39,7 +39,7 @@ export const ChatMessages = ({ messages, isTyping = false }: ChatMessagesProps) 
         backgroundSize: '100% 100%, 24px 24px'
       }}
     >
-      <div className="container max-w-3xl mx-auto px-4">
+      <div className="container max-w-3xl mx-auto p-4">
         <div className="max-w-[900px] mx-auto space-y-12">
           {messages.map((message) => (
             <ChatMessage key={message.id} message={message} />
@@ -56,4 +56,3 @@ export const ChatMessages = ({ messages, isTyping = false }: ChatMessagesProps) 
     </ScrollArea>
   );
 };
-

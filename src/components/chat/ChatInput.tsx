@@ -131,12 +131,13 @@ export const ChatInput = ({
             onPaste={handlePaste}
             ref={textareaRef}
             rows={1}
-            className="min-h-[24px] w-full resize-none bg-muted/50 dark:bg-muted/20 text-foreground rounded-xl pr-24 pl-12 py-3 focus-visible:ring-1 border-none"
+            className="min-h-[24px] w-full resize-none bg-muted/50 dark:bg-muted/20 text-foreground rounded-xl pr-24 pl-12 py-3 focus-visible:ring-1 border-none overflow-y-hidden"
             disabled={isLoading}
             style={{
-              height: 'auto',
+              height: input ? 'auto' : '50px',
               minHeight: '50px',
-              maxHeight: '200px'
+              maxHeight: '200px',
+              overflowY: input ? 'auto' : 'hidden'
             }}
           />
           <div className="absolute left-3 bottom-2.5">

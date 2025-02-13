@@ -43,7 +43,6 @@ export const ChatLayout = ({
   const handleSend = useCallback(async (e: React.FormEvent, file?: File): Promise<boolean> => {
     e.preventDefault();
     
-    // Allow sending if there's either text or a file
     if (!input.trim() && !file) {
       toast({
         description: "Please enter a message or attach an image",
@@ -98,23 +97,23 @@ export const ChatLayout = ({
         onToggleFavorite={onToggleFavorite}
       />
 
-      <div className="flex-1 flex flex-col bg-background relative">
-        <div className="flex-1 overflow-hidden relative">
-          {currentSession && (
-            <>
+      <div className="flex-1 flex flex-col bg-background">
+        {currentSession && (
+          <>
+            <div className="flex-1 overflow-y-auto relative">
               <ChatMessages messages={currentSession.messages} isTyping={isTyping} />
-              <div className="absolute bottom-0 left-0 right-0">
-                <ChatInput
-                  input={input}
-                  isLoading={isLoading}
-                  onInputChange={setInput}
-                  onSend={handleSend}
-                  onImageSelect={handleImageSelect}
-                />
-              </div>
-            </>
-          )}
-        </div>
+            </div>
+            <div className="w-full">
+              <ChatInput
+                input={input}
+                isLoading={isLoading}
+                onInputChange={setInput}
+                onSend={handleSend}
+                onImageSelect={handleImageSelect}
+              />
+            </div>
+          </>
+        )}
       </div>
 
       {isMobile && isSidebarOpen && (

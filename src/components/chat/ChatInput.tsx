@@ -11,7 +11,7 @@ interface ChatInputProps {
   input: string;
   isLoading: boolean;
   onInputChange: (value: string) => void;
-  onSend: (e: React.FormEvent, file?: File) => Promise<boolean>;  // Updated return type
+  onSend: (e: React.FormEvent, file?: File) => Promise<boolean>;
   onImageSelect?: (file: File) => void;
 }
 
@@ -41,20 +41,9 @@ export const ChatInput = ({
     
     if (isLoading) return;
 
-    // Allow empty text if there's an image
-    if (!input.trim() && !previewImage?.file) {
-      toast({
-        description: "Please enter a message or attach an image",
-        variant: "destructive",
-      });
-      return;
-    }
-
     try {
-      // Pass the image file to onSend if it exists
       const result = await onSend(e, previewImage?.file);
       
-      // Only clear the preview image if the send was successful
       if (result !== false) {
         if (previewImage) {
           URL.revokeObjectURL(previewImage.url);
@@ -110,12 +99,11 @@ export const ChatInput = ({
     }
   };
 
-  // Enable the send button if there's either text or an image
   const isInputEmpty = !input.trim() && !previewImage?.file;
 
   return (
-    <form onSubmit={handleSubmit} className="fixed bottom-0 right-0 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 w-[calc(100%-240px)]">
-      <div className="max-w-[900px] mx-auto px-4">
+    <form onSubmit={handleSubmit} className="bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 w-full px-4 py-2">
+      <div className="max-w-[900px] mx-auto">
         {previewImage && (
           <div className="relative inline-block mb-2">
             <div className="relative w-16 h-16 rounded-lg overflow-hidden">
@@ -134,7 +122,7 @@ export const ChatInput = ({
             </div>
           </div>
         )}
-        <div className="relative py-4">
+        <div className="relative">
           <Textarea
             placeholder="Type a message or paste an image..."
             value={input}
@@ -142,16 +130,16 @@ export const ChatInput = ({
             onKeyDown={handleKeyDown}
             onPaste={handlePaste}
             ref={textareaRef}
-            rows={3}
+            rows={1}
             className="min-h-[24px] w-full resize-none bg-muted/50 dark:bg-muted/20 text-foreground rounded-xl pr-24 pl-12 py-3 focus-visible:ring-1 border-none"
             disabled={isLoading}
             style={{
               height: 'auto',
-              minHeight: '80px',
+              minHeight: '50px',
               maxHeight: '200px'
             }}
           />
-          <div className="absolute left-3 bottom-6">
+          <div className="absolute left-3 bottom-2.5">
             {onImageSelect && (
               <ImageUpload 
                 onImageSelect={handleImageSelection}
@@ -159,7 +147,7 @@ export const ChatInput = ({
               />
             )}
           </div>
-          <div className="absolute right-3 bottom-6 flex items-center gap-2">
+          <div className="absolute right-3 bottom-2.5 flex items-center gap-2">
             <Button 
               type="button" 
               size="icon" 

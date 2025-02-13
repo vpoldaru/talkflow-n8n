@@ -23,7 +23,7 @@ export const ChatMessages = ({ messages, isTyping = false }: ChatMessagesProps) 
 
   return (
     <ScrollArea 
-      className="flex-1 p-4 space-y-8 pt-16 md:pt-4 pb-32"
+      className="flex-1 p-4 space-y-8 md:pt-4 pb-32"
       style={{
         background: `
           linear-gradient(to bottom, 
@@ -56,4 +56,3 @@ export const ChatMessages = ({ messages, isTyping = false }: ChatMessagesProps) 
     </ScrollArea>
   );
 };
-

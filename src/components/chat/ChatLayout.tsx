@@ -33,14 +33,11 @@ export const ChatLayout = ({
   onToggleFavorite,
   onSendMessage,
 }: ChatLayoutProps) => {
-  // Move all hooks to the top level
   const [input, setInput] = useState("");
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
-  const [pendingImage, setPendingImage] = useState<File | null>(null);
   const isMobile = useIsMobile();
   const { toast } = useToast();
   
-  // Find current session
   const currentSession = sessions.find(s => s.id === currentSessionId);
 
   const handleSend = useCallback(async (e: React.FormEvent, file?: File): Promise<boolean> => {
@@ -55,16 +52,9 @@ export const ChatLayout = ({
       return false;
     }
 
-    console.log('ChatLayout handleSend called with pending file:', file ? {
-      fileName: file.name,
-      fileSize: file.size,
-      fileType: file.type
-    } : null);
-
     try {
       await onSendMessage(input, file);
       setInput("");
-      console.log('Message sent successfully');
       return true;
     } catch (error) {
       toast({
@@ -76,12 +66,7 @@ export const ChatLayout = ({
   }, [input, onSendMessage, toast]);
 
   const handleImageSelect = useCallback((file: File) => {
-    console.log('ChatLayout handleImageSelect called with file:', {
-      fileName: file.name,
-      fileSize: file.size,
-      fileType: file.type
-    });
-    setPendingImage(file);
+    console.log('Image selected:', file.name);
   }, []);
 
   const handleSessionClick = useCallback((sessionId: string) => {
@@ -92,7 +77,7 @@ export const ChatLayout = ({
   }, [isMobile, onSessionSelect]);
 
   return (
-    <div className="flex h-screen relative">
+    <div className="flex h-[100dvh] relative">
       {isMobile && (
         <button
           onClick={() => setIsSidebarOpen(!isSidebarOpen)}
@@ -113,19 +98,23 @@ export const ChatLayout = ({
         onToggleFavorite={onToggleFavorite}
       />
 
-      <div className="flex-1 flex flex-col bg-background relative pb-6">
-        {currentSession && (
-          <>
-            <ChatMessages messages={currentSession.messages} isTyping={isTyping} />
-            <ChatInput
-              input={input}
-              isLoading={isLoading}
-              onInputChange={setInput}
-              onSend={handleSend}
-              onImageSelect={handleImageSelect}
-            />
-          </>
-        )}
+      <div className="flex-1 flex flex-col bg-background relative">
+        <div className="flex-1 overflow-hidden relative">
+          {currentSession && (
+            <>
+              <ChatMessages messages={currentSession.messages} isTyping={isTyping} />
+              <div className="absolute bottom-0 left-0 right-0">
+                <ChatInput
+                  input={input}
+                  isLoading={isLoading}
+                  onInputChange={setInput}
+                  onSend={handleSend}
+                  onImageSelect={handleImageSelect}
+                />
+              </div>
+            </>
+          )}
+        </div>
       </div>
 
       {isMobile && isSidebarOpen && (
@@ -137,4 +126,3 @@ export const ChatLayout = ({
     </div>
   );
 };
-

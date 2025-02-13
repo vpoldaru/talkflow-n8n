@@ -130,17 +130,17 @@ export const ChatInput = ({
             onKeyDown={handleKeyDown}
             onPaste={handlePaste}
             ref={textareaRef}
-            rows={1}
-            className="min-h-[24px] w-full resize-none bg-muted/50 dark:bg-muted/20 text-foreground rounded-xl pr-24 pl-12 py-3 focus-visible:ring-1 border-none overflow-y-hidden"
+            rows={2}
+            className="min-h-[24px] w-full resize-none bg-muted/50 dark:bg-muted/20 text-foreground rounded-xl pr-24 pl-12 py-4 focus-visible:ring-1 border-none overflow-y-hidden"
             disabled={isLoading}
             style={{
-              height: input ? 'auto' : '50px',
-              minHeight: '50px',
+              height: input ? 'auto' : '80px',
+              minHeight: '80px',
               maxHeight: '200px',
               overflowY: input ? 'auto' : 'hidden'
             }}
           />
-          <div className="absolute left-3 bottom-2.5">
+          <div className="absolute left-3 bottom-4">
             {onImageSelect && (
               <ImageUpload 
                 onImageSelect={handleImageSelection}
@@ -148,7 +148,7 @@ export const ChatInput = ({
               />
             )}
           </div>
-          <div className="absolute right-3 bottom-2.5 flex items-center gap-2">
+          <div className="absolute right-3 bottom-4 flex items-center gap-2">
             <Button 
               type="button" 
               size="icon" 

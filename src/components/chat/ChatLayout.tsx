@@ -97,13 +97,13 @@ export const ChatLayout = ({
         onToggleFavorite={onToggleFavorite}
       />
 
-      <div className="flex-1 flex flex-col bg-background">
+      <div className="flex-1 flex flex-col bg-background max-h-[100dvh]">
         {currentSession && (
           <>
-            <div className="flex-1 overflow-y-auto relative">
+            <div className="flex-1 overflow-hidden">
               <ChatMessages messages={currentSession.messages} isTyping={isTyping} />
             </div>
-            <div className="w-full">
+            <div className="w-full flex-shrink-0">
               <ChatInput
                 input={input}
                 isLoading={isLoading}
